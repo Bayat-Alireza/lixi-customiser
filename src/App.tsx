@@ -1,25 +1,30 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { SearchPath } from "./components/search/SearchPath";
+import {LixiItem} from "./components/lixi-item/LixiItem"
+// import { Provider } from "react-redux";
+// import { store } from "./redux";
+import { CssBaseline } from '@material-ui/core';
+import { ItemXMLViewer } from './components/itemXMLViewer/ItemXMLViewer';
+import { useTypedSelector } from "./hooks/useTypeSelector";
+// import { useAction } from "./hooks/useActions";
+
 
 function App() {
+  const { data } = useTypedSelector((state) => state.item); 
+  const { customization } = useTypedSelector((state) => state.customizer); 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    // <Provider store={store}>
+    <div className="App" style={{backgroundColor:"#fff",width:"70%",margin:"auto"}}>
+        <CssBaseline/>
+          <SearchPath   />
+          {data?<LixiItem item={data} />:undefined}
+          {data?
+
+          <ItemXMLViewer itemXML={customization} />
+         :undefined}
+          
+      </div>
+    // </Provider>
   );
 }
 
