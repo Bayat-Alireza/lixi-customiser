@@ -5,6 +5,7 @@ export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     listbox: {
       boxSizing: "border-box",
+
       "& ul": {
         padding: 0,
         margin: 0,
@@ -13,13 +14,15 @@ export const useStyles = makeStyles((theme: Theme) =>
           backgroundColor: theme.palette.primary.light,
           color: theme.palette.primary.contrastText,
         },
+       
       },
     },
     root: {
       display: "flex",
       alignItems: "center",
       width: "100%",
-      marginTop: "1rem",
+      marginTop: "0rem",
     },
+   
   })
 );

@@ -8,6 +8,7 @@ import { parsedXml, XmlUtil } from "../../util/nameSpaces";
 import { SubSchemaMenu } from "../sub-schema-menu/SubSchemaMenu";
 import { ListboxComponent } from "./listBoxComponent";
 import { useStyles } from "./searchPathStyle";
+import {UploadFile} from "../upload-file/UploadFile"
 
 export const SearchPath: React.FC = () => {
   const classes = useStyles();
@@ -33,12 +34,13 @@ export const SearchPath: React.FC = () => {
     };
 
     (async () => {
+      setOptions([])
       setOptions(await lixiItems());
     })();
   }, [transactionType]);
 
   const onSubmit = (
-    event: React.ChangeEvent<{}>,
+    event: React.ChangeEvent<{}> | React.FormEvent<HTMLFormElement>,
     searchText: string | null
   ) => {
     event.preventDefault();
@@ -48,13 +50,30 @@ export const SearchPath: React.FC = () => {
   };
 
   return (
-    <form>
-      <div className={classes.root}>
+    
+      <div >
+        <div style={
+          {
+            alignItems:"center",
+            display:"flex",
+            justifyContent:"space-between",
+            marginTop:"1rem",
+            padding:"0.2rem 0.5rem",
+            height:"max-content",
+            // width:"max-content",
+            backgroundColor:"#fffde7"
+        }
+          }>
+         <UploadFile saveFace={(file:any)=>console.log((file))}/>
+        </div>
+        <div className={classes.root}>
         <Autocomplete
           id="virtualize-demo"
           onChange={(event, option) => onSubmit(event, option)}
           disableListWrap
           classes={classes}
+          autoComplete={true}
+          includeInputInList
           loading={_loading}
           ListboxComponent={
             ListboxComponent as React.ComponentType<
@@ -78,6 +97,7 @@ export const SearchPath: React.FC = () => {
                     ) : null}
                     {params.InputProps.endAdornment}
                     <SubSchemaMenu />
+                   
                   </React.Fragment>
                 ),
               }}
@@ -85,7 +105,10 @@ export const SearchPath: React.FC = () => {
           )}
           renderOption={(option) => <Typography noWrap>{option}</Typography>}
         />
+        </div>
+        
+        
       </div>
-    </form>
+    
   );
 };
