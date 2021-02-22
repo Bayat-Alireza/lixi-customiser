@@ -1,4 +1,4 @@
-import { Box, Button, ButtonGroup, Typography } from "@material-ui/core";
+import { Button, Typography } from "@material-ui/core";
 import prettifyXml from "prettify-xml";
 import React, { Fragment } from "react";
 import XMLViewer from "react-xml-viewer";

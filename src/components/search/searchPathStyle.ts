@@ -1,5 +1,4 @@
 import { makeStyles, createStyles, Theme } from "@material-ui/core";
-import { Palette } from "@material-ui/icons";
 
 export const useStyles = makeStyles((theme: Theme) =>
   createStyles({

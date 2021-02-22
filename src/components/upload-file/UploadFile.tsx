@@ -5,14 +5,14 @@ import DescriptionTwoToneIcon from "@material-ui/icons/DescriptionTwoTone";
 import MemoryTwoToneIcon from "@material-ui/icons/MemoryTwoTone";
 
 interface FormProps {
+  description: string;
   saveFace: any; //(fileName:Blob) => Promise<void>, // callback taking a string and then dispatching a store actions
 }
 
-export const UploadFile: React.FC<FormProps> = ({ saveFace }) => {
+export const UploadFile: React.FC<FormProps> = ({ saveFace, description }) => {
   const classes = useStyles();
   const [selectedFile, setSelectedFile] = React.useState<any>(undefined);
   const [metadata, setMetadata] = React.useState<{ [key: string]: string }>();
-
   const handleCapture = ({ target }: any) => {
     // console.log("jwiegfj", target.files[0].name);
     setSelectedFile(target.files[0]);
@@ -43,7 +43,7 @@ export const UploadFile: React.FC<FormProps> = ({ saveFace }) => {
         type="file"
         onChange={handleCapture}
       />
-      <Tooltip title="Click to s elect LIXI Base Schema">
+      <Tooltip title="Click to select LIXI Base Schema">
         <label
           style={{ display: "flex", alignItems: "center" }}
           htmlFor="faceImage"
@@ -56,18 +56,20 @@ export const UploadFile: React.FC<FormProps> = ({ saveFace }) => {
           >
             <DescriptionTwoToneIcon fontSize="large" />
           </IconButton>
-          <Typography className={classes.fileName} noWrap>
-            {metadata ? metadata.name : "LIXI Base Schema"}
+          <Typography 
+          style={{backgroundColor:"#c5cae9",padding:"0.5rem" ,borderRadius:"0.1rem"}} 
+          variant="caption" 
+          className={classes.fileName} 
+          noWrap>
+            {metadata ? metadata.name : description}
           </Typography>
         </label>
       </Tooltip>
-      {/* <label>{metadata ? metadata.name : "Select LIXI MainSchema.xsd"}</label> */}
-      {/* <label>{"Select Image"}</label> */}
       <Button
-        style={{ marginLeft: "0.5rem", height: "2rem" }}
+        style={{ marginLeft: "0.5rem" }}
         startIcon={<MemoryTwoToneIcon />}
         variant="outlined"
-        size="small"
+        size="medium"
         onClick={() => handleSubmit()}
         color="primary"
       >

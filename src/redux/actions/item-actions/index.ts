@@ -3,6 +3,10 @@ import { ItemActionType } from "../../action-types";
 interface SearchItemAction {
   type: ItemActionType.SEARCH_ITEM;
 }
+
+interface ResetItemAction {
+  type: ItemActionType.REST_ITEM;
+}
 interface SearchItemSuccessAction {
   type: ItemActionType.SEARCH_ITEM_SUCCESS;
   payload: Element | null;
@@ -15,4 +19,5 @@ interface SearchItemErrorAction {
 export type ItemAction =
   | SearchItemAction
   | SearchItemSuccessAction
-  | SearchItemErrorAction;
+  | SearchItemErrorAction
+  | ResetItemAction;

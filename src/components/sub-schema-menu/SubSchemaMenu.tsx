@@ -6,16 +6,22 @@ import React, { useEffect, useState } from "react";
 import { useAction } from "../../hooks/useActions";
 import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { SubSchema } from "../../redux/actions/customiser-actions";
-import { parsedXml, XmlUtil } from "../../util/nameSpaces";
-import { useStyles } from "./subSchemaMenuStyle";
+import { 
+  // parsedXml,
+   XmlUtil } from "../../util/nameSpaces";
+// import { useStyles } from "./subSchemaMenuStyle";
 
 export const SubSchemaMenu: React.FC = () => {
-  const classes = useStyles();
-  const { customizeSubSchema } = useAction();
+  // const classes = useStyles();
+  const { 
+    customizeSubSchema,
+    // resetCustomizeSubSchema
+   } = useAction();
   const { transactionVersion, transactionType } = useTypedSelector(
     (state) => state.customizer.subSchema
-  );
-  const [transaction, setTransaction] = useState<string | undefined>(undefined);
+  )|| {transactionType:"",transactionVersion:""};
+  const { schema } = useTypedSelector((state) => state.schema);
+  // const [transaction, setTransaction] = useState<string | undefined>(undefined);
   const [transactionList, setTransactionList] = useState<
     {
       transactionType: string;
@@ -44,7 +50,12 @@ export const SubSchemaMenu: React.FC = () => {
       }[]
     > => {
       return new Promise((resolves, rejects) => {
-        const xmlUtile = new XmlUtil(parsedXml);
+        if (!schema) {
+          setTransactionList([])
+          // resetCustomizeSubSchema()
+          return
+        } 
+        const xmlUtile = new XmlUtil(schema);
         const transactions = xmlUtile.getTransactions();
         resolves(transactions);
       });
@@ -53,16 +64,22 @@ export const SubSchemaMenu: React.FC = () => {
     (async () => {
       setTransactionList(await transaction());
     })();
-  }, []);
+  }, [schema]);
+
+
+  useEffect(()=>{
+
+  })
   return (
-    <div style={{ margin: "0" }}>
+    <>
       <Button
-        className={classes.menuButton}
+        // className={classes.menuButton}
         color="primary"
         aria-controls="simple-menu"
         aria-haspopup="true"
         onClick={handleClick}
-        variant="contained"
+        variant="outlined"
+        disabled={transactionList.length?false:true}
         endIcon={<KeyboardArrowDownIcon />}
       >
         {transactionType && transactionVersion
@@ -86,6 +103,6 @@ export const SubSchemaMenu: React.FC = () => {
           );
         })}
       </Menu>
-    </div>
+    </>
   );
 };

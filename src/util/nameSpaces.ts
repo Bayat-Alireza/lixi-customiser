@@ -1,6 +1,6 @@
-import { InfoRounded } from "@material-ui/icons";
-import { read } from "fs";
-import { master_schema } from "../assets/LIXI-Master-Schema";
+// import { InfoRounded } from "@material-ui/icons";
+// import { read } from "fs";
+// import { master_schema } from "../assets/LIXI-Master-Schema1";
 import { LixiTagEnum } from "../enums/lixiEnums";
 type NameSpace = {
   [ns: string]: string;
@@ -17,42 +17,42 @@ export const nameSpaceResolver: XPathNSResolver = (
   return prefix ? ns[prefix] : null;
 };
 
-const parser = new DOMParser();
-export const parsedXml = parser.parseFromString(master_schema, "text/xml");
+// const parser = new DOMParser();
+// export const parsedXml = parser.parseFromString(master_schema, "text/xml");
 
-export const path = parsedXml.evaluate(
-  "//lx:path[1]/text()",
-  parsedXml,
-  nameSpaceResolver,
-  XPathResult.UNORDERED_NODE_ITERATOR_TYPE,
-  null
-);
+// export const path = parsedXml.evaluate(
+//   "//lx:path[1]/text()",
+//   parsedXml,
+//   nameSpaceResolver,
+//   XPathResult.UNORDERED_NODE_ITERATOR_TYPE,
+//   null
+// );
 
-export const result = parsedXml.evaluate(
-  "/xs:schema/xs:element",
-  parsedXml,
-  nameSpaceResolver,
-  XPathResult.ANY_TYPE,
-  null
-);
+// export const result = parsedXml.evaluate(
+//   "/xs:schema/xs:element",
+//   parsedXml,
+//   nameSpaceResolver,
+//   XPathResult.ANY_TYPE,
+//   null
+// );
 
-export const packageElement = parsedXml.evaluate(
-  "/xs:schema/xs:element[@name='Package']",
-  parsedXml,
-  nameSpaceResolver,
-  XPathResult.ANY_TYPE,
-  null
-);
+// export const packageElement = parsedXml.evaluate(
+//   "/xs:schema/xs:element[@name='Package']",
+//   parsedXml,
+//   nameSpaceResolver,
+//   XPathResult.ANY_TYPE,
+//   null
+// );
 
 export class XmlUtil {
   private parsedDoc: Document;
-  constructor(parsedDoc: Document = parsedXml) {
+  constructor(parsedDoc: Document) {
     this.parsedDoc = parsedDoc;
   }
 
   getPathOfAllElements() {
     const elementsPath = [];
-    const elements = parsedXml.getElementsByTagName(LixiTagEnum.element);
+    const elements = this.parsedDoc.getElementsByTagName(LixiTagEnum.element);
     for (const e of Array.prototype.fill(elements)) {
       elementsPath.push(
         e.getElementsByTagName(LixiTagEnum.path)[0].textContent

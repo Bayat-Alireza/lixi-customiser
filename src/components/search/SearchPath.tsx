@@ -4,26 +4,29 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import React, { useEffect, useState } from "react";
 import { useAction } from "../../hooks/useActions";
 import { useTypedSelector } from "../../hooks/useTypeSelector";
-import { parsedXml, XmlUtil } from "../../util/nameSpaces";
-import { SubSchemaMenu } from "../sub-schema-menu/SubSchemaMenu";
+import { 
+  // parsedXml, 
+  XmlUtil } from "../../util/nameSpaces";
 import { ListboxComponent } from "./listBoxComponent";
 import { useStyles } from "./searchPathStyle";
-import {UploadFile} from "../upload-file/UploadFile"
 
 export const SearchPath: React.FC = () => {
   const classes = useStyles();
+  // const [selectedItem,setSelectedItem]=useState<string|undefined>()
   const { searchItem } = useAction();
   const [options, setOptions] = useState<string[] | null>([]);
-  const { data, error, loading } = useTypedSelector((state) => state.item);
+  // const { data, error, loading } = useTypedSelector((state) => state.item);
+  const { loading,  schema } = useTypedSelector((state) => state.schema);
   const { transactionType } = useTypedSelector(
     (state) => state.customizer.subSchema
-  );
+  ) || {transactionType:""};
   const _loading = loading || options?.length === 0;
 
   useEffect(() => {
     const lixiItems = (): Promise<string[]> => {
       return new Promise((resolves, rejects) => {
-        const xmlUtile = new XmlUtil(parsedXml);
+        if (!schema) return;;;
+        const xmlUtile = new XmlUtil(schema);
         if (transactionType) {
           const allPath = xmlUtile.getPathOfAllItemsInATransaction(
             transactionType
@@ -34,43 +37,31 @@ export const SearchPath: React.FC = () => {
     };
 
     (async () => {
-      setOptions([])
+      setOptions([]);
       setOptions(await lixiItems());
     })();
-  }, [transactionType]);
+  }, [transactionType, schema]);
 
   const onSubmit = (
     event: React.ChangeEvent<{}> | React.FormEvent<HTMLFormElement>,
     searchText: string | null
   ) => {
     event.preventDefault();
+    
     if (searchText) {
       searchItem(searchText);
     }
   };
 
+  
   return (
-    
-      <div >
-        <div style={
-          {
-            alignItems:"center",
-            display:"flex",
-            justifyContent:"space-between",
-            marginTop:"1rem",
-            padding:"0.2rem 0.5rem",
-            height:"max-content",
-            // width:"max-content",
-            backgroundColor:"#fffde7"
-        }
-          }>
-         <UploadFile saveFace={(file:any)=>console.log((file))}/>
-        </div>
-        <div className={classes.root}>
+    <div>
+      <div className={classes.root}>
         <Autocomplete
           id="virtualize-demo"
           onChange={(event, option) => onSubmit(event, option)}
           disableListWrap
+          // value={selectedItem}
           classes={classes}
           autoComplete={true}
           includeInputInList
@@ -96,8 +87,6 @@ export const SearchPath: React.FC = () => {
                       <CircularProgress color="inherit" size={20} />
                     ) : null}
                     {params.InputProps.endAdornment}
-                    <SubSchemaMenu />
-                   
                   </React.Fragment>
                 ),
               }}
@@ -105,10 +94,7 @@ export const SearchPath: React.FC = () => {
           )}
           renderOption={(option) => <Typography noWrap>{option}</Typography>}
         />
-        </div>
-        
-        
       </div>
-    
+    </div>
   );
 };

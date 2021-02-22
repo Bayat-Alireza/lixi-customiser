@@ -23,6 +23,8 @@ const reducer = (
       return { loading: false, error: null, data: action.payload };
     case ItemActionType.SEARCH_ITEM_ERROR:
       return { loading: false, error: action.payload, data: null };
+    case ItemActionType.REST_ITEM:
+      return { loading: false, error: null, data: null };
 
     default:
       return state;

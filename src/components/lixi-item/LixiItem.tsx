@@ -104,12 +104,12 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
         </Badge>
         <div>
           {lixiItem?.transactions?.sort().map((t, idx) => {
-            if (subSchema.transactionType && subSchema.transactionType === t) {
+            if (subSchema?.transactionType && subSchema.transactionType === t) {
               return (
                 <Chip
                   key="active"
                   style={{ margin: "0 0.1rem" }}
-                  avatar={<Avatar>{subSchema.transactionType[0]}</Avatar>}
+                  avatar={<Avatar>{subSchema?.transactionType[0]}</Avatar>}
                   deleteIcon={<DoneIcon />}
                   size="small"
                   color="secondary"
