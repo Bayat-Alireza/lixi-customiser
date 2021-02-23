@@ -2,7 +2,7 @@ import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useAction } from "../../hooks/useActions";
 import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { SubSchema } from "../../redux/actions/customiser-actions";
@@ -15,8 +15,8 @@ export const SubSchemaMenu: React.FC = () => {
   // const classes = useStyles();
   const { 
     customizeSubSchema,
-    // resetCustomizeSubSchema
-   } = useAction();
+    // resetCustomizeSubSchema 
+  }= useAction();
   const { transactionVersion, transactionType } = useTypedSelector(
     (state) => state.customizer.subSchema
   )|| {transactionType:"",transactionVersion:""};
@@ -32,6 +32,8 @@ export const SubSchemaMenu: React.FC = () => {
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
+  const sortedTransactionList = useMemo(() => transactionList?.sort((a,b)=>(a.transactionType>b.transactionType)?1:-1),[transactionList])
 
   const handleClose = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const s = e.currentTarget.innerText.split(" ");
@@ -52,7 +54,7 @@ export const SubSchemaMenu: React.FC = () => {
       return new Promise((resolves, rejects) => {
         if (!schema) {
           setTransactionList([])
-          // resetCustomizeSubSchema()
+          // resetCustomizeSubSchema();
           return
         } 
         const xmlUtile = new XmlUtil(schema);
@@ -79,7 +81,7 @@ export const SubSchemaMenu: React.FC = () => {
         aria-haspopup="true"
         onClick={handleClick}
         variant="outlined"
-        disabled={transactionList.length?false:true}
+        disabled={transactionList.length ? false : true}
         endIcon={<KeyboardArrowDownIcon />}
       >
         {transactionType && transactionVersion
@@ -87,13 +89,14 @@ export const SubSchemaMenu: React.FC = () => {
           : "Transaction"}
       </Button>
       <Menu
+        
         id="simple-menu"
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        {transactionList?.map(({ transactionType, transactionVersion }) => {
+        {sortedTransactionList.map(({ transactionType, transactionVersion }) => {
           return (
             <MenuItem
               id={`${transactionType}_${transactionVersion}`}

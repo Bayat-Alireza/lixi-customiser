@@ -33,7 +33,7 @@ function getStepContent(step: number) {
       return `Upload LIXI's Base schema and specify the transaction schema that you would like to customise.
       Alternatively only upload the specific transaction schema.`;
     case 1:
-      return `If you already have an existing customisatin file you can upload it here, otherwise a new customisation file will be created`;
+      return `If you already have an existing customisation file you can upload it here, otherwise a new customisation file will be created`;
     case 2:
       return `Search item by their path or alternatively choose the item you would like to customise from the dropdown list`;
     default:
@@ -77,6 +77,7 @@ export const VerticalLinearStepper: React.FC = () => {
 
   const handleReset = () => {
     setActiveStep(0);
+    setStepProp({});
     resetBaseSchema();
     resetItem();
   };

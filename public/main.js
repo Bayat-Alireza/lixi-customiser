@@ -1,21 +1,35 @@
 const { app, BrowserWindow, session } = require("electron");
 require("@electron/remote/main");
+const path = require("path");
+const isDev = require("electron-is-dev");
+
 
 function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
     width: 1600,
     height: 1100,
+    // icon: path.join(__dirname, "lixi.ico"),
+
+    // icon: "https://cdn.lixi.org.au/assets/lixi-logo-white-mac-smaller.git",
     titleBarStyle: "customButtonsOnHover",
-    title: "LIXI Customiser",
+    title: "Customiser",
     webPreferences: {
       enableRemoteModule: true,
       contextIsolation: true,
+      devTools:  isDev
     },
   });
-  win.loadURL("http://localhost:3000");
-  win.setTitle("LIXI Customiser");
+  // win.loadURL("http://localhost:3000");
+  win.loadURL(
+    isDev
+      ? "http://localhost:3000"
+      : `file://${path.join(__dirname, "..", "build", "index.html")}`
+  );
+  win.setIcon(path.join(__dirname, "..","src","assets","lixiTitle.ico"),)
+  win.setTitle("Customiser");
 }
+
 
 app.on("ready", createWindow);
 
