@@ -3,6 +3,7 @@ import { Theme, makeStyles, createStyles } from "@material-ui/core";
 export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     subItemHeader: {
+      zIndex: 2,
       display: "flex",
       justifyContent: "space-between",
       backgroundColor: "#fff8e1",

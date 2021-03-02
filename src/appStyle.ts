@@ -4,7 +4,7 @@ export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: "100%",
-      height: "100vh",
+      minHeight: "100vh",
       backgroundColor: "#333",
       padding: "1rem",
     },
