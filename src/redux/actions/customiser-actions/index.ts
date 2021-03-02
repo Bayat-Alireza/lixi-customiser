@@ -5,9 +5,14 @@ export type SubSchema = {
   transactionVersion: string | undefined;
 };
 
+type Customise = {
+  customisedSchema: Element;
+  cutomisedItem: Element;
+};
+
 interface ExcludeItem {
   type: CustomizationActionType.EXCLUDE;
-  payload: Element;
+  payload: Customise;
 }
 
 interface UploadCustomizationAction {

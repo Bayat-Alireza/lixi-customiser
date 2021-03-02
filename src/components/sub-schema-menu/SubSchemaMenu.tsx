@@ -6,34 +6,32 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useAction } from "../../hooks/useActions";
 import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { SubSchema } from "../../redux/actions/customiser-actions";
-import { 
-  // parsedXml,
-   XmlUtil } from "../../util/nameSpaces";
-// import { useStyles } from "./subSchemaMenuStyle";
+import { XmlUtil } from "../../util/nameSpaces";
+import { useStyles } from "./subSchemaMenuStyle";
+
+
+
 
 export const SubSchemaMenu: React.FC = () => {
-  // const classes = useStyles();
-  const { 
-    customizeSubSchema,
-    // resetCustomizeSubSchema 
-  }= useAction();
-  const { transactionVersion, transactionType } = useTypedSelector(
-    (state) => state.customizer.subSchema
-  )|| {transactionType:"",transactionVersion:""};
+  const classes = useStyles();
+  const { customizeSubSchema } = useAction();
+  const { subSchema } = useTypedSelector((state) => state.customizer);
   const { schema } = useTypedSelector((state) => state.schema);
-  // const [transaction, setTransaction] = useState<string | undefined>(undefined);
-  const [transactionList, setTransactionList] = useState<
-    {
-      transactionType: string;
-      transactionVersion: string;
-    }[]
-  >([]);
+  const [transactionList, setTransactionList] = useState<SubSchema[]>([]);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
-
-  const sortedTransactionList = useMemo(() => transactionList?.sort((a,b)=>(a.transactionType>b.transactionType)?1:-1),[transactionList])
+  const sortedTransactionList = useMemo(
+    () =>
+      transactionList?.sort((a, b) => {
+        if (a && b && a.transactionType && b.transactionType) {
+          return a?.transactionType > b?.transactionType ? 1 : -1;
+        }
+        return 0;
+      }),
+    [transactionList]
+  );
 
   const handleClose = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     const s = e.currentTarget.innerText.split(" ");
@@ -53,10 +51,9 @@ export const SubSchemaMenu: React.FC = () => {
     > => {
       return new Promise((resolves, rejects) => {
         if (!schema) {
-          setTransactionList([])
-          // resetCustomizeSubSchema();
-          return
-        } 
+          setTransactionList([]);
+          return;
+        }
         const xmlUtile = new XmlUtil(schema);
         const transactions = xmlUtile.getTransactions();
         resolves(transactions);
@@ -68,14 +65,10 @@ export const SubSchemaMenu: React.FC = () => {
     })();
   }, [schema]);
 
-
-  useEffect(()=>{
-
-  })
   return (
     <>
       <Button
-        // className={classes.menuButton}
+        className={classes.menuButton}
         color="primary"
         aria-controls="simple-menu"
         aria-haspopup="true"
@@ -84,27 +77,28 @@ export const SubSchemaMenu: React.FC = () => {
         disabled={transactionList.length ? false : true}
         endIcon={<KeyboardArrowDownIcon />}
       >
-        {transactionType && transactionVersion
-          ? `${transactionType} ${transactionVersion}`
+        {subSchema?.transactionType && subSchema?.transactionVersion
+          ? `${subSchema.transactionType} ${subSchema.transactionVersion}`
           : "Transaction"}
       </Button>
       <Menu
-        
         id="simple-menu"
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        {sortedTransactionList.map(({ transactionType, transactionVersion }) => {
-          return (
-            <MenuItem
-              id={`${transactionType}_${transactionVersion}`}
-              key={`${transactionType}_${transactionVersion}`}
-              onClick={handleClose}
-            >{`${transactionType} ${transactionVersion}`}</MenuItem>
-          );
-        })}
+        {sortedTransactionList.map(
+          ({ transactionType, transactionVersion }) => {
+            return (
+              <MenuItem
+                id={`${transactionType}_${transactionVersion}`}
+                key={`${transactionType}_${transactionVersion}`}
+                onClick={handleClose}
+              >{`${transactionType} ${transactionVersion}`}</MenuItem>
+            );
+          }
+        )}
       </Menu>
     </>
   );

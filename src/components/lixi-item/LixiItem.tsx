@@ -8,14 +8,15 @@ import {
   CssBaseline,
   Divider,
   FormControlLabel,
-  FormGroup,
+  // FormGroup,
   List,
   ListItem,
   ListSubheader,
+  // TextField,
   Typography,
 } from "@material-ui/core";
-import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
-import DeleteTwoToneIcon from "@material-ui/icons/DeleteTwoTone";
+// import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
+// import DeleteTwoToneIcon from "@material-ui/icons/DeleteTwoTone";
 import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
 import React, { Fragment, useEffect, useState } from "react";
 import { useAction } from "../../hooks/useActions";
@@ -24,12 +25,26 @@ import { Customiser } from "../../models/Customiser";
 import { LixiBase } from "../../models/LixiBase";
 import { useStyles } from "./lixiItemStyle";
 import DoneIcon from "@material-ui/icons/Done";
+// import { ItemXMLViewer } from "../itemXMLViewer/ItemXMLViewer";
+import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
+// import ListItemIcon from "@material-ui/core/ListItemIcon";
+// import ListItemText from "@material-ui/core/ListItemText";
+// import DoneOutlineIcon from '@material-ui/icons/DoneOutline';
+// import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
+// import DoneAllOutlinedIcon from '@material-ui/icons/DoneAllOutlined';
+import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
+import DoneOutlinedIcon from '@material-ui/icons/DoneOutlined';
+// import IconButton from "@material-ui/core/IconButton";
+import { CustomiseElement } from "../customise-element/CustomiseElement";
+import Collapse from "@material-ui/core/Collapse";
 
 interface ItemType {
   item: Element | null | undefined;
 }
 export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
   const classes = useStyles();
+  const [openToCustomise,setOpenToCustomise] = useState<boolean>(false)
   const [lixiItem, setLixiItem] = useState<LixiBase>();
   const [exclude, setExclude] = useState(false);
   const { customization, subSchema } = useTypedSelector(
@@ -43,6 +58,8 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
       setLixiItem(ele);
     }
   }, [item]);
+
+ 
 
   const onExclude = () => {
     const excluded = !exclude;
@@ -64,34 +81,42 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
   }, [customization, lixiItem?.path, exclude]);
 
   return (
-    <div className={classes.container}>
+    <Grid container spacing={2}>
+
+    <Grid item xs={12}>
+    <Paper style={{marginTop:"0.5rem", padding:"0.5rem 0.5rem"}} >
       <div className={classes.header}>
-        <FormGroup row>
+        {/* <FormGroup row> */}
           <FormControlLabel
             control={
               <Checkbox
-                icon={<DeleteOutlinedIcon fontSize="small" />}
-                checkedIcon={<DeleteTwoToneIcon fontSize="small" />}
+                icon={<DoneOutlinedIcon style={{color:"green"}} fontSize="small" />}
+                checkedIcon={<CloseOutlinedIcon fontSize="small" />}
                 onChange={onExclude}
                 checked={exclude}
                 name="checkedI"
               />
             }
-            label={exclude ? "Excluded" : "Exclude"}
+            label={exclude ? "Excluded" : "Include"}
           />
+        {/* <IconButton color="primary" disabled={exclude} aria-label="customise"  size="small">
+          <SettingsOutlinedIcon fontSize="large" />
+        </IconButton> */}
           <Button
             disabled={exclude}
+            onClick={()=> setOpenToCustomise((pre)=>!pre)}
             startIcon={<SettingsOutlinedIcon />}
             variant="contained"
             color="primary"
+            size="small"
           >
-            Customize
+            Customise
           </Button>
-        </FormGroup>
+        {/* </FormGroup> */}
       </div>
       <Divider />
       <CssBaseline />
-      <div className={classes.itemLabelDescriptin}>
+      <div className={classes.itemLabelDescription}>
         <Badge
           color="primary"
           badgeContent={lixiItem?.element.localName.toUpperCase()}
@@ -130,16 +155,20 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
             );
           })}
         </div>
-        {/* <Chip
-          avatar={<Avatar>T</Avatar>}
-          color="primary"
-          variant="outlined"
-          label={lixiItem?.transactions?.sort().join(" ")}
-        /> */}
       </div>
+      <div style={{maxWidth:"75ch"}}>
+        {/* <TextField 
+        variant="standard" 
+        label="Documentation"  
+        fullWidth multiline 
+        rows={2} 
+        value={lixiItem?.documentation}
+        /> */}
       <Typography style={{ padding: "0.1rem 1rem" }} variant="body1">
         {lixiItem?.documentation}
       </Typography>
+      </div>
+      
       <Divider />
       <div className={classes.attributes}>
         {lixiItem?.element.getAttributeNames().map((att, idx) => {
@@ -173,16 +202,17 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
           </div>
         ) : undefined}
       </div>
-      <Divider />
+     
 
       {lixiItem?.references ? (
         <div>
+           <Divider />
           <List dense subheader={<ListSubheader>References</ListSubheader>}>
             <Divider />
             {lixiItem.references.map((r, idx) => {
               return (
                 <Fragment key={`${idx}_${r}`}>
-                  <ListItem component="nav">
+                  <ListItem component="li">
                     <Typography variant="body1">{r}</Typography>
                   </ListItem>
                 </Fragment>
@@ -191,6 +221,16 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
           </List>
         </div>
       ) : undefined}
-    </div>
+      
+    </Paper>
+    </Grid>
+    <Grid item xs={12} >
+    <Collapse in={openToCustomise}>
+    
+    <CustomiseElement lixiItem={lixiItem}/>
+    </Collapse>
+    
+      </Grid>
+    </Grid>
   );
 };

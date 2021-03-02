@@ -10,7 +10,7 @@ export const useStyles = makeStyles((theme: Theme) =>
     input: {
       display: "none",
     },
-    faceImage: {
+    documentImage: {
       color: theme.palette.primary.light,
     },
 

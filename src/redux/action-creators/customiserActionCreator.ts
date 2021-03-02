@@ -11,10 +11,13 @@ export const excludeItem = (itemPath: string) => {
   ) => {
     const { customization } = getState().customizer;
     const newCustomisaion = new Customiser(customization);
-    newCustomisaion.exclude(itemPath);
+    const customisedItem = newCustomisaion.exclude(itemPath);
     dispatch({
       type: CustomizationActionType.EXCLUDE,
-      payload: newCustomisaion.customisation,
+      payload: {
+        customisedSchema: newCustomisaion.customisation,
+        cutomisedItem: customisedItem,
+      },
     });
   };
 };

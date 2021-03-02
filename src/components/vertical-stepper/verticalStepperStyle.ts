@@ -4,6 +4,7 @@ export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: "100%",
+      // margin: theme.spacing(1),
     },
     button: {
       marginTop: theme.spacing(1),

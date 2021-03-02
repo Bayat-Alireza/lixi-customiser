@@ -3,6 +3,7 @@ import { CustomizationAction, SubSchema } from "../actions/customiser-actions";
 
 interface CustomizationState {
   customization: Element | undefined;
+  customisedItem: Element | undefined;
   loading: boolean;
   error: string | null;
   subSchema: SubSchema | undefined;
@@ -11,9 +12,10 @@ interface CustomizationState {
 
 const initialState: CustomizationState = {
   customization: undefined,
+  customisedItem: undefined,
   subSchema: { transactionType: undefined, transactionVersion: undefined },
-  error:null,
-  loading:false
+  error: null,
+  loading: false,
 };
 
 const reducer = (
@@ -22,15 +24,41 @@ const reducer = (
 ): CustomizationState => {
   switch (action.type) {
     case CustomizationActionType.UPLOAD_CUSTOMIZATION:
-      return { ...state, customization: undefined,  loading:  true,  error:  null  };
+      return {
+        ...state,
+        customization: undefined,
+        customisedItem: undefined,
+        loading: true,
+        error: null,
+      };
     case CustomizationActionType.UPLOAD_CUSTOMIZATION_SUCCESS:
-      return { ...state, customization: action.payload,  loading:  false,  error:  null  };
+      return {
+        ...state,
+        customization: action.payload,
+        customisedItem: undefined,
+        loading: false,
+        error: null,
+      };
     case CustomizationActionType.UPLOAD_CUSTOMIZATION_ERROR:
-      return { ...state, customization: undefined,  loading:  false,  error:  action.payload  };
+      return {
+        ...state,
+        customization: undefined,
+        customisedItem: undefined,
+        loading: false,
+        error: action.payload,
+      };
     case CustomizationActionType.EXCLUDE:
-      return { ...state, customization: action.payload };
+      return {
+        ...state,
+        customization: action.payload.customisedSchema,
+        customisedItem: action.payload.cutomisedItem,
+      };
     case CustomizationActionType.INCLUDE:
-      return { ...state, customization: action.payload };
+      return {
+        ...state,
+        customization: action.payload,
+        customisedItem: undefined,
+      };
     case CustomizationActionType.CUSTOMIZE_SUB_SCHEMA:
       return { ...state, subSchema: action.payload };
     case CustomizationActionType.RESET_SUB_SCHEMA:
@@ -39,6 +67,7 @@ const reducer = (
         customHeading: undefined,
         subSchema: undefined,
         customization: undefined,
+        customisedItem: undefined,
       };
     default:
       return state;

@@ -3,6 +3,7 @@ import { useStyles } from "./uploadFileStyle";
 import { Button, IconButton, Tooltip, Typography } from "@material-ui/core";
 import DescriptionTwoToneIcon from "@material-ui/icons/DescriptionTwoTone";
 import MemoryTwoToneIcon from "@material-ui/icons/MemoryTwoTone";
+import Grid from "@material-ui/core/Grid";
 
 interface FormProps {
   description: string;
@@ -39,42 +40,53 @@ export const UploadFile: React.FC<FormProps> = ({ saveFace, description }) => {
       <input
         accept=".xml,.xsd"
         className={classes.input}
-        id="faceImage"
+        id="document"
         type="file"
         onChange={handleCapture}
       />
-      <Tooltip title="Click to select LIXI Base Schema">
-        <label
-          style={{ display: "flex", alignItems: "center" }}
-          htmlFor="faceImage"
-        >
-          <IconButton
-            className={classes.faceImage}
+      <Grid container spacing={1} alignItems="center">
+        <Grid item>
+          <Tooltip title="Click to select LIXI Base Schema">
+            <label
+              style={{ display: "flex", alignItems: "center" }}
+              htmlFor="document"
+            >
+              <IconButton
+                className={classes.documentImage}
+                color="primary"
+                aria-label="upload picture"
+                component="span"
+              >
+                <DescriptionTwoToneIcon fontSize="large" />
+              </IconButton>
+              <Typography
+                style={{
+                  backgroundColor: "#c5cae9",
+                  padding: "0.3rem",
+                  borderRadius: "0.2rem",
+                }}
+                variant="caption"
+                className={classes.fileName}
+                noWrap
+              >
+                {metadata ? metadata.name : description}
+              </Typography>
+            </label>
+          </Tooltip>
+        </Grid>
+        <Grid item>
+          <Button
+            style={{ marginLeft: "0.5rem",    minWidth:"6rem" }}
+            startIcon={<MemoryTwoToneIcon />}
+            variant="outlined"
+            size="small"
+            onClick={() => handleSubmit()}
             color="primary"
-            aria-label="upload picture"
-            component="span"
           >
-            <DescriptionTwoToneIcon fontSize="large" />
-          </IconButton>
-          <Typography 
-          style={{backgroundColor:"#c5cae9",padding:"0.5rem" ,borderRadius:"0.1rem"}} 
-          variant="caption" 
-          className={classes.fileName} 
-          noWrap>
-            {metadata ? metadata.name : description}
-          </Typography>
-        </label>
-      </Tooltip>
-      <Button
-        style={{ marginLeft: "0.5rem" }}
-        startIcon={<MemoryTwoToneIcon />}
-        variant="outlined"
-        size="medium"
-        onClick={() => handleSubmit()}
-        color="primary"
-      >
-        Upload
-      </Button>
+            Upload
+          </Button>
+        </Grid>
+      </Grid>
     </>
   );
 };

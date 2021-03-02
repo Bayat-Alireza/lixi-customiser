@@ -17,6 +17,7 @@ export class Customiser {
     path.innerHTML = itemPath;
     customiseItem.append(path);
     this.customisation.append(customiseItem);
+    return customiseItem;
   }
   include(itemPath: string) {
     const excludedPath: Element = this.ExcludedItem(itemPath);

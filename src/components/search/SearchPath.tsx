@@ -4,32 +4,26 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import React, { useEffect, useState } from "react";
 import { useAction } from "../../hooks/useActions";
 import { useTypedSelector } from "../../hooks/useTypeSelector";
-import { 
-  // parsedXml, 
-  XmlUtil } from "../../util/nameSpaces";
+import { XmlUtil } from "../../util/nameSpaces";
 import { ListboxComponent } from "./listBoxComponent";
 import { useStyles } from "./searchPathStyle";
 
 export const SearchPath: React.FC = () => {
   const classes = useStyles();
-  // const [selectedItem,setSelectedItem]=useState<string|undefined>()
   const { searchItem } = useAction();
   const [options, setOptions] = useState<string[] | null>([]);
-  // const { data, error, loading } = useTypedSelector((state) => state.item);
-  const { loading,  schema } = useTypedSelector((state) => state.schema);
-  const { transactionType } = useTypedSelector(
-    (state) => state.customizer.subSchema
-  ) || {transactionType:""};
+  const { loading, schema } = useTypedSelector((state) => state.schema);
+  const { subSchema } = useTypedSelector((state) => state.customizer);
   const _loading = loading || options?.length === 0;
 
   useEffect(() => {
     const lixiItems = (): Promise<string[]> => {
       return new Promise((resolves, rejects) => {
-        if (!schema) return;;;
+        if (!schema) return;
         const xmlUtile = new XmlUtil(schema);
-        if (transactionType) {
+        if (subSchema?.transactionType) {
           const allPath = xmlUtile.getPathOfAllItemsInATransaction(
-            transactionType
+            subSchema.transactionType
           );
           resolves(allPath);
         }
@@ -40,20 +34,19 @@ export const SearchPath: React.FC = () => {
       setOptions([]);
       setOptions(await lixiItems());
     })();
-  }, [transactionType, schema]);
+  }, [subSchema?.transactionType, schema]);
 
   const onSubmit = (
     event: React.ChangeEvent<{}> | React.FormEvent<HTMLFormElement>,
     searchText: string | null
   ) => {
     event.preventDefault();
-    
+
     if (searchText) {
       searchItem(searchText);
     }
   };
 
-  
   return (
     <div>
       <div className={classes.root}>
@@ -61,7 +54,6 @@ export const SearchPath: React.FC = () => {
           id="virtualize-demo"
           onChange={(event, option) => onSubmit(event, option)}
           disableListWrap
-          // value={selectedItem}
           classes={classes}
           autoComplete={true}
           includeInputInList
