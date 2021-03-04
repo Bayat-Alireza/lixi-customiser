@@ -1,27 +1,15 @@
-import React from "react";
-import { Formik, Form, Field, FieldArray } from "formik";
+import Button from "@material-ui/core/Button";
+import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import TextField from "@material-ui/core/TextField";
-import Divider from "@material-ui/core/Divider";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import Checkbox from "@material-ui/core/Checkbox";
-import List from "@material-ui/core/List";
-import { LixiBase } from "../../models/LixiBase";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import DoneOutlinedIcon from "@material-ui/icons/DoneOutlined";
-import CloseOutlinedIcon from "@material-ui/icons/CloseOutlined";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Button from "@material-ui/core/Button";
 import SaveIcon from "@material-ui/icons/Save";
-import { CustomiseElementSchema } from "./customiseElementSchema";
-import { AppTextField } from "../formik-mterial-ui/AppTextField";
-import { AppCheckBox } from "../formik-mterial-ui/AppCheckBox";
-import Typography from "@material-ui/core/Typography";
-import { useStyles } from "./customiseElementStyle";
-import { FastRewind } from "@material-ui/icons";
+import { Form, Formik } from "formik";
+import React from "react";
+import { LixiBase } from "../../models/LixiBase";
 import { ElementSubItems } from "../element-sub-items/ElementSubItems";
+import { AppTextField } from "../formik-mterial-ui/AppTextField";
+import { CustomiseElementSchema } from "./customiseElementSchema";
+import { useStyles } from "./customiseElementStyle";
 
 interface ICustomiseElement {
   lixiItem: LixiBase | undefined;
@@ -33,9 +21,6 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
 
   const [itemSubElement, setItemSubElement] = React.useState<SubElement>({});
   const [itemAttributes, setItemAttributes] = React.useState<Element[]>([]);
-
-  const [newMin, setNewMin] = React.useState<string>();
-  const [newMax, setNewMax] = React.useState<string>();
   const [occursMinMax, setOccursMinMax] = React.useState<
     | {
         min: string | null | undefined;
@@ -81,12 +66,13 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
 
   return (
     <Formik
-      // validateOnBlur={false}
       initialValues={{
         newMin: undefined,
-        newMax: "",
-        excludeSubElement: [],
-        excludeItemAttributes: [],
+        newMax: undefined,
+        includeAllElements:    true,
+        includeAllAttributes:    true,
+        Elements: [],
+        Attributes: [],
         excerpt: undefined,
         documentation: undefined,
       }}
@@ -152,7 +138,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                       itemSubElement["choice"] ? "CHOICE" : "(SEQUENCE)"
                     }`}
                     subItems={leafEle}
-                    arrayName="excludeSubElement"
+                    arrayName="Elements"
                   />
                 ) : undefined}
               </Grid>
@@ -171,7 +157,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                     parentPath={lixiItem?.path || ""}
                     header="Attributes"
                     subItems={leafAttribs}
-                    arrayName="excludeItemAttributes"
+                    arrayName="Attributes"
                   />
                 ) : undefined}
               </Grid>

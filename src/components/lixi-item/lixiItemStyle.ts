@@ -15,8 +15,6 @@ export const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: "#fff8e1",
       marginBottom: "0.2rem",
       borderRadius: "0.1rem",
-
-
     },
     subItemHeader: {
       display: "flex",
@@ -24,17 +22,14 @@ export const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: "#fff8e1",
       marginBottom: "0.2rem",
       borderRadius: "0.2rem",
-      maxHeight:"5rem",
-      color:theme.palette.primary.main
-
+      maxHeight: "5rem",
+      color: theme.palette.primary.main,
     },
     subItem: {
-      height:"12rem",
-      maxHeight:"12rem",
-      overflow:"scroll"
-
+      height: "12rem",
+      maxHeight: "12rem",
+      overflow: "scroll",
     },
-
 
     itemLabelDescription: {
       padding: "0.1rem",
@@ -42,11 +37,17 @@ export const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
+      [theme.breakpoints.down("sm")]: {
+        display: "inline-block"
+      },
     },
     attributes: {
       padding: "0.1rem 1rem",
       display: "flex",
       justifyContent: "flex-start",
+      [theme.breakpoints.down("sm")]:      {
+        display:"inline-block"
+      }
     },
     references: {
       display: "flex",

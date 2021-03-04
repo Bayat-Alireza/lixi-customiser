@@ -12,6 +12,10 @@ import { useStyles } from "./elementSubItemsStyle";
 import IndeterminateCheckBoxTwoToneIcon from "@material-ui/icons/IndeterminateCheckBoxTwoTone";
 import { useAction } from "../../hooks/useActions";
 import ListSubheader from "@material-ui/core/ListSubheader";
+import { ItemActionType } from "../../redux/action-types";
+import LaunchIcon from '@material-ui/icons/Launch';
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction/ListItemSecondaryAction";
+import IconButton from "@material-ui/core/IconButton/IconButton";
 
 interface SubItems {
   subItems: (string | null | undefined)[];
@@ -30,22 +34,29 @@ export const ElementSubItems: React.FC<SubItems> = ({
 }) => {
   const classes = useStyles();
   const { searchItem } = useAction();
-  const [toggleAll, setToggleAll] = React.useState<boolean>(false);
+  const [includeAll, setIncludeAll] = React.useState<boolean>(true);
 
   const toggleExclude = (arrayHelpers: FieldArrayRenderProps) => {
-    if (!toggleAll) {
-      subItems?.forEach((si) => {
-        if (arrayHelpers.form.values[arrayHelpers.name].includes(si)) return;
-        arrayHelpers.push(si);
-      });
-    } else {
-      const itemArray = arrayHelpers.form.values[arrayHelpers.name];
-      for (const i of itemArray) {
+    setIncludeAll(!includeAll);
+    const itemArray = arrayHelpers.form.values[arrayHelpers.name];
+    if (!includeAll && itemArray?.length) {
+      for (let i=itemArray.length; i >=0;i--){
+
         arrayHelpers.remove(i);
       }
-    }
-    setToggleAll(!toggleAll);
+    } 
+    
   };
+
+  const handelAddItem =(arrayHelpers:FieldArrayRenderProps,subItem:string)=>{
+    const arrayItems = arrayHelpers.form.values[arrayHelpers.name]
+    if (!arrayItems?.includes(subItem)){
+     arrayHelpers.push(subItem)
+    }else{
+      
+      arrayHelpers.remove(arrayItems.indexOf(subItem))
+    }
+  }
   return (
     <>
       <List className={classes.subItem}>
@@ -60,60 +71,67 @@ export const ElementSubItems: React.FC<SubItems> = ({
                 key={`${arrayName}_Header`}
               >
                 <ListItemIcon>
-                  <Checkbox
-                    checked={toggleAll}
+                  <AppCheckBox
+                    name={`includeAll${arrayName}`}
+                    checked={includeAll}
                     disableRipple
-                    checkedIcon={<CloseOutlinedIcon />}
-                    icon={<DoneOutlinedIcon style={{ color: "green" }} />}
+                    checkedIcon={<DoneOutlinedIcon style={{ color: "green" }} />}
+                    icon={<CloseOutlinedIcon  style={{ color: "red" }}/>}
                     indeterminateIcon={
                       <IndeterminateCheckBoxTwoToneIcon color="primary" />
                     }
                     indeterminate={
-                      arrayHelpers.form.values[arrayHelpers.name].length > 0 &&
-                      arrayHelpers.form.values[arrayHelpers.name].length <
+                      arrayHelpers.form.values[arrayHelpers.name]?.length > 0 &&
+                      arrayHelpers.form.values[arrayHelpers.name]?.length <
                         subItems.length
                     }
                   />
                 </ListItemIcon>
-                <ListItemText id={`${arrayName}_Header`} primary={header} />
+                <ListItemText id={`${arrayName}_Header`} primary={`Include All ${header}`} />
                 {/* </ListItem> */}
               </ListSubheader>
-              {subItems?.map((subEle, idx) => {
-                if (!subEle) {
-                  return <></>;
-                }
-                return (
-                  <ListItem divider dense key={`${arrayName}_${idx}`}>
-                    <ListItemIcon>
-                      <AppCheckBox
-                        key={`${arrayName}_${idx}`}
-                        name={arrayName}
-                        checked={arrayHelpers.form.values[
-                          arrayHelpers.name
-                        ].includes(subEle)}
-                        value={subEle}
-                        checkedIcon={<CloseOutlinedIcon fontSize="small" />}
-                        icon={
-                          <DoneOutlinedIcon
-                            style={{ color: "green" }}
-                            fontSize="small"
+              {!includeAll &&
+                
+                subItems?.map((subEle, idx) => {
+                    if (!subEle) {
+                      return <></>;
+                    }
+                    return (
+                      <ListItem divider dense button key={`${arrayName}_${idx}`} onClick={()=>handelAddItem(arrayHelpers,subEle)}>
+                        <ListItemIcon>
+                          <AppCheckBox
+                            key={`${arrayName}_${idx}`}
+                            name={arrayName}
+                            checked={arrayHelpers.form.values[
+                              arrayHelpers.name
+                            ]?.includes(subEle)}
+                            value={subEle}
+                            checkedIcon={
+                              <DoneOutlinedIcon
+                                style={{ color: "green" }}
+                                fontSize="small"
+                              />
+                            }
+                            icon={<CloseOutlinedIcon fontSize="small" style={{ color: "red" }}/>}
                           />
-                        }
-                      />
-                    </ListItemIcon>
-                    <ListItemText
-                      style={{ cursor: "pointer" }}
-                      onClick={(e) =>
-                        searchItem(
-                          `${parentPath}.${e.currentTarget.textContent}`
-                        )
-                      }
-                      id={``}
-                      primary={subEle}
-                    />
-                  </ListItem>
-                );
-              })}
+                        </ListItemIcon>
+                        <ListItemText
+                          style={{ cursor: "pointer" }}
+                          id={``}
+                          primary={subEle}
+                        />
+                        <ListItemSecondaryAction>
+                        <IconButton value={subEle} onClick={(e) =>
+                            searchItem(
+                              `${parentPath}.${e.currentTarget.value}`
+                            )
+                          } edge="start" aria-label="comments">
+                          <LaunchIcon fontSize="small"/>
+                          </IconButton>
+                        </ListItemSecondaryAction>
+                      </ListItem>
+                    );
+                  })}
             </div>
           )}
         />
