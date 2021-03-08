@@ -8,6 +8,7 @@ export enum ItemActionType {
 export enum CustomizationActionType {
   EXCLUDE = "exclude",
   INCLUDE = "include",
+  CUSTOMISE_ELEMENT="customiseElement",
   UPLOAD_CUSTOMIZATION = "uploadCustomization",
   UPLOAD_CUSTOMIZATION_SUCCESS = "uploadCustomizationSuccess",
   UPLOAD_CUSTOMIZATION_ERROR = "uploadCustomizationError",
@@ -22,6 +23,7 @@ export enum CustomizationActionType {
   CUSTOM_DEFINITION = "definition",
   STRING_TO_PATTERN = "stringToPattern",
   EXCLUDE_SUB_ELEMENTS = "excludeSubElements",
+
 }
 
 

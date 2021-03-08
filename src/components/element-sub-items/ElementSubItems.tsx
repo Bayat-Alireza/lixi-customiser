@@ -1,4 +1,3 @@
-import Checkbox from "@material-ui/core/Checkbox";
 import { FieldArray, FieldArrayRenderProps } from "formik";
 import ListItem from "@material-ui/core/ListItem/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -16,9 +15,12 @@ import { ItemActionType } from "../../redux/action-types";
 import LaunchIcon from '@material-ui/icons/Launch';
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction/ListItemSecondaryAction";
 import IconButton from "@material-ui/core/IconButton/IconButton";
+import Typography from "@material-ui/core/Typography/Typography";
+import { LixiBase } from "../../models/LixiBase";
+import { LixiItemToolTip } from "../tool-tip/LixiItemToolTip";
 
 interface SubItems {
-  subItems: (string | null | undefined)[];
+  subItems: (LixiBase | null | undefined)[];
   header: string;
   arrayName: string;
   parentPath: string;
@@ -36,6 +38,7 @@ export const ElementSubItems: React.FC<SubItems> = ({
   const { searchItem } = useAction();
   const [includeAll, setIncludeAll] = React.useState<boolean>(true);
 
+
   const toggleExclude = (arrayHelpers: FieldArrayRenderProps) => {
     setIncludeAll(!includeAll);
     const itemArray = arrayHelpers.form.values[arrayHelpers.name];
@@ -52,11 +55,12 @@ export const ElementSubItems: React.FC<SubItems> = ({
     const arrayItems = arrayHelpers.form.values[arrayHelpers.name]
     if (!arrayItems?.includes(subItem)){
      arrayHelpers.push(subItem)
+     
     }else{
-      
       arrayHelpers.remove(arrayItems.indexOf(subItem))
     }
   }
+
   return (
     <>
       <List className={classes.subItem}>
@@ -65,16 +69,18 @@ export const ElementSubItems: React.FC<SubItems> = ({
           render={(arrayHelpers) => (
             <div>
               <ListSubheader
-                style={{ marginTop: "0", cursor: "pointer" }}
+                style={{ marginTop: "0",alignItems:"center" }}
                 className={classes.subItemHeader}
-                onClick={() => toggleExclude(arrayHelpers)}
+                // onClick={() => toggleExclude(arrayHelpers)}
                 key={`${arrayName}_Header`}
               >
                 <ListItemIcon>
                   <AppCheckBox
                     name={`includeAll${arrayName}`}
-                    checked={includeAll}
+                    checked={arrayHelpers.form.values[arrayHelpers.name]?.length ===
+                      subItems.length?true: includeAll}
                     disableRipple
+                    onClick={() => toggleExclude(arrayHelpers)}
                     checkedIcon={<DoneOutlinedIcon style={{ color: "green" }} />}
                     icon={<CloseOutlinedIcon  style={{ color: "red" }}/>}
                     indeterminateIcon={
@@ -97,38 +103,66 @@ export const ElementSubItems: React.FC<SubItems> = ({
                       return <></>;
                     }
                     return (
-                      <ListItem divider dense button key={`${arrayName}_${idx}`} onClick={()=>handelAddItem(arrayHelpers,subEle)}>
+                      <ListItem
+                        divider
+                        dense
+                        button
+                        key={`${arrayName}_${idx}`}
+                        onClick={() => handelAddItem(arrayHelpers, subEle?.path?.split(".").pop()||"")}
+                      >
                         <ListItemIcon>
                           <AppCheckBox
                             key={`${arrayName}_${idx}`}
                             name={arrayName}
                             checked={arrayHelpers.form.values[
                               arrayHelpers.name
-                            ]?.includes(subEle)}
-                            value={subEle}
+                            ]?.includes(subEle?.path?.split(".").pop())}
+                            value={subEle?.path?.split(".").pop()}
                             checkedIcon={
                               <DoneOutlinedIcon
                                 style={{ color: "green" }}
                                 fontSize="small"
                               />
                             }
-                            icon={<CloseOutlinedIcon fontSize="small" style={{ color: "red" }}/>}
+                            icon={
+                              <CloseOutlinedIcon
+                                fontSize="small"
+                                style={{ color: "red" }}
+                              />
+                            }
                           />
                         </ListItemIcon>
                         <ListItemText
                           style={{ cursor: "pointer" }}
                           id={``}
-                          primary={subEle}
+                          // primary={subEle}
+                          primary={
+                             <Typography
+                            style={{alignItems:"center"}}
+                            component="span"
+                            variant="body2"
+                            color="textPrimary"
+                          >
+                            {subEle?.path?.split(".").pop()} 
+                           <LixiItemToolTip lixiItem={subEle} placement="top-start"/>
+                          </Typography>}
                         />
-                        <ListItemSecondaryAction>
-                        <IconButton value={subEle} onClick={(e) =>
-                            searchItem(
-                              `${parentPath}.${e.currentTarget.value}`
-                            )
-                          } edge="start" aria-label="comments">
-                          <LaunchIcon fontSize="small"/>
-                          </IconButton>
-                        </ListItemSecondaryAction>
+                       <ListItemSecondaryAction>
+                        <IconButton
+                            edge="end" 
+                            aria-label="comments"
+                            className={classes.viewItem}
+                            value={subEle?.path?.split(".").pop()}
+                            onClick={(e) =>
+                              searchItem(
+                                `${parentPath}.${subEle?.path?.split(".").pop()}`
+                              )
+                            }
+                          >
+                            
+                            <LaunchIcon fontSize="small" />
+                    </IconButton>
+            </ListItemSecondaryAction>
                       </ListItem>
                     );
                   })}

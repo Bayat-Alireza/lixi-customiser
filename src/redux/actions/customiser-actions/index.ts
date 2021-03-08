@@ -7,11 +7,15 @@ export type SubSchema = {
 
 type Customise = {
   customisedSchema: Element;
-  cutomisedItem: Element;
+  customisedItem: Element;
 };
 
 interface ExcludeItem {
   type: CustomizationActionType.EXCLUDE;
+  payload: Customise;
+}
+interface CustomiseElement {
+  type: CustomizationActionType.CUSTOMISE_ELEMENT;
   payload: Customise;
 }
 
@@ -40,6 +44,7 @@ interface CustomizeSubSchema {
 }
 
 export type CustomizationAction =
+  | CustomiseElement
   | UploadCustomizationAction
   | UploadSuccessCustomizationAction
   | UploadErrorCustomizationAction

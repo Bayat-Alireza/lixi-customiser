@@ -3,6 +3,7 @@ import { CustomizationAction, SubSchema } from "../actions/customiser-actions";
 import { Dispatch } from "redux";
 import { RootState } from "..";
 import { Customiser } from "../../models/Customiser";
+import { CustomisedElementType } from "../../models/customisationTypes";
 
 export const excludeItem = (itemPath: string) => {
   return (
@@ -10,15 +11,18 @@ export const excludeItem = (itemPath: string) => {
     getState: () => RootState
   ) => {
     const { customization } = getState().customizer;
-    const newCustomisaion = new Customiser(customization);
-    const customisedItem = newCustomisaion.exclude(itemPath);
-    dispatch({
-      type: CustomizationActionType.EXCLUDE,
-      payload: {
-        customisedSchema: newCustomisaion.customisation,
-        cutomisedItem: customisedItem,
-      },
-    });
+    const newCustomisaion = new Customiser(customization, itemPath);
+    const customisedItem = newCustomisaion.exclude();
+    if (customisedItem) {
+      dispatch({
+        type: CustomizationActionType.EXCLUDE,
+        payload: {
+          customisedSchema: newCustomisaion.customisation,
+          customisedItem: customisedItem,
+        },
+      });
+    }
+    
   };
 };
 export const includeItem = (itemPath: string) => {
@@ -28,12 +32,37 @@ export const includeItem = (itemPath: string) => {
   ) => {
     const { customization } = getState().customizer;
     if (!customization) return;
-    const newCustomisaion = new Customiser(customization);
-    // newCustomisaion.exclude(itemPath);
-    newCustomisaion.include(itemPath);
+    const newCustomisaion = new Customiser(customization, itemPath);
+
+    newCustomisaion.include();
     dispatch({
       type: CustomizationActionType.INCLUDE,
       payload: newCustomisaion.customisation,
+    });
+  };
+};
+
+
+export const customiseElement = (
+  customisedElement: CustomisedElementType,
+  path: string
+) => {
+  return (
+    dispatch: Dispatch<CustomizationAction>,
+    getState: () => RootState
+  ) => {
+    const { customization } = getState().customizer;
+    const newCustomisation = new Customiser(customization, path);
+    const newCustomisedEle = newCustomisation.customiseElement(
+      customisedElement
+    );
+    if (!newCustomisedEle) return;
+    dispatch({
+      type: CustomizationActionType.CUSTOMISE_ELEMENT,
+      payload: {
+        customisedSchema: newCustomisation.customisation,
+        customisedItem: newCustomisedEle,
+      },
     });
   };
 };

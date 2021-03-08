@@ -74,9 +74,9 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
   useEffect(() => {
     if (exclude) return;
     const path = lixiItem?.path;
-    const customiser = new Customiser(customization);
     if (path) {
-      setExclude(!!customiser.ExcludedItem(path));
+      const customiser = new Customiser(customization, path);
+      setExclude(!!customiser.ExcludedItem());
     }
   }, [customization, lixiItem?.path, exclude]);
 

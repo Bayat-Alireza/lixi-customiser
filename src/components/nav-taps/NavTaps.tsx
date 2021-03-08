@@ -79,7 +79,9 @@ export const NavTabs: React.FC = () => {
       <TabPanel value={value} index={1}>
         <SearchPath />
         {data ? <LixiItem item={data} /> : undefined}
-        {data ? <ItemXMLViewer itemXML={customisedItem} /> : undefined}
+        {customisedItem ? (
+          <ItemXMLViewer itemXML={customisedItem} />
+        ) : undefined}
       </TabPanel>
       <TabPanel value={value} index={2}>
         {<ItemXMLViewer itemXML={customization} />}

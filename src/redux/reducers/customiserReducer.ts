@@ -51,13 +51,19 @@ const reducer = (
       return {
         ...state,
         customization: action.payload.customisedSchema,
-        customisedItem: action.payload.cutomisedItem,
+        customisedItem: action.payload.customisedItem,
       };
     case CustomizationActionType.INCLUDE:
       return {
         ...state,
         customization: action.payload,
         customisedItem: undefined,
+      };
+    case CustomizationActionType.CUSTOMISE_ELEMENT:
+      return {
+        ...state,
+        customization: action.payload.customisedSchema,
+        customisedItem: action.payload.customisedItem,
       };
     case CustomizationActionType.CUSTOMIZE_SUB_SCHEMA:
       return { ...state, subSchema: action.payload };

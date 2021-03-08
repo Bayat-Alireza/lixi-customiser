@@ -17,5 +17,10 @@ export const useStyles = makeStyles((theme: Theme) =>
       // maxHeight: "12rem",
       overflow: "scroll",
     },
+    viewItem: {
+      "&:hover": {
+        color: "#3f51b5",
+      },
+    },
   })
 );
