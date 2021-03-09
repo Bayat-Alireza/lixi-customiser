@@ -2,10 +2,10 @@ import { CustomisedElementType } from "./customisationTypes";
 
 export class Customiser {
   customisation: Element;
-  path:string|undefined=undefined
-  constructor(Customisation: Element | undefined = undefined,  path?:  string) {
-    if (path){
-      this.path = path
+  path: string | undefined = undefined;
+  constructor(Customisation: Element | undefined = undefined, path?: string) {
+    if (path) {
+      this.path = path;
     }
     if (Customisation) {
       this.customisation = Customisation;
@@ -15,20 +15,19 @@ export class Customiser {
   }
 
   exclude() {
-    if (this.ExcludedItem())return
-    this.removeCustomisedItem()
+    if (this.ExcludedItem()) return;
+    this.removeCustomisedItem();
     const parser = new DOMParser();
     const xDoc = parser.parseFromString("<root></root>", "text/xml");
     const customiseItem = xDoc.createElement("CustomiseItem");
     customiseItem.setAttribute("exclude", "yes");
     const path = xDoc.createElement("Path");
-    path.textContent = this.path || "";
+    path.innerHTML = this.path || "";
     customiseItem.append(path);
     this.customisation.append(customiseItem);
     return customiseItem;
   }
   include() {
-  
     const excludedPath: Element = this.ExcludedItem();
     if (excludedPath && excludedPath.parentElement) {
       this.customisation.removeChild(excludedPath.parentElement);
@@ -41,10 +40,10 @@ export class Customiser {
     const excludedPath: Element = Array.prototype.find.call(
       allPath,
       (p: Element) => {
-        if (p.parentElement?.getAttribute("exclude") ==="yes"){
-          console.log("excluded",p.parentElement?.getAttribute("exclude"))
-          return p.textContent === this.path
-        } 
+        if (p.parentElement?.getAttribute("exclude") === "yes") {
+          console.log("excluded", p.parentElement?.getAttribute("exclude"));
+          return p.innerHTML === this.path;
+        }
       }
     );
     return excludedPath;
@@ -64,7 +63,9 @@ export class Customiser {
     return parsedXML.getElementsByTagName("Customisations")[0];
   }
 
-  customiseElement(customisedElement: CustomisedElementType): Element|undefined {
+  customiseElement(
+    customisedElement: CustomisedElementType
+  ): Element | undefined {
     const {
       includeAllElements,
       includeAllAttributes,
@@ -75,8 +76,8 @@ export class Customiser {
       newMin,
       newMax,
     } = customisedElement;
-    this.include()
-    this.removeCustomisedItem()
+    this.include();
+    this.removeCustomisedItem();
     const parser = new DOMParser();
     const xDoc = parser.parseFromString("<root></root>", "text/xml");
     const customiseItem = xDoc.createElement("CustomiseItem");
@@ -84,13 +85,23 @@ export class Customiser {
     path.innerHTML = this.path || "";
     customiseItem.append(path);
 
-    if (!Elements.length && includeAllElements && !Attributes.length && includeAllAttributes){
-      return
+    if (
+      !Elements.length &&
+      includeAllElements &&
+      !Attributes.length &&
+      includeAllAttributes
+    ) {
+      return;
     }
-    if (!Elements.length && !includeAllElements && !Attributes.length && !includeAllAttributes){
-      console.log("exclude")
+    if (
+      !Elements.length &&
+      !includeAllElements &&
+      !Attributes.length &&
+      !includeAllAttributes
+    ) {
+      console.log("exclude");
       // this.removeCustomisedItem()
-      return this.exclude()
+      return this.exclude();
     }
 
     if (Attributes.length || Elements.length) {
@@ -100,13 +111,13 @@ export class Customiser {
     if (newMin) {
       customiseItem.setAttribute("customMinOccurs", "yes");
       const customMinOccurs = xDoc.createElement("CustomMinOccurs");
-      customMinOccurs.textContent = newMin.toString();
+      customMinOccurs.innerHTML = newMin.toString();
       customiseItem.append(customMinOccurs);
     }
     if (newMax) {
       customiseItem.setAttribute("customMaxOccurs", "yes");
       const customMaxOccurs = xDoc.createElement("CustomMaxOccurs");
-      customMaxOccurs.textContent = newMax.toString();
+      customMaxOccurs.innerHTML = newMax.toString();
       customiseItem.append(customMaxOccurs);
     }
 
@@ -114,37 +125,35 @@ export class Customiser {
       customiseItem.setAttribute("excludeAllElement", "no");
       Elements.forEach((ele, idx) => {
         const newElement = xDoc.createElement("Element");
-        newElement.textContent = ele;
+        newElement.innerHTML = ele;
         customiseItem.append(newElement);
       });
-    }else if(!includeAllElements){
+    } else if (!includeAllElements) {
       customiseItem.setAttribute("excludeAllElement", "yes");
-    }else if(includeAllElements){
+    } else if (includeAllElements) {
       customiseItem.setAttribute("includeAllElement", "yes");
-
     }
     if (!includeAllAttributes && Attributes.length) {
       console.log("att", Attributes.length);
       customiseItem.setAttribute("excludeAllAttributes", "no");
       Attributes.forEach((att, idx) => {
         const newAttribute = xDoc.createElement("Attribute");
-        newAttribute.textContent = att;
+        newAttribute.innerHTML = att;
         customiseItem.append(newAttribute);
       });
-    }else if (!includeAllAttributes){
+    } else if (!includeAllAttributes) {
       customiseItem.setAttribute("excludeAllAttributes", "yes");
-    }else if (includeAllAttributes){
+    } else if (includeAllAttributes) {
       customiseItem.setAttribute("includeAllAttributes", "yes");
-
     }
     if (excerpt) {
       const customExcerpt = xDoc.createElement("CustomExcerpt");
-      customExcerpt.textContent = excerpt;
+      customExcerpt.innerHTML = excerpt;
       customiseItem.append(customExcerpt);
     }
     if (documentation) {
       const customDocumentation = xDoc.createElement("CustomDocumentation");
-      customDocumentation.textContent = documentation;
+      customDocumentation.innerHTML = documentation;
       customiseItem.append(customDocumentation);
     }
 
@@ -152,25 +161,40 @@ export class Customiser {
     return customiseItem;
   }
 
-  getCustomisedItem(){
-const allPath = this.customisation.getElementsByTagName("Path");
+  getCustomisedItem() {
+    const allPath = this.customisation.getElementsByTagName("Path");
     const excludedPath: Element = Array.prototype.find.call(
       allPath,
       (p: Element) => {
-        if (!p.parentElement?.getAttribute("exclude") ||p.parentElement?.getAttribute("exclude")==="no"){
-
-          return p.textContent === this.path
-        } 
+        if (
+          !p.parentElement?.getAttribute("exclude") ||
+          p.parentElement?.getAttribute("exclude") === "no"
+        ) {
+          return p.innerHTML === this.path;
+        }
       }
     );
     return excludedPath;
   }
 
-  private removeCustomisedItem(){
-    const existingCustomisedItem = this.getCustomisedItem()?.parentElement
-    if (existingCustomisedItem){
-      this.customisation.removeChild(existingCustomisedItem)
+  getTouchedItem() {
+    const allPath = this.customisation.getElementsByTagName("Path");
+    const excludedPath: Element = Array.prototype.find.call(
+      allPath,
+      (p: Element) => {
+        return p.innerHTML === this.path;
+      }
+    );
+    return excludedPath;
+  }
+  private removeCustomisedItem() {
+    const existingCustomisedItem = this.getCustomisedItem()?.parentElement;
+    if (existingCustomisedItem) {
+      this.customisation.removeChild(existingCustomisedItem);
     }
   }
 
+  serializeCustomisedElement(){
+
+  }
 }
