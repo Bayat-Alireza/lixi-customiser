@@ -1,38 +1,46 @@
-import { CustomisedElementType } from "./customisationTypes";
-
 export class Customiser {
   customisation: Element;
   path: string | undefined = undefined;
-  constructor(Customisation: Element | undefined = undefined, path?: string) {
+  customiseItem:Element
+  excerpt:string = ''
+  documentation:string =''
+  constructor(customisation: Element | undefined = undefined, path?: string) {
+    this.customiseItem = this._customiseItemStub()
     if (path) {
       this.path = path;
     }
-    if (Customisation) {
-      this.customisation = Customisation;
+    if (customisation) {
+      this.customisation = customisation;
     } else {
       this.customisation = this._customisationStub();
     }
   }
 
+  itemPath() {
+    if (this.path) {
+      const doc = Customiser.docStub();
+      const path = doc.createElement("Path");
+      path.textContent = this.path
+      this.customiseItem.append(path);
+    }
+  }
+
   exclude() {
-    if (this.ExcludedItem()) return;
+    if (this.ExcludedItem()||!this.path) return;
     this.removeCustomisedItem();
-    const parser = new DOMParser();
-    const xDoc = parser.parseFromString("<root></root>", "text/xml");
-    const customiseItem = xDoc.createElement("CustomiseItem");
-    customiseItem.setAttribute("exclude", "yes");
-    const path = xDoc.createElement("Path");
-    path.innerHTML = this.path || "";
-    customiseItem.append(path);
-    this.customisation.append(customiseItem);
-    return customiseItem;
+    const doc = Customiser.docStub();
+    this.customiseItem.setAttribute("exclude", "yes");
+    const path = doc.createElement("Path");
+    path.textContent = this.path;
+    this.customiseItem.append(path);
+    this.customisation.append(this.customiseItem);
+    return this.customiseItem;
   }
   include() {
     const excludedPath: Element = this.ExcludedItem();
     if (excludedPath && excludedPath.parentElement) {
       this.customisation.removeChild(excludedPath.parentElement);
     }
-    // console.log(excludedPath);
   }
 
   ExcludedItem(): Element {
@@ -49,6 +57,11 @@ export class Customiser {
     return excludedPath;
   }
 
+  _customiseItemStub():   Element   {
+    const doc = Customiser.docStub()
+    return doc.createElement("CustomiseItem");
+  }
+
   _customisationStub(): Element {
     const parser = new DOMParser();
     const customisationStub = `
@@ -63,114 +76,14 @@ export class Customiser {
     return parsedXML.getElementsByTagName("Customisations")[0];
   }
 
-  customiseElement(
-    customisedElement: CustomisedElementType
-  ): Element | undefined {
-    const {
-      includeAllElements,
-      includeAllAttributes,
-      Elements,
-      Attributes,
-      excerpt,
-      documentation,
-      newMin,
-      newMax,
-    } = customisedElement;
-    this.include();
-    this.removeCustomisedItem();
-    const parser = new DOMParser();
-    const xDoc = parser.parseFromString("<root></root>", "text/xml");
-    const customiseItem = xDoc.createElement("CustomiseItem");
-    const path = xDoc.createElement("Path");
-    path.innerHTML = this.path || "";
-    customiseItem.append(path);
-
-    if (
-      !Elements.length &&
-      includeAllElements &&
-      !Attributes.length &&
-      includeAllAttributes
-    ) {
-      return;
-    }
-    if (
-      !Elements.length &&
-      !includeAllElements &&
-      !Attributes.length &&
-      !includeAllAttributes
-    ) {
-      console.log("exclude");
-      // this.removeCustomisedItem()
-      return this.exclude();
-    }
-
-    if (Attributes.length || Elements.length) {
-      customiseItem.setAttribute("include", "yes");
-    }
-
-    if (newMin) {
-      customiseItem.setAttribute("customMinOccurs", "yes");
-      const customMinOccurs = xDoc.createElement("CustomMinOccurs");
-      customMinOccurs.innerHTML = newMin.toString();
-      customiseItem.append(customMinOccurs);
-    }
-    if (newMax) {
-      customiseItem.setAttribute("customMaxOccurs", "yes");
-      const customMaxOccurs = xDoc.createElement("CustomMaxOccurs");
-      customMaxOccurs.innerHTML = newMax.toString();
-      customiseItem.append(customMaxOccurs);
-    }
-
-    if (!includeAllElements && Elements.length) {
-      customiseItem.setAttribute("excludeAllElement", "no");
-      Elements.forEach((ele, idx) => {
-        const newElement = xDoc.createElement("Element");
-        newElement.innerHTML = ele;
-        customiseItem.append(newElement);
-      });
-    } else if (!includeAllElements) {
-      customiseItem.setAttribute("excludeAllElement", "yes");
-    } else if (includeAllElements) {
-      customiseItem.setAttribute("includeAllElement", "yes");
-    }
-    if (!includeAllAttributes && Attributes.length) {
-      console.log("att", Attributes.length);
-      customiseItem.setAttribute("excludeAllAttributes", "no");
-      Attributes.forEach((att, idx) => {
-        const newAttribute = xDoc.createElement("Attribute");
-        newAttribute.innerHTML = att;
-        customiseItem.append(newAttribute);
-      });
-    } else if (!includeAllAttributes) {
-      customiseItem.setAttribute("excludeAllAttributes", "yes");
-    } else if (includeAllAttributes) {
-      customiseItem.setAttribute("includeAllAttributes", "yes");
-    }
-    if (excerpt) {
-      const customExcerpt = xDoc.createElement("CustomExcerpt");
-      customExcerpt.innerHTML = excerpt;
-      customiseItem.append(customExcerpt);
-    }
-    if (documentation) {
-      const customDocumentation = xDoc.createElement("CustomDocumentation");
-      customDocumentation.innerHTML = documentation;
-      customiseItem.append(customDocumentation);
-    }
-
-    this.customisation.append(customiseItem);
-    return customiseItem;
-  }
-
   getCustomisedItem() {
     const allPath = this.customisation.getElementsByTagName("Path");
     const excludedPath: Element = Array.prototype.find.call(
       allPath,
       (p: Element) => {
-        if (
-          !p.parentElement?.getAttribute("exclude") ||
-          p.parentElement?.getAttribute("exclude") === "no"
-        ) {
-          return p.innerHTML === this.path;
+        if (!p.parentElement?.getAttribute("exclude")) {
+          console.log(p.textContent,this.path)
+          return p.textContent === this.path;
         }
       }
     );
@@ -182,19 +95,41 @@ export class Customiser {
     const excludedPath: Element = Array.prototype.find.call(
       allPath,
       (p: Element) => {
-        return p.innerHTML === this.path;
+        return p.textContent === this.path;
       }
     );
     return excludedPath;
   }
-  private removeCustomisedItem() {
+  removeCustomisedItem() {
     const existingCustomisedItem = this.getCustomisedItem()?.parentElement;
     if (existingCustomisedItem) {
       this.customisation.removeChild(existingCustomisedItem);
     }
   }
 
-  serializeCustomisedElement(){
-
+  static docStub():Document{
+    const parser = new DOMParser();
+    return parser.parseFromString("<root></root>", "text/xml");
   }
+
+  customExcerpt(){
+    if (this.excerpt) {
+      const doc = Customiser.docStub()
+      const customExcerpt = doc.createElement("CustomExcerpt");
+      customExcerpt.textContent = this.excerpt;
+      this.customiseItem.append(customExcerpt);
+    }
+  }
+  customDocumentation(){
+    if (this.documentation) {
+      const doc = Customiser.docStub()
+      const customDocumentation:Element = doc.createElement("CustomDocumentation");
+      customDocumentation.textContent = this.documentation;
+      this.customiseItem.append(customDocumentation);
+    }
+  }
+
+  
+  
+  
 }

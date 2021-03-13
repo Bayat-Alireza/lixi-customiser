@@ -6,6 +6,10 @@ import SaveIcon from "@material-ui/icons/Save";
 import { Form, Formik } from "formik";
 import React from "react";
 import { useAction } from "../../hooks/useActions";
+import { useTypedSelector } from "../../hooks/useTypeSelector";
+import { CustomisedElementType } from "../../models/customisationTypes";
+import {ElementCustomiser} from '../../models/ElementCustomiser'
+// import { ElementCustomiser } from "../../models/ElementCustomiser";
 import { LixiBase } from "../../models/LixiBase";
 import { ElementSubItems } from "../element-sub-items/ElementSubItems";
 import { AppTextField } from "../formik-mterial-ui/AppTextField";
@@ -20,8 +24,23 @@ type SubElement = { [key: string]: Element[] };
 export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
   const classes = useStyles();
   const { customiseElement } = useAction();
+  const { customization } = useTypedSelector((state) => state.customizer);
+  const [
+    initialValue,
+    setInitialValue,
+  ] = React.useState<CustomisedElementType>({
+    newMin: '',
+    newMax: '',
+    includeAllElements: true,
+    includeAllAttributes: true,
+    elements: [],
+    attributes: [],
+    excerpt: '',
+    documentation: '',
+  });
   const [itemSubElement, setItemSubElement] = React.useState<SubElement>({});
   const [itemAttributes, setItemAttributes] = React.useState<Element[]>([]);
+
   const [occursMinMax, setOccursMinMax] = React.useState<
     | {
         min: string | null | undefined;
@@ -33,10 +52,10 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
   const leafAttribs = React.useMemo(() => {
     return itemAttributes?.map((item, idx) => {
       const itemEle = new LixiBase(item);
-      if (itemEle){
-
+      if (itemEle) {
         return itemEle;
       }
+      return undefined
     });
   }, [itemAttributes]);
   const leafEle = React.useMemo(() => {
@@ -47,6 +66,21 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
       }
     );
   }, [itemSubElement]);
+
+  React.useEffect(() => {
+    if (!lixiItem?.path) return;
+    const newCustomisation = new ElementCustomiser(
+      customization,
+      lixiItem?.path
+    );
+    const instruction = newCustomisation.customisedObject()  
+    setInitialValue(instruction)
+    
+  },[customization,lixiItem?.path]);
+
+  React.useEffect(()=>{
+    console.log(initialValue)
+  },[initialValue])
 
   React.useEffect(() => {
     const subElement = lixiItem?.lixiSubElements;
@@ -70,25 +104,17 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
 
   return (
     <Formik
-      initialValues={{
-        newMin: undefined,
-        newMax: undefined,
-        includeAllElements: true,
-        includeAllAttributes: true,
-        Elements: [],
-        Attributes: [],
-        excerpt: undefined,
-        documentation: undefined,
-      }}
+      enableReinitialize
+      initialValues={initialValue }
       validationSchema={() =>
         CustomiseElementSchema(occursMinMax?.min, occursMinMax?.max)
       }
       onSubmit={(values, { setSubmitting }) => {
-        customiseElement(values,   lixiItem?.path||"");
-        // setTimeout(() => {
-        //   alert(JSON.stringify(values, null, 2));
-        //   setSubmitting(false);
-        // }, 400);
+        customiseElement(values, lixiItem?.path || "");
+        setTimeout(() => {
+          alert(JSON.stringify(values, null, 2));
+          setSubmitting(false);
+        }, 400);
       }}
     >
       {({ isSubmitting, values, errors, touched }) => (
@@ -107,7 +133,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                       disabled={
                         occursMinMax?.min === "1" && occursMinMax?.max === "1"
                       }
-                      value={values.newMin}
+                      value={values?.newMin}
                     />
 
                     <AppTextField
@@ -117,7 +143,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                       variant="outlined"
                       label="New Max Occurs"
                       disabled={occursMinMax?.max === "1"}
-                      value={values.newMax}
+                      value={values?.newMax}
                     />
                   </div>
                   <div className={classes.saveButton}>
@@ -134,28 +160,30 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                 </div>
                 <Divider />
               </Grid>
-              {leafEle?.length?<Grid item xs={12} sm={itemAttributes?.length ? 6 : 12}>
+              {leafEle?.length ? (
+                <Grid item xs={12} sm={itemAttributes?.length ? 6 : 12}>
                   <ElementSubItems
+                    value={values.elements}
                     parentPath={lixiItem?.path || ""}
                     header={`Sub-Elements ${
                       itemSubElement["choice"] ? "CHOICE" : "(SEQUENCE)"
                     }`}
                     subItems={leafEle}
-                    arrayName="Elements"
+                    arrayName="elements"
                   />
-              </Grid>:undefined}
-              {leafAttribs?.length?<Grid
-                item
-                xs={12}
-                sm={leafEle?.length? 6: 12}
-              >
+                </Grid>
+              ) : undefined}
+              {leafAttribs?.length ? (
+                <Grid item xs={12} sm={leafEle?.length ? 6 : 12}>
                   <ElementSubItems
+                    value={values.attributes}
                     parentPath={lixiItem?.path || ""}
                     header="Attributes"
                     subItems={leafAttribs}
-                    arrayName="Attributes"
+                    arrayName="attributes"
                   />
-              </Grid>:undefined}
+                </Grid>
+              ) : undefined}
               <Grid item xs={12} sm={6}>
                 <AppTextField
                   variant="outlined"
@@ -174,7 +202,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                   fullWidth
                   rows={4}
                   name="documentation"
-                  value={values.documentation}
+                  value={values?.documentation}
                   label="Custom Documentation"
                 />
               </Grid>

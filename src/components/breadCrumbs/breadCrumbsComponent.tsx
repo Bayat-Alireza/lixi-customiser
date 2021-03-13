@@ -7,7 +7,6 @@ import { useStyles } from "./breadCrumbsStyle";
 import { useAction } from "../../hooks/useActions";
 import IconButton from "@material-ui/core/IconButton";
 import FindInPageIcon from "@material-ui/icons/FindInPage";
-import { Divider } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 
 interface BreadCrumbsType {

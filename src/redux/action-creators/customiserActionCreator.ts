@@ -4,12 +4,14 @@ import { Dispatch } from "redux";
 import { RootState } from "..";
 import { Customiser } from "../../models/Customiser";
 import { CustomisedElementType } from "../../models/customisationTypes";
+import { ElementCustomiser } from "../../models/ElementCustomiser";
 
 export const excludeItem = (itemPath: string) => {
   return (
     dispatch: Dispatch<CustomizationAction>,
     getState: () => RootState
   ) => {
+    console.log(itemPath)
     const { customization } = getState().customizer;
     const newCustomisaion = new Customiser(customization, itemPath);
     const customisedItem = newCustomisaion.exclude();
@@ -43,29 +45,25 @@ export const includeItem = (itemPath: string) => {
 };
 
 
-export const customiseElement = (
-  customisedElement: CustomisedElementType,
-  path: string
-) => {
+export const customiseElement = (customisedElement: CustomisedElementType, path: string) => {
   return (
     dispatch: Dispatch<CustomizationAction>,
     getState: () => RootState
   ) => {
     const { customization } = getState().customizer;
-    const newCustomisation = new Customiser(customization, path);
-    const newCustomisedEle = newCustomisation.customiseElement(
-      customisedElement
-    );
-    if (!newCustomisedEle) return;
+    const newCustomisation = new ElementCustomiser(customization, path,customisedElement);
+    newCustomisation.customise();
+ 
+    if (!newCustomisation.customiseItem) return;
     dispatch({
       type: CustomizationActionType.CUSTOMISE_ELEMENT,
       payload: {
         customisedSchema: newCustomisation.customisation,
-        customisedItem: newCustomisedEle,
+        customisedItem: newCustomisation.customiseItem,
       },
     });
-  };
-};
+  };;
+};;
 
 export const customizeSubSchema = (subSchema: SubSchema) => {
   return (

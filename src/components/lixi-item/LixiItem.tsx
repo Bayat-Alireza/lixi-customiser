@@ -28,11 +28,12 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useAction } from "../../hooks/useActions";
 import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { Customiser } from "../../models/Customiser";
+import { ElementCustomiser } from "../../models/ElementCustomiser";
 import { LixiBase } from "../../models/LixiBase";
 import { CustomiseAttribute } from "../customise-attribute/CustomiseAttribute";
 import { CustomiseElement } from "../customise-element/CustomiseElement";
 import { useStyles } from "./lixiItemStyle";
-
+import Alert from '@material-ui/lab/Alert';
 
 
 interface ItemType {
@@ -40,13 +41,16 @@ interface ItemType {
 }
 export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
   const classes = useStyles();
-  const [openToCustomise,setOpenToCustomise] = useState<boolean>(false)
+
+
+  const [openToCustomise, setOpenToCustomise] = useState<boolean>(false);
+  const [alert,setAlert] = useState<string>('')
   const [lixiItem, setLixiItem] = useState<LixiBase>();
   const [exclude, setExclude] = useState(false);
   const { customization, subSchema } = useTypedSelector(
     (state) => state.customizer
   );
-  const { excludeItem, includeItem } = useAction();
+  const { excludeItem, includeItem,searchItem } = useAction();
 
   const itemType = React.useMemo(() => {
     return lixiItem?.element?.localName;
@@ -58,8 +62,6 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
       setLixiItem(ele);
     }
   }, [item]);
-
- 
 
   const onExclude = () => {
     const excluded = !exclude;
@@ -73,20 +75,28 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
 
   useEffect(() => {
     if (exclude) return;
-    const path = lixiItem?.path;
-    if (path) {
-      const customiser = new Customiser(customization, path);
+    if (lixiItem?.path) {
+      const customiser = new Customiser(customization, lixiItem?.path);
       setExclude(!!customiser.ExcludedItem());
     }
   }, [customization, lixiItem?.path, exclude]);
 
+  useEffect(()  =>  {
+    if (!lixiItem?.element.localName || !lixiItem?.path || !customization)  return;
+    const parentExcluded = ElementCustomiser.parentCustomised(lixiItem?.path,customization,lixiItem.element.localName)
+    if (parentExcluded){
+      setAlert(parentExcluded||'');;
+    }
+  },  [customization, lixiItem?.path,lixiItem?.element.localName]);;
+
   return (
     <Grid container spacing={2}>
+      
       <Grid item xs={12}>
         <Paper style={{ marginTop: "0.5rem", padding: "0.5rem 0.5rem" }}>
           <Grid item xs={12}>
             <Paper>
-              <div className={classes.header}>
+              {!alert?<div className={classes.header}>
                 {/* <FormGroup row> */}
                 <FormControlLabel
                   control={
@@ -105,7 +115,7 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
                   }
                   label={exclude ? "Excluded" : "Include"}
                 />
-              
+
                 <Button
                   disabled={exclude}
                   onClick={() => setOpenToCustomise((pre) => !pre)}
@@ -116,7 +126,14 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
                 >
                   Customise
                 </Button>
-              </div>
+              </div>:<Alert variant="standard" severity="warning" action={
+                        <Button className={classes.alert}  variant="contained" size="small" onClick={()=>searchItem(alert)}>
+                         see parent
+                        </Button>
+                      }>
+                This item excluded via its parent: {<em><strong>{alert.split(".").pop()}</strong></em>}
+                        
+                      </Alert>}
             </Paper>
           </Grid>
           {/* <Divider /> */}
@@ -165,7 +182,6 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
             </div>
           </div>
           <div style={{ maxWidth: "75ch" }}>
-     
             <Typography style={{ padding: "0.1rem 1rem" }} variant="body1">
               {lixiItem?.documentation}
             </Typography>
@@ -173,7 +189,6 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
 
           <Divider />
           <div className={classes.attributes}>
-         
             {lixiItem?.element.getAttributeNames().map((att, idx) => {
               return (
                 <Box
@@ -186,10 +201,10 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
                   }}
                 >
                   <Typography color="primary" align="left" variant="body1">
-                    {`${att}: `}
+                    {`-${att}: `}
                   </Typography>
                   <Typography color="secondary" align="left" variant="body2">
-                    {lixiItem?.element.getAttribute(att)}
+                    <em>{lixiItem?.element.getAttribute(att)}</em>
                   </Typography>
                 </Box>
               );
@@ -230,9 +245,7 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
           {itemType === "element" ? (
             <CustomiseElement lixiItem={lixiItem} />
           ) : undefined}
-          {itemType === "attribute" ? (
-            <CustomiseAttribute  />
-          ) : undefined}
+          {itemType === "attribute" ? <CustomiseAttribute /> : undefined}
         </Collapse>
       </Grid>
     </Grid>

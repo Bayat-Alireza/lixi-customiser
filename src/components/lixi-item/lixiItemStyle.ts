@@ -38,20 +38,28 @@ export const useStyles = makeStyles((theme: Theme) =>
       justifyContent: "space-between",
       alignItems: "center",
       [theme.breakpoints.down("sm")]: {
-        display: "inline-block"
+        display: "inline-block",
       },
     },
     attributes: {
       padding: "0.1rem 1rem",
       display: "flex",
       justifyContent: "flex-start",
-      [theme.breakpoints.down("sm")]:      {
-        display:"inline-block"
-      }
+      [theme.breakpoints.down("sm")]: {
+        display: "inline-block",
+      },
     },
     references: {
       display: "flex",
       alignItems: "center",
+    },
+    alert: {
+      color: "orange",
+      backgroundColor:   "#333",
+      "&:hover":{
+        color: "#333",
+      backgroundColor:   "orange",
+      }
     },
   })
 );
