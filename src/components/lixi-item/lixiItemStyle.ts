@@ -15,6 +15,7 @@ export const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: "#fff8e1",
       marginBottom: "0.2rem",
       borderRadius: "0.1rem",
+      alignItems: "center",
     },
     subItemHeader: {
       display: "flex",
@@ -55,11 +56,11 @@ export const useStyles = makeStyles((theme: Theme) =>
     },
     alert: {
       color: "orange",
-      backgroundColor:   "#333",
-      "&:hover":{
+      backgroundColor: "#333",
+      "&:hover": {
         color: "#333",
-      backgroundColor:   "orange",
-      }
+        backgroundColor: "orange",
+      },
     },
   })
 );

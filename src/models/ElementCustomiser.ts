@@ -23,7 +23,13 @@ export class ElementCustomiser extends Customiser {
 
   customise() {
     const { includeAllAttributes, includeAllElements } = this.object;
-    if (includeAllAttributes && includeAllElements) return;
+    if (includeAllAttributes && includeAllElements) {
+      if (this.customiseItem?.parentElement) {
+        this.customisation.removeChild(this.customiseItem?.parentElement);
+        return;
+      }
+      return;
+    }
     const { documentation, excerpt } = this.object;
     this.excerpt = excerpt ? excerpt : "";
     this.documentation = documentation ? documentation : "";
@@ -162,38 +168,51 @@ export class ElementCustomiser extends Customiser {
     path: string,
     customisation: Element,
     type: string
-  ): string | undefined => {
-    console.log("type", type);
+  ): { included: boolean; path: string } | undefined => {
+    const parentStatus = {} as { included: boolean; path: string };
+
     const pathList = path.split(".");
     const pathLeaf = pathList.pop();
     const customiser = new ElementCustomiser(customisation, pathList.join("."));
     const customisedItem = customiser.getTouchedItem()?.parentElement;
+    customiser.customisedObject();
     if (customisedItem) {
-      if (customisedItem.getAttribute("exclude")) return pathList.join(".");
+      if (customisedItem.getAttribute("exclude")) {
+        parentStatus.included = false;
+        parentStatus.path = pathList.join(".");
+        return parentStatus;
+      }
       if (type === "element") {
         console.log("insideElement");
         if (customisedItem.getAttribute("includeAllElements") === "yes") {
-          return;
+          parentStatus.included = true;
+          parentStatus.path = pathList.join(".");
+          return parentStatus;
         } else if (pathLeaf && customiser.object.elements.includes(pathLeaf)) {
-          return;
+          parentStatus.included = true;
+          parentStatus.path = pathList.join(".");
+          return parentStatus;
         } else {
-          return pathList.join(".");
+          parentStatus.included = false;
+          parentStatus.path = pathList.join(".");
+          return parentStatus;
         }
       } else if (type === "attribute") {
-        console.log(
-          "insideAttribute",
-          customisedItem.getAttribute("includeAllAttributes")
-        );
-
         if (customisedItem.getAttribute("includeAllAttributes") === "yes") {
-          return;
+          parentStatus.included = true;
+          parentStatus.path = pathList.join(".");
+          return parentStatus;
         } else if (
           pathLeaf &&
           customiser.object.attributes.includes(pathLeaf)
         ) {
-          return;
+          parentStatus.included = true;
+          parentStatus.path = pathList.join(".");
+          return parentStatus;
         } else {
-          return pathList.join(".");
+          parentStatus.included = false;
+          parentStatus.path = pathList.join(".");
+          return parentStatus;
         }
       } else {
         pathList.pop();
@@ -207,14 +226,25 @@ export class ElementCustomiser extends Customiser {
         pathList.join(".")
       );
       const customisedItem = customiser.getTouchedItem()?.parentElement;
+      customiser.customisedObject();
       if (customisedItem) {
-        if (customisedItem.getAttribute("exclude")) return pathList.join(".");
+        if (customisedItem.getAttribute("exclude")) {
+          parentStatus.included = false;
+          parentStatus.path = pathList.join(".");
+          return parentStatus;
+        }
         if (customisedItem.getAttribute("includeAllElements") === "yes") {
-          return;
+          parentStatus.included = true;
+          parentStatus.path = pathList.join(".");
+          return parentStatus;
         } else if (pathLeaf && customiser.object.elements.includes(pathLeaf)) {
-          return;
+          parentStatus.included = true;
+          parentStatus.path = pathList.join(".");
+          return parentStatus;
         } else {
-          return pathList.join(".");
+          parentStatus.included = false;
+          parentStatus.path = pathList.join(".");
+          return parentStatus;
         }
       }
     }

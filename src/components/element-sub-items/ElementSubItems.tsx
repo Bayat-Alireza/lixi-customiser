@@ -10,9 +10,10 @@ import CloseOutlinedIcon from "@material-ui/icons/CloseOutlined";
 import DoneOutlinedIcon from "@material-ui/icons/DoneOutlined";
 import IndeterminateCheckBoxTwoToneIcon from "@material-ui/icons/IndeterminateCheckBoxTwoTone";
 import LaunchIcon from '@material-ui/icons/Launch';
-import { FieldArray, FieldArrayRenderProps } from "formik";
+import { FieldArray, FieldArrayRenderProps,useFormikContext } from "formik";
 import React from "react";
 import { useAction } from "../../hooks/useActions";
+import { CustomisedElementType } from "../../models/customisationTypes";
 import { LixiBase } from "../../models/LixiBase";
 import { AppCheckBox } from "../formik-mterial-ui/AppCheckBox";
 import { LixiItemToolTip } from "../tool-tip/LixiItemToolTip";
@@ -38,7 +39,13 @@ export const ElementSubItems: React.FC<SubItems> = ({
   const classes = useStyles();
   const { searchItem } = useAction();
   const [includeAll, setIncludeAll] = React.useState<boolean>(true);
+  const {values} = useFormikContext<CustomisedElementType>()
 
+  const name = React.useMemo(()=>{
+    return arrayName.replace(new RegExp("^[a-z]"),(matched) => {
+    return matched.toUpperCase();
+    }) as keyof CustomisedElementType
+  },[arrayName])
 
   const toggleExclude = (arrayHelpers: FieldArrayRenderProps) => {
     setIncludeAll(!includeAll);
@@ -49,6 +56,15 @@ export const ElementSubItems: React.FC<SubItems> = ({
     } 
   };
 
+  React.useEffect(()=>{
+    const controlName = `includeAll${name}` as keyof CustomisedElementType
+
+    if (controlName in values){
+      if (!values[controlName] && !value.length){
+        setIncludeAll(false)
+      }
+    }
+  },[values,name,value.length])
   React.useEffect(()=>{
     if (value.length && includeAll){
       setIncludeAll(false)
@@ -70,7 +86,8 @@ export const ElementSubItems: React.FC<SubItems> = ({
       <List className={classes.subItem}>
         <FieldArray
           name={arrayName}
-          render={(arrayHelpers) => (
+
+          render={(arrayHelpers:FieldArrayRenderProps) => (
             <div>
               <ListSubheader
                 style={{ marginTop: "0", alignItems: "center" }}
@@ -80,16 +97,13 @@ export const ElementSubItems: React.FC<SubItems> = ({
                 <ListItemIcon>
                   <AppCheckBox
                     name={`includeAll${arrayName.replace(
-                      new RegExp("^[a-z]"),(matched)=>{
-                        return matched.toUpperCase()
+                      new RegExp("^[a-z]"),
+                      (matched) => {
+                        return matched.toUpperCase();
                       }
-                     
                     )}`}
                     checked={
-                      arrayHelpers.form.values[arrayHelpers.name]?.length ===
-                      subItems.length
-                        ? true
-                        : includeAll
+                      value?.length === subItems.length ? true : includeAll
                     }
                     disableRipple
                     onClick={() => toggleExclude(arrayHelpers)}
@@ -101,7 +115,7 @@ export const ElementSubItems: React.FC<SubItems> = ({
                       <IndeterminateCheckBoxTwoToneIcon color="primary" />
                     }
                     indeterminate={
-                      value?.length > 0 && value?.length <subItems.length
+                      value?.length > 0 && value?.length < subItems.length
                     }
                   />
                 </ListItemIcon>
@@ -133,7 +147,9 @@ export const ElementSubItems: React.FC<SubItems> = ({
                         <AppCheckBox
                           key={`${arrayName}_${idx}`}
                           name={arrayName}
-                          checked={value?.includes(subEle?.path?.split(".").pop()||'')}
+                          checked={value?.includes(
+                            subEle?.path?.split(".").pop() || ""
+                          )}
                           value={subEle?.path?.split(".").pop()}
                           checkedIcon={
                             <DoneOutlinedIcon

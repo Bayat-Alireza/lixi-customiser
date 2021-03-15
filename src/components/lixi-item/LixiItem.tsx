@@ -44,7 +44,7 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
 
 
   const [openToCustomise, setOpenToCustomise] = useState<boolean>(false);
-  const [alert,setAlert] = useState<string>('')
+  const [alert, setAlert] = useState<{ included: boolean; path: string }>();
   const [lixiItem, setLixiItem] = useState<LixiBase>();
   const [exclude, setExclude] = useState(false);
   const { customization, subSchema } = useTypedSelector(
@@ -83,57 +83,79 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
 
   useEffect(()  =>  {
     if (!lixiItem?.element.localName || !lixiItem?.path || !customization)  return;
-    const parentExcluded = ElementCustomiser.parentCustomised(lixiItem?.path,customization,lixiItem.element.localName)
-    if (parentExcluded){
-      setAlert(parentExcluded||'');;
+    const parentCustomised = ElementCustomiser.parentCustomised(
+      lixiItem?.path,
+      customization,
+      lixiItem.element.localName
+    );
+    if (parentCustomised) {
+      setAlert(parentCustomised);
     }
   },  [customization, lixiItem?.path,lixiItem?.element.localName]);;
 
   return (
     <Grid container spacing={2}>
-      
       <Grid item xs={12}>
         <Paper style={{ marginTop: "0.5rem", padding: "0.5rem 0.5rem" }}>
           <Grid item xs={12}>
             <Paper>
-              {!alert?<div className={classes.header}>
-                {/* <FormGroup row> */}
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      icon={
-                        <DoneOutlinedIcon
-                          style={{ color: "green" }}
-                          fontSize="small"
-                        />
-                      }
-                      checkedIcon={<CloseOutlinedIcon fontSize="small" />}
-                      onChange={onExclude}
-                      checked={exclude}
-                      name="checkedI"
-                    />
-                  }
-                  label={exclude ? "Excluded" : "Include"}
-                />
+              {!alert || alert?.included ? (
+                <div className={classes.header}>
+                  {/* <FormGroup row> */}
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        icon={
+                          <DoneOutlinedIcon
+                            style={{ color: "green" }}
+                            fontSize="small"
+                          />
+                        }
+                        checkedIcon={<CloseOutlinedIcon fontSize="small" />}
+                        onChange={onExclude}
+                        checked={exclude}
+                        disabled={alert?.included}
+                        name="checkedI"
+                      />
+                    }
+                    label={exclude ? "Excluded" : "Include"}
+                  />
 
-                <Button
-                  disabled={exclude}
-                  onClick={() => setOpenToCustomise((pre) => !pre)}
-                  startIcon={<SettingsOutlinedIcon />}
-                  variant="contained"
-                  color="primary"
-                  size="small"
+                  <Button
+                    disabled={exclude}
+                    style={{      height:      "max-content" ,width:"min-content"     }}
+                    onClick={() => setOpenToCustomise((pre) => !pre)}
+                    startIcon={<SettingsOutlinedIcon />}
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                  >
+                    Customise
+                  </Button>
+                </div>
+              ) : (
+                <Alert
+                  variant="standard"
+                  severity="warning"
+                  action={
+                    <Button
+                      className={classes.alert}
+                      variant="contained"
+                      size="small"
+                      onClick={() => searchItem(alert?.path || "")}
+                    >
+                      see parent
+                    </Button>
+                  }
                 >
-                  Customise
-                </Button>
-              </div>:<Alert variant="standard" severity="warning" action={
-                        <Button className={classes.alert}  variant="contained" size="small" onClick={()=>searchItem(alert)}>
-                         see parent
-                        </Button>
-                      }>
-                This item excluded via its parent: {<em><strong>{alert.split(".").pop()}</strong></em>}
-                        
-                      </Alert>}
+                  This item excluded via its parent:{" "}
+                  {
+                    <em>
+                      <strong>{alert?.path.split(".").pop()}</strong>
+                    </em>
+                  }
+                </Alert>
+              )}
             </Paper>
           </Grid>
           {/* <Divider /> */}
