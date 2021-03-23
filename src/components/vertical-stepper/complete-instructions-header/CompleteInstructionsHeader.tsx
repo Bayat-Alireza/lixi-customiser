@@ -64,7 +64,7 @@ export const CompleteInstructionsHeader: React.FC<ICompleteCustomisationHeader> 
   ] = React.useState<InstructionHeader>(initialValue);
 
   React.useEffect(() => {
-    console.log("sc", subSchema);
+    console.log("Sub-Schema:", subSchema);
   }, [subSchema]);
 
   React.useEffect(() => {

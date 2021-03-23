@@ -31,7 +31,6 @@ export const uploadBaseSchema = (file: File) => {
     dispatch: Dispatch<SchemaActions>,
     getState: () => RootState
   ) => {
-    // console.log("***", getState().customizer.customization);
     dispatch({
       type: SchemaActionType.UPLOAD_SCHEMA,
     });

@@ -22,15 +22,26 @@ export class ElementCustomiser extends Customiser {
   }
 
   customise() {
-    const { includeAllAttributes, includeAllElements } = this.object;
-    if (includeAllAttributes && includeAllElements) {
-      if (this.customiseItem?.parentElement) {
-        this.customisation.removeChild(this.customiseItem?.parentElement);
-        return;
-      }
+    const {
+      includeAllAttributes,
+      includeAllElements,
+      newMin,
+      newMax,
+      documentation,
+      excerpt,
+    } = this.object;
+    if (
+      includeAllAttributes &&
+      includeAllElements &&
+      !newMax &&
+      !newMin &&
+      !documentation &&
+      !excerpt
+    ) {
+      this.removeCustomisedItem();
       return;
     }
-    const { documentation, excerpt } = this.object;
+
     this.excerpt = excerpt ? excerpt : "";
     this.documentation = documentation ? documentation : "";
     this.removeCustomisedItem();
@@ -123,7 +134,6 @@ export class ElementCustomiser extends Customiser {
   customisedObject() {
     const customisedEle = this.getCustomisedItem()?.parentElement;
     if (!customisedEle) return this.object;
-    console.log(customisedEle?.children);
     this.object.includeAllAttributes =
       customisedEle.getAttribute("includeAllAttributes") === "yes"
         ? true
@@ -183,7 +193,6 @@ export class ElementCustomiser extends Customiser {
         return parentStatus;
       }
       if (type === "element") {
-        console.log("insideElement");
         if (customisedItem.getAttribute("includeAllElements") === "yes") {
           parentStatus.included = true;
           parentStatus.path = pathList.join(".");
@@ -219,7 +228,6 @@ export class ElementCustomiser extends Customiser {
       }
     }
     while (pathList.length) {
-      console.log(pathList);
       const pathLeaf = pathList.pop();
       const customiser = new ElementCustomiser(
         customisation,

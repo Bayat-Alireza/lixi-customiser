@@ -7,7 +7,7 @@ export class LixiBase implements ILixiBase {
   readonly element: Element;
   readonly annotated: boolean;
   constructor(element: Element) {
-    this.element = element;
+    this.element = element.cloneNode(true) as Element;
     this.annotated =
       this.element.children[0].localName === LixiLocalNameEnum.annotation;
   }
@@ -64,7 +64,6 @@ export class LixiBase implements ILixiBase {
     Array.prototype.map.call(targets, (t) => {
       referenceTargets.push(t.textContent);
     });
-    console.log("ref", referenceTargets);
     return referenceTargets;
   }
 
@@ -91,7 +90,6 @@ export class LixiBase implements ILixiBase {
   }
 
   getLixiComplexType() {
-    // console.log("comp");
     const complex: Element[] = [];
     Array.from(this.element.children).forEach((child) => {
       if (child.localName === LixiLocalNameEnum.complexType) {

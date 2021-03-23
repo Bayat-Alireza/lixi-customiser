@@ -1,6 +1,3 @@
-// import { InfoRounded } from "@material-ui/icons";
-// import { read } from "fs";
-// import { master_schema } from "../assets/LIXI-Master-Schema1";
 import { LixiTagEnum } from "../enums/lixiEnums";
 type NameSpace = {
   [ns: string]: string;
@@ -92,7 +89,6 @@ export class XmlUtil {
       }
       transaction = result?.iterateNext();
     }
-    console.log(itemsPath.length);
     return itemsPath;
   }
 

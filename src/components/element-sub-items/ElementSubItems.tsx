@@ -1,70 +1,107 @@
-import IconButton from "@material-ui/core/IconButton/IconButton";
 import List from "@material-ui/core/List/List";
-import ListItem from "@material-ui/core/ListItem/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction/ListItemSecondaryAction";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListSubheader from "@material-ui/core/ListSubheader";
-import Typography from "@material-ui/core/Typography/Typography";
-import CloseOutlinedIcon from "@material-ui/icons/CloseOutlined";
-import DoneOutlinedIcon from "@material-ui/icons/DoneOutlined";
-import IndeterminateCheckBoxTwoToneIcon from "@material-ui/icons/IndeterminateCheckBoxTwoTone";
-import LaunchIcon from '@material-ui/icons/Launch';
-import { FieldArray, FieldArrayRenderProps,useFormikContext } from "formik";
+import { FieldArray, useFormikContext } from "formik";
 import React from "react";
-import { useAction } from "../../hooks/useActions";
+import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { CustomisedElementType } from "../../models/customisationTypes";
+import { Customiser } from "../../models/Customiser";
 import { LixiBase } from "../../models/LixiBase";
-import { AppCheckBox } from "../formik-mterial-ui/AppCheckBox";
-import { LixiItemToolTip } from "../tool-tip/LixiItemToolTip";
+import { LixiListItemHeader } from "../lixi-list-item-header/LixiListItemHeader";
+import { LixiListItem } from "../lixi-list-item/LixiListItem";
 import { useStyles } from "./elementSubItemsStyle";
 
 interface SubItems {
   subItems: (LixiBase | null | undefined)[];
   header: string;
-  arrayName: string;
-  parentPath: string;
+  name: "elements"|"attributes";
   value:string[];
-  // checked?: boolean;
-  onClick?: (event: any) => void;
 }
 
 export const ElementSubItems: React.FC<SubItems> = ({
   subItems,
   header,
-  arrayName,
-  parentPath,
+  name,
   value
 }) => {
   const classes = useStyles();
-  const { searchItem } = useAction();
+  const { customization } = useTypedSelector((state) => state.customizer);
   const [includeAll, setIncludeAll] = React.useState<boolean>(true);
-  const {values} = useFormikContext<CustomisedElementType>()
+  const {values,getFieldHelpers} = useFormikContext<CustomisedElementType>()
 
-  const name = React.useMemo(()=>{
-    return arrayName.replace(new RegExp("^[a-z]"),(matched) => {
+  const includeAllItem = React.useMemo(()=>{
+    const titleCaseName = name.replace(new RegExp("^[a-z]"),(matched) => {
     return matched.toUpperCase();
-    }) as keyof CustomisedElementType
-  },[arrayName])
+    }) 
+    return `includeAll${titleCaseName}`
+  },[name]) as  "includeAllElements"|"includeAllAttributes"
 
-  const toggleExclude = (arrayHelpers: FieldArrayRenderProps) => {
-    setIncludeAll(!includeAll);
-    if (!includeAll && value?.length) {
-      for (let i=value.length; i >=0;i--){
-        arrayHelpers.remove(i);
+
+  const affected = React.useMemo(()=>{
+    const affectedItem = {}as{path:string,items:string[]}
+    const result = [] as {path:string,items:string[]}[]
+    subItems?.forEach((item:LixiBase|null|undefined) => {
+      if (item && item.path){
+        const customiser = new Customiser(customization,item.path)
+        const affectedList = customiser.affectedDecedents()
+        if (affectedList.length){
+          affectedItem.path = item.path
+          affectedItem.items = []
+          affectedList.forEach((i)=>{
+            if (i.textContent){
+              affectedItem.items.push(i.textContent)
+            }
+          })
+          if(affectedItem.items.length)
+          result.push(affectedItem)
+        }
       }
-    } 
-  };
+    });
+    if(result.length){return result}
+
+  },[customization,subItems])
+
+
 
   React.useEffect(()=>{
-    const controlName = `includeAll${name}` as keyof CustomisedElementType
+    const reflectAffected = (): Promise<void>=>{
+      return new Promise((resolves,rejects)=>{
+        affected?.forEach(({path})=>{
+          values[name]?.push(path.split(".").pop()|| "")
+          resolves(getFieldHelpers(name).setValue(values[name]))
+  
+        })
+      })
+    }
+    if (!includeAll){
+      (async()=>{
+       await reflectAffected()
+      })()
+      
+    }
+    
+    
+  },[affected, name, getFieldHelpers, values,includeAllItem,includeAll])
 
-    if (controlName in values){
-      if (!values[controlName] && !value.length){
+  const toggleExclude = async() => {
+    setIncludeAll(!includeAll);
+    promiseRemove()
+    
+  };
+  const promiseRemove = (): Promise<void> =>{
+        return new Promise((resolves,rejects)=>{
+          if (!includeAll && value?.length) {
+                for (let i=value.length; i >=0;i--){
+                  values[name]?.splice(i,1)
+                }
+              } 
+          resolves(getFieldHelpers(name).setValue(values[name]))
+        })
+      }
+
+  React.useEffect(()=>{
+      if (!values[includeAllItem] && !value.length){
         setIncludeAll(false)
       }
-    }
-  },[values,name,value.length])
+  },[values,includeAllItem,value.length])
   React.useEffect(()=>{
     if (value.length && includeAll){
       setIncludeAll(false)
@@ -72,133 +109,34 @@ export const ElementSubItems: React.FC<SubItems> = ({
     }
   },[value?.length,includeAll])
 
-  const handelAddItem =(arrayHelpers:FieldArrayRenderProps,subItem:string)=>{
-    if (!value.includes(subItem)){
-     arrayHelpers.push(subItem)
-     
-    }else{
-      arrayHelpers.remove(value.indexOf(subItem))
-    }
-  }
-
   return (
     <>
+    
       <List className={classes.subItem}>
         <FieldArray
-          name={arrayName}
-
-          render={(arrayHelpers:FieldArrayRenderProps) => (
+          name={name}
+          render={() => (
             <div>
-              <ListSubheader
-                style={{ marginTop: "0", alignItems: "center" }}
-                className={classes.subItemHeader}
-                key={`${arrayName}_Header`}
-              >
-                <ListItemIcon>
-                  <AppCheckBox
-                    name={`includeAll${arrayName.replace(
-                      new RegExp("^[a-z]"),
-                      (matched) => {
-                        return matched.toUpperCase();
-                      }
-                    )}`}
-                    checked={
-                      value?.length === subItems.length ? true : includeAll
-                    }
-                    disableRipple
-                    onClick={() => toggleExclude(arrayHelpers)}
-                    checkedIcon={
-                      <DoneOutlinedIcon style={{ color: "green" }} />
-                    }
-                    icon={<CloseOutlinedIcon style={{ color: "red" }} />}
-                    indeterminateIcon={
-                      <IndeterminateCheckBoxTwoToneIcon color="primary" />
-                    }
-                    indeterminate={
-                      value?.length > 0 && value?.length < subItems.length
-                    }
-                  />
-                </ListItemIcon>
-                <ListItemText
-                  id={`${arrayName}_Header`}
-                  primary={`Include All ${header}`}
-                />
-                {/* </ListItem> */}
-              </ListSubheader>
+              <LixiListItemHeader 
+              name={includeAllItem}
+              includesAll={includeAll}
+              header={header} 
+              itemsLength={subItems.length}
+              selectedItemsLength={values[name].length}
+              toggle={toggleExclude}
+              />
               {!includeAll &&
                 subItems?.map((subEle, idx) => {
-                  if (!subEle) {
+                  if (!subEle?.path) {
                     return <></>;
                   }
                   return (
-                    <ListItem
-                      divider
-                      dense
-                      button
-                      key={`${arrayName}_${idx}`}
-                      onClick={() =>
-                        handelAddItem(
-                          arrayHelpers,
-                          subEle?.path?.split(".").pop() || ""
-                        )
-                      }
-                    >
-                      <ListItemIcon>
-                        <AppCheckBox
-                          key={`${arrayName}_${idx}`}
-                          name={arrayName}
-                          checked={value?.includes(
-                            subEle?.path?.split(".").pop() || ""
-                          )}
-                          value={subEle?.path?.split(".").pop()}
-                          checkedIcon={
-                            <DoneOutlinedIcon
-                              style={{ color: "green" }}
-                              fontSize="small"
-                            />
-                          }
-                          icon={
-                            <CloseOutlinedIcon
-                              fontSize="small"
-                              style={{ color: "red" }}
-                            />
-                          }
-                        />
-                      </ListItemIcon>
-                      <ListItemText
-                        style={{ cursor: "pointer" }}
-                        id={``}
-                        primary={
-                          <Typography
-                            style={{ alignItems: "center" }}
-                            component="span"
-                            variant="body2"
-                            color="textPrimary"
-                          >
-                            {subEle?.path?.split(".").pop()}
-                            <LixiItemToolTip
-                              lixiItem={subEle}
-                              placement="top-start"
-                            />
-                          </Typography>
-                        }
-                      />
-                      <ListItemSecondaryAction>
-                        <IconButton
-                          edge="end"
-                          aria-label="comments"
-                          className={classes.viewItem}
-                          value={subEle?.path?.split(".").pop()}
-                          onClick={(e) =>
-                            searchItem(
-                              `${parentPath}.${subEle?.path?.split(".").pop()}`
-                            )
-                          }
-                        >
-                          <LaunchIcon fontSize="small" />
-                        </IconButton>
-                      </ListItemSecondaryAction>
-                    </ListItem>
+                    <LixiListItem 
+                    key={`${idx}-${subEle.path}`} 
+                    name={name} 
+                    element={subEle} 
+                    values={{values}} 
+                    />
                   );
                 })}
             </div>

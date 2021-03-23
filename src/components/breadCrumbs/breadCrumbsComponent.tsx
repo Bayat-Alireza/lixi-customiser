@@ -8,6 +8,7 @@ import { useAction } from "../../hooks/useActions";
 import IconButton from "@material-ui/core/IconButton";
 import FindInPageIcon from "@material-ui/icons/FindInPage";
 import Paper from "@material-ui/core/Paper";
+import { useTypedSelector } from "../../hooks/useTypeSelector";
 
 interface BreadCrumbsType {
   pathSections: string[] | undefined;
@@ -19,6 +20,7 @@ export const IconBreadcrumbs: React.FC<BreadCrumbsType> = (
 ) => {
   const classes = useStyles();
   const { searchItem } = useAction();
+  const { subSchema } = useTypedSelector((state) => state.customizer);
   const handleClick = (
     event: React.MouseEvent<HTMLParagraphElement, MouseEvent>
   ) => {
@@ -27,7 +29,6 @@ export const IconBreadcrumbs: React.FC<BreadCrumbsType> = (
     const pathArr = [...props.pathSections];
     const index = props.pathSections.indexOf(event.currentTarget.innerHTML);
     if (index === 0) {
-      console.log("i'm here");
       searchItem("Package");
       return;
     }
@@ -40,33 +41,38 @@ export const IconBreadcrumbs: React.FC<BreadCrumbsType> = (
 
   return (
     <Paper className={classes.root}>
-      <Breadcrumbs
-        separator={<ArrowForwardIosIcon className={classes.icon} />}
-        aria-label="breadcrumb"
-      >
-        {props.pathSections?.map((section, idx) => {
-          return (
-            <Typography
-              onClick={(
-                e: React.MouseEvent<HTMLParagraphElement, MouseEvent>
-              ) => handleClick(e)}
-              color="textSecondary"
-              key={idx}
-              className={classes.link}
-            >
-              {section}
-            </Typography>
-          );
-        })}
-        <IconButton
-          onClick={props.iconClickHandler}
-          aria-label="delete"
-          className={classes.leafLink}
-          size="medium"
+      <div style={{  display:  "flex",justifyContent:"space-between" ,alignItems:"center" }}>
+        <Breadcrumbs
+          separator={<ArrowForwardIosIcon className={classes.icon} />}
+          aria-label="breadcrumb"
         >
-          <FindInPageIcon fontSize="inherit" />
-        </IconButton>
-      </Breadcrumbs>
+          {props.pathSections?.map((section, idx) => {
+            return (
+              <Typography
+                onClick={(
+                  e: React.MouseEvent<HTMLParagraphElement, MouseEvent>
+                ) => handleClick(e)}
+                color="textSecondary"
+                key={idx}
+                className={classes.link}
+              >
+                {section}
+              </Typography>
+            );
+          })}
+          <IconButton
+            onClick={props.iconClickHandler}
+            aria-label="delete"
+            className={classes.leafLink}
+            size="medium"
+          >
+            <FindInPageIcon fontSize="inherit" />
+          </IconButton>
+        </Breadcrumbs>
+        <Typography noWrap style={{marginRight:"1rem"}} color="textSecondary" variant="inherit">
+          <em>{`${subSchema?.transactionType} - ${subSchema?.transactionVersion}`}</em>
+        </Typography>
+      </div>
     </Paper>
   );
 };

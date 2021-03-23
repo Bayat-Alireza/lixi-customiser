@@ -15,7 +15,6 @@ export const UploadFile: React.FC<FormProps> = ({ saveFace, description }) => {
   const [selectedFile, setSelectedFile] = React.useState<any>(undefined);
   const [metadata, setMetadata] = React.useState<{ [key: string]: string }>();
   const handleCapture = ({ target }: any) => {
-    // console.log("jwiegfj", target.files[0].name);
     setSelectedFile(target.files[0]);
   };
 

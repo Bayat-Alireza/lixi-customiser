@@ -50,7 +50,7 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
   const { customization, subSchema } = useTypedSelector(
     (state) => state.customizer
   );
-  const { excludeItem, includeItem,searchItem } = useAction();
+  const { searchItem, updateCustomisation } = useAction();
 
   const itemType = React.useMemo(() => {
     return lixiItem?.element?.localName;
@@ -61,16 +61,19 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
       const ele: LixiBase = new LixiBase(item);
       setLixiItem(ele);
     }
-  }, [item]);
+  }, [item, customization]);
 
   const onExclude = () => {
+    if (!lixiItem?.path) return;
     const excluded = !exclude;
     setExclude(excluded);
-    if (excluded && lixiItem?.path) {
-      excludeItem(lixiItem?.path);
-    } else if (lixiItem?.path) {
-      includeItem(lixiItem?.path);
+    const newCustomisation = new Customiser(customization, lixiItem?.path);
+    if (excluded) {
+      newCustomisation.exclude();
+    } else {
+      newCustomisation.include();
     }
+    updateCustomisation(newCustomisation.customisation);
   };
 
   useEffect(() => {
@@ -101,7 +104,6 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
             <Paper>
               {!alert || alert?.included ? (
                 <div className={classes.header}>
-                  {/* <FormGroup row> */}
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -158,79 +160,70 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
               )}
             </Paper>
           </Grid>
-          {/* <Divider /> */}
-          {/* <CssBaseline /> */}
           <div className={classes.itemLabelDescription}>
             <Badge
               color="primary"
-              badgeContent={lixiItem?.element.localName}
+              badgeContent={`${item?.localName}`}
               anchorOrigin={{
                 vertical: "top",
                 horizontal: "right",
               }}
             >
-              <Typography variant="h4">{lixiItem?.label}</Typography>
+              <Typography color="primary" variant="h4">{lixiItem?.label}</Typography>
             </Badge>
-            <div>
-              {lixiItem?.transactions?.sort().map((t, idx) => {
-                if (
-                  subSchema?.transactionType &&
-                  subSchema.transactionType === t
-                ) {
-                  return (
-                    <Chip
-                      key="active"
-                      style={{ margin: "0 0.1rem" }}
-                      avatar={<Avatar>{subSchema?.transactionType[0]}</Avatar>}
-                      deleteIcon={<DoneIcon />}
-                      size="small"
-                      color="secondary"
-                      variant="outlined"
-                      clickable
-                      label={t}
-                    />
-                  );
-                }
-                return (
-                  <Chip
-                    key={`${idx}_${t}`}
-                    size="small"
-                    color="primary"
-                    variant="outlined"
-                    label={t}
-                  />
-                );
-              })}
-            </div>
           </div>
-          <div style={{ maxWidth: "75ch" }}>
-            <Typography style={{ padding: "0.1rem 1rem" }} variant="body1">
+          <div style={{ maxWidth: "75ch" ,marginBottom:"1rem"}}>
+            <Typography style={{ padding: "0.1rem 1rem" }} color="textPrimary" variant="body1">
               {lixiItem?.documentation}
             </Typography>
           </div>
 
           <Divider />
-          <div className={classes.attributes}>
-            {lixiItem?.element.getAttributeNames().map((att, idx) => {
-              return (
-                <Box
-                  key={`${idx}_${att}`}
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                    marginRight: "0.5rem",
-                  }}
-                >
-                  <Typography color="primary" align="left" variant="body1">
-                    {`-${att}: `}
-                  </Typography>
-                  <Typography color="secondary" align="left" variant="body2">
-                    <em>{lixiItem?.element.getAttribute(att)}</em>
-                  </Typography>
-                </Box>
-              );
-            })}
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+            <div className={classes.attributes}>
+              {lixiItem?.element.getAttributeNames().map((att, idx) => {
+                return (
+                  <Box
+                    key={`${idx}-${att}`}
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      alignItems: "center",
+                      marginRight: "0.5rem",
+                    }}
+                  >
+                    <Typography color="textSecondary" align="left" variant="body1">
+                      {`${att}:`}
+                    </Typography>
+                    <Typography color="textPrimary" align="left" variant="body2">
+                      <strong>{lixiItem?.element.getAttribute(att)}</strong>
+                    </Typography>
+              
+                  </Box>
+                );
+              })}
+            </div>
+            <div className={classes.attributes}>
+                  {lixiItem?.transactions?.sort().map((t, idx) => {
+                    if (
+                      subSchema?.transactionType &&
+                      subSchema.transactionType !== t
+                    ) {
+                      return (
+                        <Chip
+                      key={`${idx}_${t}`}
+                      size="small"
+                      color="default"
+                      variant="outlined"
+                      label={t}
+                    />
+                      );
+                    }else{
+                      <></>
+                    }
+                })}
+              </div>
+          </div>
             {lixiItem?.element.localName === "simpleType" ? (
               <div className={classes.references}>
                 <Typography color="primary" align="left" variant="h6">
@@ -241,7 +234,7 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
                 </Typography>
               </div>
             ) : undefined}
-          </div>
+             
 
           {lixiItem?.references ? (
             <div>

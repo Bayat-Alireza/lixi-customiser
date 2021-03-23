@@ -1,16 +1,17 @@
 export class Customiser {
   customisation: Element;
   path: string | undefined = undefined;
-  customiseItem:Element
-  excerpt:string = ''
-  documentation:string =''
+  customiseItem: Element;
+  excerpt: string = "";
+  documentation: string = "";
   constructor(customisation: Element | undefined = undefined, path?: string) {
-    this.customiseItem = this._customiseItemStub()
+    this.customiseItem = this._customiseItemStub();
     if (path) {
       this.path = path;
     }
     if (customisation) {
-      this.customisation = customisation;
+      this.customisation = customisation.cloneNode(true) as Element;
+      
     } else {
       this.customisation = this._customisationStub();
     }
@@ -20,13 +21,13 @@ export class Customiser {
     if (this.path) {
       const doc = Customiser.docStub();
       const path = doc.createElement("Path");
-      path.textContent = this.path
+      path.textContent = this.path;
       this.customiseItem.append(path);
     }
   }
 
   exclude() {
-    if (this.ExcludedItem()||!this.path) return;
+    if (this.ExcludedItem() || !this.path) return;
     this.removeCustomisedItem();
     const doc = Customiser.docStub();
     this.customiseItem.setAttribute("exclude", "yes");
@@ -44,12 +45,11 @@ export class Customiser {
   }
 
   ExcludedItem(): Element {
-    const allPath = this.customisation.getElementsByTagName("Path");
+    const allPath = this.customisation?.getElementsByTagName("Path");
     const excludedPath: Element = Array.prototype.find.call(
       allPath,
       (p: Element) => {
         if (p.parentElement?.getAttribute("exclude") === "yes") {
-          console.log("excluded", p.parentElement?.getAttribute("exclude"));
           return p.innerHTML === this.path;
         }
       }
@@ -57,8 +57,8 @@ export class Customiser {
     return excludedPath;
   }
 
-  _customiseItemStub():   Element   {
-    const doc = Customiser.docStub()
+  _customiseItemStub(): Element {
+    const doc = Customiser.docStub();
     return doc.createElement("CustomiseItem");
   }
 
@@ -82,7 +82,6 @@ export class Customiser {
       allPath,
       (p: Element) => {
         if (!p.parentElement?.getAttribute("exclude")) {
-          console.log(p.textContent,this.path)
           return p.textContent === this.path;
         }
       }
@@ -107,29 +106,48 @@ export class Customiser {
     }
   }
 
-  static docStub():Document{
+  static docStub(): Document {
     const parser = new DOMParser();
     return parser.parseFromString("<root></root>", "text/xml");
   }
 
-  customExcerpt(){
+  customExcerpt() {
     if (this.excerpt) {
-      const doc = Customiser.docStub()
+      const doc = Customiser.docStub();
       const customExcerpt = doc.createElement("CustomExcerpt");
       customExcerpt.textContent = this.excerpt;
       this.customiseItem.append(customExcerpt);
     }
   }
-  customDocumentation(){
+  customDocumentation() {
     if (this.documentation) {
-      const doc = Customiser.docStub()
-      const customDocumentation:Element = doc.createElement("CustomDocumentation");
+      const doc = Customiser.docStub();
+      const customDocumentation: Element = doc.createElement(
+        "CustomDocumentation"
+      );
       customDocumentation.textContent = this.documentation;
       this.customiseItem.append(customDocumentation);
     }
   }
 
-  
-  
-  
+  affectedDecedents() {
+    const allPath = this.customisation?.getElementsByTagName("Path");
+    const affectedItems: Element[] = Array.prototype.filter.call(
+      allPath,
+      (p: Element) => {
+        return p.textContent?.startsWith(this.path || "");
+      }
+    );
+    return affectedItems;
+  }
+  removeCustomisation(paths: string[]){
+    const allCustomisedPaths = this.customisation.getElementsByTagName("Path");
+    Array.prototype.forEach.call(allCustomisedPaths,      (path:      Element)      =>      {
+      if (path?.textContent && paths.includes(path?.textContent)){
+        if(path.parentElement){
+          this.customisation.removeChild(path.parentElement)
+        }
+      }
+    })
+  }
 }

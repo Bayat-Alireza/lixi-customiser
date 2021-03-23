@@ -23,21 +23,20 @@ type SubElement = { [key: string]: Element[] };
 
 export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
   const classes = useStyles();
-  const { customiseElement } = useAction();
+  const { updateCustomisation } = useAction();
   const { customization } = useTypedSelector((state) => state.customizer);
-  const [
-    initialValue,
-    setInitialValue,
-  ] = React.useState<CustomisedElementType>({
-    newMin: '',
-    newMax: '',
-    includeAllElements: true,
-    includeAllAttributes: true,
-    elements: [],
-    attributes: [],
-    excerpt: '',
-    documentation: '',
-  });
+  const [initialValue, setInitialValue] = React.useState<CustomisedElementType>(
+    {
+      newMin: "",
+      newMax: "",
+      includeAllElements: true,
+      includeAllAttributes: true,
+      elements: [],
+      attributes: [],
+      excerpt: "",
+      documentation: "",
+    }
+  );
   const [itemSubElement, setItemSubElement] = React.useState<SubElement>({});
   const [itemAttributes, setItemAttributes] = React.useState<Element[]>([]);
 
@@ -55,7 +54,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
       if (itemEle) {
         return itemEle;
       }
-      return undefined
+      return undefined;
     });
   }, [itemAttributes]);
   const leafEle = React.useMemo(() => {
@@ -73,14 +72,9 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
       customization,
       lixiItem?.path
     );
-    const instruction = newCustomisation.customisedObject()  
-    setInitialValue(instruction)
-    
-  },[customization,lixiItem?.path]);
-
-  React.useEffect(()=>{
-    console.log(initialValue)
-  },[initialValue])
+    const instruction = newCustomisation.customisedObject();
+    setInitialValue(instruction);
+  }, [customization, lixiItem?.path]);
 
   React.useEffect(() => {
     const subElement = lixiItem?.lixiSubElements;
@@ -91,7 +85,6 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
     if (attributes?.length) {
       setItemAttributes(attributes);
     }
-    console.log(attributes?.length);
   }, [lixiItem]);
 
   React.useEffect(() => {
@@ -105,21 +98,29 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
   return (
     <Formik
       enableReinitialize
-      initialValues={initialValue }
+      initialValues={initialValue}
       validationSchema={() =>
         CustomiseElementSchema(occursMinMax?.min, occursMinMax?.max)
       }
       onSubmit={(values, { setSubmitting }) => {
-        customiseElement(values, lixiItem?.path || "");
+        setSubmitting(true);
+        if (!lixiItem?.path) return;
+        const newCustomisation = new ElementCustomiser(
+          customization,
+          lixiItem?.path,
+          values
+        );
+        newCustomisation.customise();
+        updateCustomisation(newCustomisation.customisation);
         setTimeout(() => {
-          alert(JSON.stringify(values, null, 2));
+          // alert(JSON.stringify(values, null, 2));
           setSubmitting(false);
         }, 400);
       }}
     >
       {({ isSubmitting, values, errors, touched }) => (
         <Form>
-          <Paper>
+          <Paper style={{        padding:        "0.5rem"        }}>
             <Grid container spacing={1}>
               <Grid item xs={12}>
                 <div className={classes.saveMinMax}>
@@ -150,7 +151,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                     <Button
                       size="small"
                       type="submit"
-                      variant="outlined"
+                      variant="contained"
                       color="primary"
                       startIcon={<SaveIcon fontSize="large" />}
                     >
@@ -164,12 +165,11 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                 <Grid item xs={12} sm={itemAttributes?.length ? 6 : 12}>
                   <ElementSubItems
                     value={values.elements}
-                    parentPath={lixiItem?.path || ""}
                     header={`Sub-Elements ${
                       itemSubElement["choice"] ? "CHOICE" : "(SEQUENCE)"
                     }`}
                     subItems={leafEle}
-                    arrayName="elements"
+                    name="elements"
                   />
                 </Grid>
               ) : undefined}
@@ -177,10 +177,9 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                 <Grid item xs={12} sm={leafEle?.length ? 6 : 12}>
                   <ElementSubItems
                     value={values.attributes}
-                    parentPath={lixiItem?.path || ""}
                     header="Attributes"
                     subItems={leafAttribs}
-                    arrayName="attributes"
+                    name="attributes"
                   />
                 </Grid>
               ) : undefined}
@@ -208,7 +207,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
               </Grid>
             </Grid>
           </Paper>
-          <pre>{JSON.stringify(values, null, 2)}</pre>
+          {/* <pre>{JSON.stringify(values, null, 2)}</pre> */}
         </Form>
       )}
     </Formik>

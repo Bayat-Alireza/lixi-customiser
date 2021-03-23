@@ -18,8 +18,8 @@ export const SearchPath: React.FC = () => {
   // const [path, setPath] = useState<string>();
   const [options, setOptions] = useState<string[] | null>([]);
   const [showSearchBox, setShowSearchBox] = useState<boolean>(true);
-  const { loading, schema } = useTypedSelector((state) => state.schema);
-  const { data } = useTypedSelector((state) => state.item);
+  const {  schema } = useTypedSelector((state) => state.schema);
+  const { data,loading } = useTypedSelector((state) => state.item);
   const { subSchema } = useTypedSelector((state) => state.customizer);
   const _loading = loading || options?.length === 0;
 
@@ -28,6 +28,13 @@ export const SearchPath: React.FC = () => {
     const newItem = new LixiBase(data);
     return newItem?.path;
   }, [data]);
+
+  useEffect(() => {
+    if (data) {
+      setShowSearchBox(false);
+    }
+  },  [data]);
+
   useEffect(() => {
     const lixiItems = (): Promise<string[]> => {
       return new Promise((resolves, rejects) => {
@@ -63,7 +70,7 @@ export const SearchPath: React.FC = () => {
   return (
     <div>
       <div>
-        {showSearchBox ? (
+        {!data || showSearchBox ? (
           <Slide
             direction="down"
             in={showSearchBox}

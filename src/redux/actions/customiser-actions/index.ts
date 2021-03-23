@@ -43,8 +43,14 @@ interface CustomizeSubSchema {
   payload: SubSchema;
 }
 
+interface IUpdateCustomisation {
+  type: CustomizationActionType.UPDATE_CUSTOMISATION;
+  payload: Element;
+}
+
 export type CustomizationAction =
   | CustomiseElement
+  | IUpdateCustomisation
   | UploadCustomizationAction
   | UploadSuccessCustomizationAction
   | UploadErrorCustomizationAction

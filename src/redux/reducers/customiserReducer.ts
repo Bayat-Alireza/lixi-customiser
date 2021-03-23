@@ -47,24 +47,6 @@ const reducer = (
         loading: false,
         error: action.payload,
       };
-    case CustomizationActionType.EXCLUDE:
-      return {
-        ...state,
-        customization: action.payload.customisedSchema,
-        customisedItem: action.payload.customisedItem,
-      };
-    case CustomizationActionType.INCLUDE:
-      return {
-        ...state,
-        customization: action.payload,
-        customisedItem: undefined,
-      };
-    case CustomizationActionType.CUSTOMISE_ELEMENT:
-      return {
-        ...state,
-        customization: action.payload.customisedSchema,
-        customisedItem: action.payload.customisedItem,
-      };
     case CustomizationActionType.CUSTOMIZE_SUB_SCHEMA:
       return { ...state, subSchema: action.payload };
     case CustomizationActionType.RESET_SUB_SCHEMA:
@@ -74,6 +56,11 @@ const reducer = (
         subSchema: undefined,
         customization: undefined,
         customisedItem: undefined,
+      };
+    case CustomizationActionType.UPDATE_CUSTOMISATION:
+      return {
+        ...state,
+        customization: action.payload,
       };
     default:
       return state;

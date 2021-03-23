@@ -10,6 +10,9 @@ import { ItemXMLViewer } from "../itemXMLViewer/ItemXMLViewer";
 import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { SearchPath } from "../search/SearchPath";
 import { LixiItem } from "../lixi-item/LixiItem";
+import { Customiser } from "../../models/Customiser";
+import { LixiBase } from "../../models/LixiBase";
+import { CreateInstructionTab } from "./create-instruction/CreateInstruction";
 // import TabPanel from "@material-ui/lab/TabPanel/TabPanel";
 
 interface TabPanelProps {
@@ -48,6 +51,7 @@ function a11yProps(index: any) {
 export const NavTabs: React.FC = () => {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
+  const [itemInstruction, setItemInstruction] = React.useState<Element>();
   const { customization, customisedItem } = useTypedSelector(
     (state) => state.customizer
   );
@@ -55,6 +59,19 @@ export const NavTabs: React.FC = () => {
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
+
+  React.useEffect(() => {
+    console.log("data:", data);
+    if (!data) return;
+    const path = new LixiBase(data)?.path;
+    if (path) {
+      const newCustomiser = new Customiser(customization, path);
+      const customisedItem = newCustomiser?.getCustomisedItem()?.parentElement;
+      console.log("customisedItem", customisedItem);
+      if (!customisedItem) return;
+      setItemInstruction(customisedItem);
+    }
+  }, [customization, data]);
 
   return (
     <div className={classes.root}>
@@ -75,14 +92,14 @@ export const NavTabs: React.FC = () => {
           <VerticalLinearStepper />
         </Box>
       </TabPanel>
+      
+      <CreateInstructionTab value={value} index={1} />
 
-      <TabPanel value={value} index={1}>
+      {/* <TabPanel value={value} index={1}>
         <SearchPath />
         {data ? <LixiItem item={data} /> : undefined}
-        {customisedItem ? (
-          <ItemXMLViewer itemXML={customisedItem} />
-        ) : undefined}
-      </TabPanel>
+        {<ItemXMLViewer itemXML={itemInstruction} />}
+      </TabPanel> */}
       <TabPanel value={value} index={2}>
         {<ItemXMLViewer itemXML={customization} />}
       </TabPanel>

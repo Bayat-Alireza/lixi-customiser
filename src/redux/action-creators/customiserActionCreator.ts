@@ -2,68 +2,7 @@ import { CustomizationActionType } from "../action-types";
 import { CustomizationAction, SubSchema } from "../actions/customiser-actions";
 import { Dispatch } from "redux";
 import { RootState } from "..";
-import { Customiser } from "../../models/Customiser";
-import { CustomisedElementType } from "../../models/customisationTypes";
-import { ElementCustomiser } from "../../models/ElementCustomiser";
 
-export const excludeItem = (itemPath: string) => {
-  return (
-    dispatch: Dispatch<CustomizationAction>,
-    getState: () => RootState
-  ) => {
-    console.log(itemPath)
-    const { customization } = getState().customizer;
-    const newCustomisaion = new Customiser(customization, itemPath);
-    const customisedItem = newCustomisaion.exclude();
-    if (customisedItem) {
-      dispatch({
-        type: CustomizationActionType.EXCLUDE,
-        payload: {
-          customisedSchema: newCustomisaion.customisation,
-          customisedItem: customisedItem,
-        },
-      });
-    }
-    
-  };
-};
-export const includeItem = (itemPath: string) => {
-  return (
-    dispatch: Dispatch<CustomizationAction>,
-    getState: () => RootState
-  ) => {
-    const { customization } = getState().customizer;
-    if (!customization) return;
-    const newCustomisaion = new Customiser(customization, itemPath);
-
-    newCustomisaion.include();
-    dispatch({
-      type: CustomizationActionType.INCLUDE,
-      payload: newCustomisaion.customisation,
-    });
-  };
-};
-
-
-export const customiseElement = (customisedElement: CustomisedElementType, path: string) => {
-  return (
-    dispatch: Dispatch<CustomizationAction>,
-    getState: () => RootState
-  ) => {
-    const { customization } = getState().customizer;
-    const newCustomisation = new ElementCustomiser(customization, path,customisedElement);
-    newCustomisation.customise();
- 
-    if (!newCustomisation.customiseItem) return;
-    dispatch({
-      type: CustomizationActionType.CUSTOMISE_ELEMENT,
-      payload: {
-        customisedSchema: newCustomisation.customisation,
-        customisedItem: newCustomisation.customiseItem,
-      },
-    });
-  };;
-};;
 
 export const customizeSubSchema = (subSchema: SubSchema) => {
   return (
@@ -133,17 +72,11 @@ export const uploadExistingCustomization = (file: File) => {
   };
 };
 
-// export const resetBaseSchema = () => {
-//   return (dispatch: Dispatch<SchemaActions>) => {
-//     try {
-//       dispatch({
-//         type: SchemaActionType.RESET,
-//       });
-//     } catch (err) {
-//       dispatch({
-//         type: SchemaActionType.UPLOAD_ERROR,
-//         payload: err.message,
-//       });
-//     }
-//   };
-// };
+export const updateCustomisation = (customisation: Element) => {
+  return (dispatch: Dispatch<CustomizationAction>) => {
+    dispatch({
+      type: CustomizationActionType.UPDATE_CUSTOMISATION,
+      payload: customisation,
+    });
+  };
+};
