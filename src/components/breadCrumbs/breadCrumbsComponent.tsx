@@ -41,7 +41,13 @@ export const IconBreadcrumbs: React.FC<BreadCrumbsType> = (
 
   return (
     <Paper className={classes.root}>
-      <div style={{  display:  "flex",justifyContent:"space-between" ,alignItems:"center" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <Breadcrumbs
           separator={<ArrowForwardIosIcon className={classes.icon} />}
           aria-label="breadcrumb"
@@ -69,9 +75,6 @@ export const IconBreadcrumbs: React.FC<BreadCrumbsType> = (
             <FindInPageIcon fontSize="inherit" />
           </IconButton>
         </Breadcrumbs>
-        <Typography noWrap style={{marginRight:"1rem"}} color="textSecondary" variant="inherit">
-          <em>{`${subSchema?.transactionType} - ${subSchema?.transactionVersion}`}</em>
-        </Typography>
       </div>
     </Paper>
   );
