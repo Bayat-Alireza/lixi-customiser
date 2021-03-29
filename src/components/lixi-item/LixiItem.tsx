@@ -125,7 +125,7 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
 
                   <Button
                     disabled={exclude}
-                    style={{      height:      "max-content" ,width:"min-content"     }}
+                    style={{ height: "max-content", width: "min-content" }}
                     onClick={() => setOpenToCustomise((pre) => !pre)}
                     startIcon={<SettingsOutlinedIcon />}
                     variant="contained"
@@ -169,17 +169,29 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
                 horizontal: "right",
               }}
             >
-              <Typography color="primary" variant="h4">{lixiItem?.label}</Typography>
+              <Typography color="primary" variant="h4">
+                {lixiItem?.label}
+              </Typography>
             </Badge>
           </div>
-          <div style={{ maxWidth: "75ch" ,marginBottom:"1rem"}}>
-            <Typography style={{ padding: "0.1rem 1rem" }} color="textPrimary" variant="body1">
+          <div style={{ maxWidth: "75ch", marginBottom: "1rem" }}>
+            <Typography
+              style={{ padding: "0.1rem 1rem" }}
+              color="textPrimary"
+              variant="body1"
+            >
               {lixiItem?.documentation}
             </Typography>
           </div>
 
           <Divider />
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
             <div className={classes.attributes}>
               {lixiItem?.element.getAttributeNames().map((att, idx) => {
                 return (
@@ -192,49 +204,55 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
                       marginRight: "0.5rem",
                     }}
                   >
-                    <Typography color="textSecondary" align="left" variant="body1">
+                    <Typography
+                      color="textSecondary"
+                      align="left"
+                      variant="body1"
+                    >
                       {`${att}:`}
                     </Typography>
-                    <Typography color="textPrimary" align="left" variant="body2">
+                    <Typography
+                      color="textPrimary"
+                      align="left"
+                      variant="body2"
+                    >
                       <strong>{lixiItem?.element.getAttribute(att)}</strong>
                     </Typography>
-              
                   </Box>
                 );
               })}
             </div>
             <div className={classes.attributes}>
-                  {lixiItem?.transactions?.sort().map((t, idx) => {
-                    if (
-                      subSchema?.transactionType &&
-                      subSchema.transactionType !== t
-                    ) {
-                      return (
-                        <Chip
+              {lixiItem?.transactions?.sort().map((t, idx) => {
+                if (
+                  subSchema?.transactionType &&
+                  subSchema.transactionType !== t
+                ) {
+                  return (
+                    <Chip
                       key={`${idx}_${t}`}
                       size="small"
                       color="default"
                       variant="outlined"
                       label={t}
                     />
-                      );
-                    }else{
-                      <></>
-                    }
-                })}
-              </div>
+                  );
+                } else {
+                  <></>;
+                }
+              })}
+            </div>
           </div>
-            {lixiItem?.element.localName === "simpleType" ? (
-              <div className={classes.references}>
-                <Typography color="primary" align="left" variant="h6">
-                  {`Base Restriction:`}
-                </Typography>
-                <Typography color="secondary" align="left" variant="body1">
-                  {lixiItem?.baseRestriction}
-                </Typography>
-              </div>
-            ) : undefined}
-             
+          {lixiItem?.element.localName === "simpleType" ? (
+            <div className={classes.references}>
+              <Typography color="primary" align="left" variant="h6">
+                {`Base Restriction:`}
+              </Typography>
+              <Typography color="secondary" align="left" variant="body1">
+                {lixiItem?.baseRestriction}
+              </Typography>
+            </div>
+          ) : undefined}
 
           {lixiItem?.references ? (
             <div>
@@ -260,7 +278,9 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
           {itemType === "element" ? (
             <CustomiseElement lixiItem={lixiItem} />
           ) : undefined}
-          {itemType === "attribute" ? <CustomiseAttribute /> : undefined}
+          {itemType === "attribute" ? (
+            <CustomiseAttribute lixiItem={lixiItem} />
+          ) : undefined}
         </Collapse>
       </Grid>
     </Grid>
