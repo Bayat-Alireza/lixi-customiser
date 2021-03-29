@@ -24,7 +24,7 @@ interface UploadCustomizationAction {
 }
 interface UploadSuccessCustomizationAction {
   type: CustomizationActionType.UPLOAD_CUSTOMIZATION_SUCCESS;
-  payload: Element;
+  payload: { doc: Element; file: File };
 }
 interface UploadErrorCustomizationAction {
   type: CustomizationActionType.UPLOAD_CUSTOMIZATION_ERROR;

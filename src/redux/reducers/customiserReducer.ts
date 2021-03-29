@@ -8,6 +8,7 @@ interface CustomizationState {
   error: string | null;
   subSchema: SubSchema | undefined;
   customHeading?: string | undefined;
+  metaData: File | undefined;
 }
 
 const initialState: CustomizationState = {
@@ -16,6 +17,7 @@ const initialState: CustomizationState = {
   subSchema: { transactionType: undefined, transactionVersion: undefined },
   error: null,
   loading: false,
+  metaData: undefined,
 };
 
 const reducer = (
@@ -34,8 +36,9 @@ const reducer = (
     case CustomizationActionType.UPLOAD_CUSTOMIZATION_SUCCESS:
       return {
         ...state,
-        customization: action.payload,
+        customization: action.payload.doc,
         customisedItem: undefined,
+        metaData: action.payload.file,
         loading: false,
         error: null,
       };
@@ -43,6 +46,7 @@ const reducer = (
       return {
         ...state,
         customization: undefined,
+        metaData: undefined,
         customisedItem: undefined,
         loading: false,
         error: action.payload,

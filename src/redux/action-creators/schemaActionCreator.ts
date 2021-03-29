@@ -40,7 +40,7 @@ export const uploadBaseSchema = (file: File) => {
         const schema = await parsBaseSchema(baseSchema?.toString());
         dispatch({
           type: SchemaActionType.UPLOAD_SCHEMA_SUCCESS,
-          payload: schema,
+          payload: { doc: schema, file: file },
         });
       }
     } catch (err) {

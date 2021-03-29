@@ -10,7 +10,7 @@ interface ResetSchemaAction {
 
 interface UploadSchemaSuccessAction {
   type: SchemaActionType.UPLOAD_SCHEMA_SUCCESS;
-  payload: Document;
+  payload: { doc: Document; file: File };
 }
 
 interface UploadSchemaErrorAction {

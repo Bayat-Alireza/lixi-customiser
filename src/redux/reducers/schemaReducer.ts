@@ -5,12 +5,14 @@ interface SchemaState {
   loading: boolean;
   schema: Document | undefined;
   error: string | null;
+  metaData: File | undefined;
 }
 
 const initialState: SchemaState = {
   error: null,
   loading: false,
   schema: undefined,
+  metaData: undefined,
 };
 
 const reducer = (
@@ -19,13 +21,33 @@ const reducer = (
 ): SchemaState => {
   switch (action.type) {
     case SchemaActionType.UPLOAD_SCHEMA:
-      return { loading: true, schema: undefined, error: null };
+      return {
+        loading: true,
+        schema: undefined,
+        metaData: undefined,
+        error: null,
+      };
     case SchemaActionType.UPLOAD_SCHEMA_SUCCESS:
-      return { loading: false, error: null, schema: action.payload };
+      return {
+        loading: false,
+        error: null,
+        metaData: action.payload.file,
+        schema: action.payload.doc,
+      };
     case SchemaActionType.UPLOAD_SCHEMA_ERROR:
-      return { loading: false, schema: undefined, error: action.payload };
+      return {
+        loading: false,
+        schema: undefined,
+        metaData: undefined,
+        error: action.payload,
+      };
     case SchemaActionType.RESET_SCHEMA:
-      return { loading: false, schema: undefined, error: null };
+      return {
+        loading: false,
+        schema: undefined,
+        metaData: undefined,
+        error: null,
+      };
     default:
       return state;
   }

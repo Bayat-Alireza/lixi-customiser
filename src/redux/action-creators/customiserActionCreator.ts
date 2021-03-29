@@ -60,7 +60,12 @@ export const uploadExistingCustomization = (file: File) => {
         const existingCustomization = await parsExistingCustomization(existingSchema?.toString());
         dispatch({
           type: CustomizationActionType.UPLOAD_CUSTOMIZATION_SUCCESS,
-          payload: existingCustomization.getElementsByTagName("Customisations")[0],
+          payload: {
+            doc: existingCustomization.getElementsByTagName(
+              "Customisations"
+            )[0],
+            file: file,
+          },
         });
       }
     } catch (err) {
