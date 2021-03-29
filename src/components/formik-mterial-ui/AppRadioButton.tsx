@@ -10,13 +10,14 @@ type AppRadioButtonType = { label: string } & RadioProps & FieldAttributes<{}>;
 
 export const AppRadioButton: React.FC<AppRadioButtonType> = ({
   label,
+  onSelect,
   ...props
 }) => {
   const [field, meta] = useField<{}>(props);
   return (
     <FormControlLabel
       {...field}
-      control={<Radio color="primary" />}
+      control={<Radio onSelect={onSelect} color="primary" />}
       label={label}
     />
   );
