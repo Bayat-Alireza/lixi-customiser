@@ -19,6 +19,7 @@ export const SubSchemaMenu: React.FC = () => {
   const { schema } = useTypedSelector((state) => state.schema);
   const [transactionList, setTransactionList] = useState<SubSchema[]>([]);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -70,10 +71,12 @@ export const SubSchemaMenu: React.FC = () => {
       <Button
         className={classes.menuButton}
         color="primary"
+        // disableRipple
         aria-controls="simple-menu"
+        fullWidth
         aria-haspopup="true"
         onClick={handleClick}
-        variant="outlined"
+        variant="contained"
         disabled={transactionList.length ? false : true}
         endIcon={<KeyboardArrowDownIcon />}
       >
