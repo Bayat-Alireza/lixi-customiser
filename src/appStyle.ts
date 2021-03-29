@@ -7,6 +7,9 @@ export const useStyles = makeStyles((theme: Theme) =>
       minHeight: "100vh",
       backgroundColor: "#333",
       padding: "1rem",
+      [theme.breakpoints.down("xs")]: {
+        padding: "0.5",
+      },
     },
     main: {
       backgroundColor: "#fff",
@@ -14,6 +17,7 @@ export const useStyles = makeStyles((theme: Theme) =>
       margin: "auto",
       [theme.breakpoints.down("sm")]: {
         width: "100%",
+        margin:   "0"
       },
       [theme.breakpoints.up("md")]: {
         width: "70%",
