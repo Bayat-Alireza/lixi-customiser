@@ -1,6 +1,6 @@
 import React from 'react';
 import { CssBaseline } from '@material-ui/core';
-import { NavTabs } from './components/nav-taps/NavTaps';
+import { NavTabs } from "./components/nav-taps/NavTabs";
 import {useStyles}from "./appStyle"
 
 
