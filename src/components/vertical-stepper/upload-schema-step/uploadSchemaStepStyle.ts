@@ -3,7 +3,8 @@ import { makeStyles, createStyles, Theme } from "@material-ui/core";
 export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     uploadContainer: {
-      width: "max-content",
+      maxWidth: "75ch",
+      minWidth: "15rem",
       alignItems: "center",
       display: "flex",
       justifyContent: "flex-start",
@@ -25,5 +26,12 @@ export const useStyles = makeStyles((theme: Theme) =>
     nextButton: {
       marginLeft: "0.5rem",
     },
+    fileDetailHeaderRow:{
+      backgroundColor:theme.palette.primary.main,
+    },
+    fileDetailHeaderCell:{
+      
+      color:theme.palette.getContrastText(theme.palette.primary.main)
+    }
   })
 );
