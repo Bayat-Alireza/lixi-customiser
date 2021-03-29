@@ -2,7 +2,6 @@ import { Theme, createStyles, makeStyles } from "@material-ui/core";
 
 export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {},
     name: {
       display: "inline-block",
       margin: "0 2px",
@@ -13,14 +12,13 @@ export const useStyles = makeStyles((theme: Theme) =>
       marginLeft: "2.7rem",
       width: "75ch",
     },
-    saveButton: {
-      width: "max-content",
-      height: "max-content",
-    },
-    enumeratedList: {
-      maxHeight: "15rem",
+    root: {
       width: "100%",
-      overflowY: "scroll",
+    },
+    row: {
+      display: "flex",
+      justifyContent: "flex-start",
+      alignItems: "center",
     },
   })
 );
