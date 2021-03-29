@@ -3,19 +3,20 @@ import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import StepContent from "@material-ui/core/StepContent";
-import Button from "@material-ui/core/Button";
-import Paper from "@material-ui/core/Paper";
+// import Button from "@material-ui/core/Button";
+// import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { useStyles } from "./verticalStepperStyle";
 
 import { useAction } from "../../hooks/useActions";
-import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
+// import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 
-import RotateLeftIcon from "@material-ui/icons/RotateLeft";
+// import RotateLeftIcon from "@material-ui/icons/RotateLeft";
 
 import { UploadSchemaStep } from "./upload-schema-step/UploadSchemaStep";
 import { UploadCustomisationInstruction } from "./upload-customisation-instruction/UploadCustomisationInstruction";
-import { CompleteInstructionsHeader } from "./complete-instructions-header/CompleteInstructionsHeader";
+// import { CompleteInstructionsHeader } from "./complete-instructions-header/CompleteInstructionsHeader";
+import CssBaseline from "@material-ui/core/CssBaseline";
 // import { Divider } from "@material-ui/core";
 
 function getSteps() {
@@ -81,10 +82,11 @@ export const VerticalLinearStepper: React.FC = () => {
 
   
   return (
-    <Paper className={classes.root}>
-      <Stepper activeStep={activeStep} orientation="vertical">
+    <div className={classes.root}>
+      <CssBaseline/>
+      <Stepper className={classes.stepper} activeStep={activeStep} orientation="vertical">
         <Step>
-        <StepLabel>{"Upload LIXI Base/Transaction Schema"}</StepLabel>
+        <StepLabel>{"Upload LIXI Base Schema"}</StepLabel>
         <StepContent>
             <UploadSchemaStep handelNextClicked={handleNext}  />
         </StepContent>
@@ -105,14 +107,14 @@ export const VerticalLinearStepper: React.FC = () => {
            
           </StepContent>
         </Step>
-        <Step>
+        {/* <Step>
           <StepLabel>Update/Complete Instruction Header</StepLabel>
           <StepContent>
           <CompleteInstructionsHeader activeStep={activeStep} handelBack={handleBack} handelNext={handleNext} />
           </StepContent>
-        </Step>
+        </Step> */}
       </Stepper>
-      {activeStep === steps.length && (
+      {/* {activeStep === steps.length && (
         <>
           <Paper
             style={{ margin: "1rem" }}
@@ -154,8 +156,8 @@ export const VerticalLinearStepper: React.FC = () => {
           >
           </Paper>
         </>
-      )}
+      )} */}
       
-    </Paper>
+    </div>
   );
 };

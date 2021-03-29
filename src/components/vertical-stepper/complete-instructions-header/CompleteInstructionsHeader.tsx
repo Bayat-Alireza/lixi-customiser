@@ -63,9 +63,9 @@ export const CompleteInstructionsHeader: React.FC<ICompleteCustomisationHeader> 
     setInstructionHeader,
   ] = React.useState<InstructionHeader>(initialValue);
 
-  React.useEffect(() => {
-    console.log("Sub-Schema:", subSchema);
-  }, [subSchema]);
+  // React.useEffect(() => {
+  //   console.log("Sub-Schema:", subSchema);
+  // }, [subSchema]);
 
   React.useEffect(() => {
     const transaction = (): Promise<
@@ -134,7 +134,7 @@ export const CompleteInstructionsHeader: React.FC<ICompleteCustomisationHeader> 
                         size: "small",
                       }}
                       selectProps={{
-                        className: classes.selectObtion,
+                        className: classes.selectOption,
                         autoWidth: true,
                       }}
                     />

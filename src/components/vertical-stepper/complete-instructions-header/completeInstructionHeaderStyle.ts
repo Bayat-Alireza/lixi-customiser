@@ -6,7 +6,7 @@ export const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(0, 1, 0, 0),
       width: "10rem",
     },
-    selectObtion: {
+    selectOption: {
       // width: "12rem",
     },
     uploadContainer: {

@@ -4,7 +4,17 @@ export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: "100%",
+      padding: 0,
+      margin: 0,
       // margin: theme.spacing(1),
+    },
+    stepper:  {
+      padding:  "0.5rem",
+      margin:  "0.5rem",
+      [theme.breakpoints.down("xs")]:{
+        padding:  "0.2rem",
+        margin:  "0.2rem"
+      }
     },
     button: {
       marginTop: theme.spacing(1),
