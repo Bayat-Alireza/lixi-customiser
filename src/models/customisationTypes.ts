@@ -8,3 +8,12 @@ export type CustomisedElementType = {
   excerpt?: string;
   documentation?: string;
 };
+
+export type CustomiseAttributeType = {
+  optionalToMandatory: boolean;
+  pattern: string;
+  stringTo: "list" | "pattern" | "";
+  excerpt: string;
+  documentation: string;
+  enumerations: { name: string; definition: string }[];
+};
