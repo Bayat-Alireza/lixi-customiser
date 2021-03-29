@@ -12,6 +12,7 @@ import {ElementCustomiser} from '../../models/ElementCustomiser'
 // import { ElementCustomiser } from "../../models/ElementCustomiser";
 import { LixiBase } from "../../models/LixiBase";
 import { ElementSubItems } from "../element-sub-items/ElementSubItems";
+import { ExcerptDocumentation } from "../excerpt-documentation/ExcerptDocumentation";
 import { AppTextField } from "../formik-mterial-ui/AppTextField";
 import { CustomiseElementSchema } from "./customiseElementSchema";
 import { useStyles } from "./customiseElementStyle";
@@ -120,7 +121,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
     >
       {({ isSubmitting, values, errors, touched }) => (
         <Form>
-          <Paper style={{        padding:        "0.5rem"        }}>
+          <Paper style={{ padding: "0.5rem" }}>
             <Grid container spacing={1}>
               <Grid item xs={12}>
                 <div className={classes.saveMinMax}>
@@ -183,27 +184,9 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                   />
                 </Grid>
               ) : undefined}
-              <Grid item xs={12} sm={6}>
-                <AppTextField
-                  variant="outlined"
-                  multiline
-                  fullWidth
-                  rows={4}
-                  name="excerpt"
-                  value={values.excerpt}
-                  label="Custom Excerpt"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <AppTextField
-                  variant="outlined"
-                  multiline
-                  fullWidth
-                  rows={4}
-                  name="documentation"
-                  value={values?.documentation}
-                  label="Custom Documentation"
-                />
+
+              <Grid item xs={12}>
+                <ExcerptDocumentation />
               </Grid>
             </Grid>
           </Paper>
