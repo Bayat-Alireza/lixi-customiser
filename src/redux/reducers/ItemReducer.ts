@@ -5,12 +5,14 @@ interface ItemState {
   error: string | null;
   data: Element | null;
   loading: boolean;
+  markedForDeletionList: string[] | undefined;
 }
 
 const initialState: ItemState = {
   data: null,
   error: null,
   loading: false,
+  markedForDeletionList: undefined,
 };
 const reducer = (
   state: ItemState = initialState,
@@ -18,13 +20,30 @@ const reducer = (
 ): ItemState => {
   switch (action.type) {
     case ItemActionType.SEARCH_ITEM:
-      return { loading: true, error: null, data: null };
+      return {
+        loading: true,
+        error: null,
+        data: null,
+        markedForDeletionList: undefined,
+      };
     case ItemActionType.SEARCH_ITEM_SUCCESS:
-      return { loading: false, error: null, data: action.payload };
+      return {
+        loading: false,
+        error: null,
+        data: action.payload,
+        markedForDeletionList: undefined,
+      };
     case ItemActionType.SEARCH_ITEM_ERROR:
-      return { loading: false, error: action.payload, data: null };
+      return {
+        loading: false,
+        error: action.payload,
+        data: null,
+        markedForDeletionList: undefined,
+      };
     case ItemActionType.REST_ITEM:
-      return { loading: false, error: null, data: null };
+      return { loading: false, error: null, data: null,markedForDeletionList:undefined  };
+    case ItemActionType.MARKED_FOR_DELETION:
+      return { ...state,markedForDeletionList:action.payload  };
 
     default:
       return state;
