@@ -63,5 +63,15 @@ export const useStyles = makeStyles((theme: Theme) =>
         backgroundColor: "orange",
       },
     },
+    typeAttribute: {
+      cursor: "pointer",
+
+      "&:hover": {
+        color: theme.palette.primary.main,
+      },
+    },
+    otherAttribute: {
+      cursor: "not-allowed",
+    },
   })
 );

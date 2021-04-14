@@ -52,8 +52,11 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
   );
   const { searchItem, updateCustomisation } = useAction();
 
-  const itemType = React.useMemo(() => {
+  const localName = React.useMemo(() => {
     return lixiItem?.element?.localName;
+  }, [lixiItem]);
+  const type = React.useMemo(() => {
+    return lixiItem?.element?.getAttribute("type");
   }, [lixiItem]);
 
   useEffect(() => {
@@ -84,8 +87,9 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
     }
   }, [customization, lixiItem?.path, exclude]);
 
-  useEffect(()  =>  {
-    if (!lixiItem?.element.localName || !lixiItem?.path || !customization)  return;
+  useEffect(() => {
+    if (!lixiItem?.element.localName || !lixiItem?.path || !customization)
+      return;
     const parentCustomised = ElementCustomiser.parentCustomised(
       lixiItem?.path,
       customization,
@@ -94,7 +98,9 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
     if (parentCustomised) {
       setAlert(parentCustomised);
     }
-  },  [customization, lixiItem?.path,lixiItem?.element.localName]);;
+  }, [customization, lixiItem?.path, lixiItem?.element.localName]);
+
+
 
   return (
     <Grid container spacing={2}>
@@ -212,9 +218,11 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
                       {`${att}:`}
                     </Typography>
                     <Typography
+                      className={att==="type"?classes.typeAttribute:classes.otherAttribute}
                       color="textPrimary"
                       align="left"
                       variant="body2"
+                      onClick={()=>att ==="type"?searchItem(type|| ""):undefined}
                     >
                       <strong>{lixiItem?.element.getAttribute(att)}</strong>
                     </Typography>
@@ -238,7 +246,7 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
                     />
                   );
                 } else {
-                  <></>;
+                  return <div key={`${idx}_${t}`}></div>;
                 }
               })}
             </div>
@@ -275,10 +283,10 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
       </Grid>
       <Grid item xs={12}>
         <Collapse in={openToCustomise}>
-          {itemType === "element" ? (
+          {localName === "element" ? (
             <CustomiseElement lixiItem={lixiItem} />
           ) : undefined}
-          {itemType === "attribute" ? (
+          {(localName === "attribute" && type === "stringType") ? (
             <CustomiseAttribute lixiItem={lixiItem} />
           ) : undefined}
         </Collapse>
