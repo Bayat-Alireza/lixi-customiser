@@ -30,7 +30,7 @@ export class Customiser {
     if (this.ExcludedItem() || !this.path) return;
     this.removeCustomisedItem();
     const doc = Customiser.docStub();
-    this.customiseItem.setAttribute("exclude", "yes");
+    this.customiseItem.setAttribute("Exclude", "Yes");
     const path = doc.createElement("Path");
     path.textContent = this.path;
     this.customiseItem.append(path);
@@ -45,12 +45,12 @@ export class Customiser {
   }
 
   ExcludedItem(): Element {
-    const allPath = this.customisation?.getElementsByTagName("Path");
+    const allPath = Array.from(this.customisation?.getElementsByTagName("Path"));
     const excludedPath: Element = Array.prototype.find.call(
       allPath,
       (p: Element) => {
-        if (p.parentElement?.getAttribute("exclude") === "yes") {
-          return p.innerHTML === this.path;
+        if (p.parentElement?.getAttribute("Exclude") === "Yes") {
+          return p.textContent === this.path;
         }
       }
     );
@@ -77,11 +77,11 @@ export class Customiser {
   }
 
   getCustomisedItem() {
-    const allPath = this.customisation.getElementsByTagName("Path");
+    const allPath = Array.from(this.customisation.getElementsByTagName("Path"));
     const excludedPath: Element = Array.prototype.find.call(
       allPath,
       (p: Element) => {
-        if (!p.parentElement?.getAttribute("exclude")) {
+        if (!p.parentElement?.getAttribute("Exclude")) {
           return p.textContent === this.path;
         }
       }
@@ -90,7 +90,7 @@ export class Customiser {
   }
 
   getTouchedItem() {
-    const allPath = this.customisation.getElementsByTagName("Path");
+    const allPath = Array.from(this.customisation.getElementsByTagName("Path"));
     const excludedPath: Element = Array.prototype.find.call(
       allPath,
       (p: Element) => {
@@ -131,23 +131,32 @@ export class Customiser {
   }
 
   affectedDecedents() {
-    const allPath = this.customisation?.getElementsByTagName("Path");
+    if (!this?.path) return;
+    const path = this.path;
+    const allPath = Array.from(this.customisation?.getElementsByTagName("Path"));
     const affectedItems: Element[] = Array.prototype.filter.call(
       allPath,
       (p: Element) => {
-        return p.textContent?.startsWith(this.path || "");
+        return p.textContent?.startsWith(path || "");
       }
     );
+
     return affectedItems;
   }
   removeCustomisation(paths: string[]){
-    const allCustomisedPaths = this.customisation.getElementsByTagName("Path");
-    Array.prototype.forEach.call(allCustomisedPaths,      (path:      Element)      =>      {
-      if (path?.textContent && paths.includes(path?.textContent)){
-        if(path.parentElement){
-          this.customisation.removeChild(path.parentElement)
+    console.log("paths:", paths);
+    const allCustomisedPaths = Array.from(this.customisation.getElementsByTagName("Path"));
+
+
+    Array.prototype.forEach.call(allCustomisedPaths, (p: Element) => {
+      console.log("path:",  p.textContent);;
+      if (p) {
+        if (p?.textContent && paths.includes(p?.textContent)) {
+          if (p.parentElement) {
+            this.customisation.removeChild(p?.parentElement);
+          }
         }
       }
-    })
+    });
   }
 }
