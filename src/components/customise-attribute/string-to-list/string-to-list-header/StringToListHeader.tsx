@@ -7,8 +7,6 @@ import ControlPointRoundedIcon from "@material-ui/icons/ControlPointRounded";
 import IconButton from "@material-ui/core/IconButton/IconButton";
 import { useStyles } from "./stringToListHeaderStyle";
 import Paper from "@material-ui/core/Paper";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import Typography from "@material-ui/core/Typography";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 
