@@ -15,6 +15,7 @@ export class AttributeCustomiser extends Customiser {
       pattern: "",
       stringTo: "",
       excerpt: "",
+      heading: "",
       documentation: "",
       enumerations: [],
     };
@@ -59,7 +60,7 @@ export class AttributeCustomiser extends Customiser {
     this.object.enumerations.forEach(({ definition, name }, idx) => {
       const enumeration = doc.createElement("Enumeration");
       enumeration.textContent = name;
-      enumeration.setAttribute("definition", definition);
+      enumeration.setAttribute("Definition", definition);
       this.customiseItem.append(enumeration);
     });
   }
@@ -72,16 +73,24 @@ export class AttributeCustomiser extends Customiser {
   }
 
   setInLineAttributes() {
-    const { optionalToMandatory, stringTo, enumerations } = this.object;
+    const {
+      optionalToMandatory,
+      stringTo,
+      enumerations,
+      heading,
+    } = this.object;
+    if (heading) {
+      this.customiseItem.setAttribute("customHeading", heading);
+    }
     if (optionalToMandatory) {
-      this.customiseItem.setAttribute("optionalToMandatory", "yes");
+      this.customiseItem.setAttribute("OptionalToMandatory", "Yes");
     }
     if (stringTo === "pattern") {
-      this.customiseItem.setAttribute("stringToPattern", "yes");
+      this.customiseItem.setAttribute("StringToPattern", "Yes");
       return;
     }
     if (stringTo === "list" && enumerations.length) {
-      this.customiseItem.setAttribute("stringToList", "yes");
+      this.customiseItem.setAttribute("StringToList", "Yes");
       return;
     }
   }
@@ -91,25 +100,31 @@ export class AttributeCustomiser extends Customiser {
     if (!customisedAttr) return this.object;
     customisedAttr.getAttributeNames().forEach((att, idx) => {
       switch (att) {
-        case "optionalToMandatory": {
+        case "customHeading": {
+          this.object.heading = (customisedAttr.getAttribute("customHeading") || "")
+          break
+        }
+        case "OptionalToMandatory": {
           this.object.optionalToMandatory = true;
           break;
         }
-        case "stringToPattern": {
+        case "StringToPattern": {
           this.object.stringTo = "pattern";
           break;
         }
-        case "stringToList": {
+        case "StringToList": {
           this.object.stringTo = "list";
           break;
         }
+        default:
+          break;
       }
     });
     Array.prototype.forEach.call(customisedAttr.children, (child: Element) => {
       switch (child.localName) {
         case "Enumeration":
           const name = child.textContent;
-          const definition = child.getAttribute("definition");
+          const definition = child.getAttribute("Definition");
           if (!name || !definition) return;
           this.object.enumerations.push({ name, definition });
           break;
@@ -120,6 +135,10 @@ export class AttributeCustomiser extends Customiser {
         case "CustomDocumentation":
           const documentation = child.textContent;
           this.object.documentation = documentation ? documentation : "";
+          break;
+        case "Pattern":
+          const pattern = child.textContent;
+          this.object.pattern = pattern ? pattern : "";
           break;
         default:
           break;
