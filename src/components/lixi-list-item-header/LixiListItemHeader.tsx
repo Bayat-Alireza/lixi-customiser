@@ -7,43 +7,63 @@ import IndeterminateCheckBoxTwoToneIcon from "@material-ui/icons/IndeterminateCh
 import CloseOutlinedIcon from "@material-ui/icons/CloseOutlined";
 import DoneOutlinedIcon from "@material-ui/icons/DoneOutlined";
 import { useStyles } from "./lixiListItemHeaderStyle";
+import { CustomisedElementType } from "../../models/customisationTypes";
+import { LixiBase } from "../../models/LixiBase";
+import { FieldArrayRenderProps, useFormikContext } from "formik";
 
 interface IHeaderLixiItem {
   name: "includeAllElements" | "includeAllAttributes";
   header: string;
-  itemsLength: number;
+  items: (LixiBase | null | undefined)[];
   selectedItemsLength: number;
-  toggle: () => void;
-  includesAll: boolean;
+  toggle: (value:string) => void;
+  arrayHelper:FieldArrayRenderProps
 }
 
 export const LixiListItemHeader: React.FC<IHeaderLixiItem> = ({
   name,
   toggle,
-  itemsLength,
+  items,
   selectedItemsLength,
   header,
-  includesAll,
+  arrayHelper:FieldArrayRenderProps
 }) => {
   const classes = useStyles();
+  const [value,setValue]=React.useState<string>("")
+  const {values} = useFormikContext<CustomisedElementType>()
+
+  React.useEffect(()=>{
+    if(selectedItemsLength === items.length ){
+      setValue(name)
+      values[name] = true
+      return
+    }
+    values[name] = false
+    setValue("")
+    
+  },[items.length, name, selectedItemsLength, value, values])
+
   return (
     <ListSubheader
+      key={name}
       style={{ marginTop: "0", alignItems: "center" }}
       className={classes.subItemHeader}
     >
       <ListItemIcon>
         <AppCheckBox
+          key={name}
           name={name}
-          checked={selectedItemsLength === itemsLength ? true : includesAll}
+          checked={!!value}
+          value={value}
           disableRipple
-          onClick={toggle}
+          onClick={()=>toggle(name)}
           checkedIcon={<DoneOutlinedIcon style={{ color: "green" }} />}
           icon={<CloseOutlinedIcon style={{ color: "red" }} />}
           indeterminateIcon={
             <IndeterminateCheckBoxTwoToneIcon color="primary" />
           }
           indeterminate={
-            selectedItemsLength > 0 && selectedItemsLength < itemsLength
+            selectedItemsLength > 0 && selectedItemsLength < items.length
           }
         />
       </ListItemIcon>
