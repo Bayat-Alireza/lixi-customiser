@@ -33,8 +33,9 @@ export const ConfirmRemoveItemDialog: React.FC<IConfirmRemoveItem> = ({
   handleClose,
 }) => {
   const classes = useStyles();
-  const { updateCustomisation } = useAction();
-  const { customization } = useTypedSelector((state) => state.customizer);
+  const { markedForDeletion } = useAction();
+  const { markedForDeletionList } = useTypedSelector((state) => state.item);
+  
   return (
     <Formik
       initialValues={{ agree: false, ...affected }}
@@ -45,10 +46,15 @@ export const ConfirmRemoveItemDialog: React.FC<IConfirmRemoveItem> = ({
       onSubmit={(values, { setSubmitting, resetForm }) => {
         setTimeout(() => {
           setSubmitting(true);
-          const newCustomiser = new Customiser(customization);
-          newCustomiser.removeCustomisation(values.items);
-          updateCustomisation(newCustomiser.customisation);
-          // alert(JSON.stringify(values, null, 2));
+          const deletionList = markedForDeletionList
+            ? [...markedForDeletionList]
+            : [];
+          values.items.forEach((item) => {
+            if (!markedForDeletionList?.includes(item)) {
+              deletionList.push(item);
+            }
+          });
+          markedForDeletion([...deletionList]);
           setSubmitting(false);
           resetForm();
           handleClose();
