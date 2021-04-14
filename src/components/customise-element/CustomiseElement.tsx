@@ -8,8 +8,8 @@ import React from "react";
 import { useAction } from "../../hooks/useActions";
 import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { CustomisedElementType } from "../../models/customisationTypes";
-import {ElementCustomiser} from '../../models/ElementCustomiser'
-// import { ElementCustomiser } from "../../models/ElementCustomiser";
+import { Customiser } from "../../models/Customiser";
+import { ElementCustomiser } from "../../models/ElementCustomiser";
 import { LixiBase } from "../../models/LixiBase";
 import { ElementSubItems } from "../element-sub-items/ElementSubItems";
 import { ExcerptDocumentation } from "../excerpt-documentation/ExcerptDocumentation";
@@ -24,8 +24,9 @@ type SubElement = { [key: string]: Element[] };
 
 export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
   const classes = useStyles();
-  const { updateCustomisation } = useAction();
+  const { updateCustomisation, } = useAction();
   const { customization } = useTypedSelector((state) => state.customizer);
+  const { markedForDeletionList } = useTypedSelector((state) => state.item);
   const [initialValue, setInitialValue] = React.useState<CustomisedElementType>(
     {
       newMin: "",
@@ -36,10 +37,16 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
       attributes: [],
       excerpt: "",
       documentation: "",
+      heading:""
     }
   );
   const [itemSubElement, setItemSubElement] = React.useState<SubElement>({});
   const [itemAttributes, setItemAttributes] = React.useState<Element[]>([]);
+  const [excludedList,setExcludedList] = React.useState<{elements:string[],attributes:string[]}>({elements:[],attributes:[]})
+  const [fixedListItem, setFixedListItems] = React.useState<{
+    elements: string[];
+    attributes: string[];
+  }>({ elements: [], attributes: [] });
 
   const [occursMinMax, setOccursMinMax] = React.useState<
     | {
@@ -75,6 +82,12 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
     );
     const instruction = newCustomisation.customisedObject();
     setInitialValue(instruction);
+    if (!instruction.elements.length && !instruction.attributes.length) return;
+    setFixedListItems({
+      elements: [...instruction.elements],
+      attributes: [...instruction.attributes],
+    });
+
   }, [customization, lixiItem?.path]);
 
   React.useEffect(() => {
@@ -96,6 +109,9 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
     setOccursMinMax(occurrenceMinMax);
   }, [lixiItem?.element]);
 
+
+
+
   return (
     <Formik
       enableReinitialize
@@ -106,15 +122,26 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
       onSubmit={(values, { setSubmitting }) => {
         setSubmitting(true);
         if (!lixiItem?.path) return;
+        
+          alert(JSON.stringify(values, null, 2))
         const newCustomisation = new ElementCustomiser(
           customization,
           lixiItem?.path,
           values
         );
+        const {elements, attributes} = excludedList
+        if (markedForDeletionList){
+          newCustomisation.removeCustomisation([...markedForDeletionList])
+        }
+        if (elements.length){
+          newCustomisation.removeCustomisation([...elements])
+        }
+        if (attributes.length ){
+          newCustomisation.removeCustomisation([...attributes])
+        }
         newCustomisation.customise();
         updateCustomisation(newCustomisation.customisation);
         setTimeout(() => {
-          // alert(JSON.stringify(values, null, 2));
           setSubmitting(false);
         }, 400);
       }}
@@ -165,6 +192,9 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
               {leafEle?.length ? (
                 <Grid item xs={12} sm={itemAttributes?.length ? 6 : 12}>
                   <ElementSubItems
+                    setExcludedList={setExcludedList}
+                    fixedListItem={fixedListItem["elements"]}
+                    key={"element"}
                     value={values.elements}
                     header={`Sub-Elements ${
                       itemSubElement["choice"] ? "CHOICE" : "(SEQUENCE)"
@@ -177,6 +207,9 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
               {leafAttribs?.length ? (
                 <Grid item xs={12} sm={leafEle?.length ? 6 : 12}>
                   <ElementSubItems
+                    setExcludedList={setExcludedList}
+                    fixedListItem={fixedListItem["attributes"]}
+                    key="attribute"
                     value={values.attributes}
                     header="Attributes"
                     subItems={leafAttribs}
@@ -190,7 +223,10 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
               </Grid>
             </Grid>
           </Paper>
-          {/* <pre>{JSON.stringify(values, null, 2)}</pre> */}
+          {/* <pre>{JSON.stringify(values, null, 2)}</pre>
+          <pre>{JSON.stringify(markedForDeletionList, null, 2)}</pre>
+          <pre>{JSON.stringify(excludedList["attributes"], null, 2)}</pre>
+          <pre>{JSON.stringify(excludedList["elements"], null, 2)}</pre> */}
         </Form>
       )}
     </Formik>
