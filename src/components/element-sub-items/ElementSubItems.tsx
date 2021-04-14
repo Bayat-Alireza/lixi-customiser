@@ -1,6 +1,7 @@
 import List from "@material-ui/core/List/List";
 import { FieldArray, useFormikContext } from "formik";
 import React from "react";
+import { useAction } from "../../hooks/useActions";
 import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { CustomisedElementType } from "../../models/customisationTypes";
 import { Customiser } from "../../models/Customiser";
@@ -14,19 +15,33 @@ interface SubItems {
   header: string;
   name: "elements"|"attributes";
   value:string[];
+  fixedListItem:string[]
+  setExcludedList:React.Dispatch<React.SetStateAction<{
+    elements: string[];
+    attributes: string[];
+} >>
 }
 
 export const ElementSubItems: React.FC<SubItems> = ({
   subItems,
   header,
   name,
+  fixedListItem,
+  setExcludedList,
   value
 }) => {
   const classes = useStyles();
+  const [selectAll, setSelectAll] = React.useState<{elements:boolean|"disable",attributes:boolean|"disable",touched:boolean}>({
+    elements:true,attributes:true,touched:false
+  })
+  const [touched, setTouched] = React.useState<{elements:boolean,attributes:boolean}>({
+    elements:false,attributes:false
+  })
   const { customization } = useTypedSelector((state) => state.customizer);
-  const [includeAll, setIncludeAll] = React.useState<boolean>(true);
-  const {values,getFieldHelpers} = useFormikContext<CustomisedElementType>()
-
+  const { markedForDeletionList } = useTypedSelector((state) => state.item);
+  // const { markedForDeletion } = useAction();
+  const {values} = useFormikContext<CustomisedElementType>()
+  
   const includeAllItem = React.useMemo(()=>{
     const titleCaseName = name.replace(new RegExp("^[a-z]"),(matched) => {
     return matched.toUpperCase();
@@ -34,111 +49,95 @@ export const ElementSubItems: React.FC<SubItems> = ({
     return `includeAll${titleCaseName}`
   },[name]) as  "includeAllElements"|"includeAllAttributes"
 
-
-  const affected = React.useMemo(()=>{
-    const affectedItem = {}as{path:string,items:string[]}
-    const result = [] as {path:string,items:string[]}[]
-    subItems?.forEach((item:LixiBase|null|undefined) => {
-      if (item && item.path){
-        const customiser = new Customiser(customization,item.path)
-        const affectedList = customiser.affectedDecedents()
-        if (affectedList.length){
-          affectedItem.path = item.path
-          affectedItem.items = []
-          affectedList.forEach((i)=>{
-            if (i.textContent){
-              affectedItem.items.push(i.textContent)
-            }
-          })
-          if(affectedItem.items.length)
-          result.push(affectedItem)
+  const affected2 = React.useMemo(()=>{
+    if (!customization)return
+    const excluded:string[] = []
+    const excludedFullPath:string[]=[]
+    const included:string[] = []
+    subItems?.forEach((item:LixiBase|null|undefined)=>{
+      const path = item?.path as string
+      const leaf = path.split(".").pop() as string
+      const customiser = new Customiser(customization, path);
+      const affectedList = customiser.affectedDecedents();
+      affectedList?.forEach((affected)=>{
+        if (affected.textContent?.split(".").pop() === leaf){
+          if(!!affected?.parentElement?.getAttribute("Exclude") && !excluded.includes(leaf)){
+              excluded.push(leaf)
+              excludedFullPath.push(affected.textContent)
+          }else if(!included.includes(leaf)){
+              included.push(leaf)
+          }
+        } else if(!included.includes(leaf)){
+            included.push(leaf)
         }
-      }
-    });
-    if(result.length){return result}
-
-  },[customization,subItems])
-
-
-
-  React.useEffect(()=>{
-    const reflectAffected = (): Promise<void>=>{
-      return new Promise((resolves,rejects)=>{
-        affected?.forEach(({path})=>{
-          values[name]?.push(path.split(".").pop()|| "")
-          resolves(getFieldHelpers(name).setValue(values[name]))
-  
-        })
       })
-    }
-    if (!includeAll){
-      (async()=>{
-       await reflectAffected()
-      })()
-      
-    }
-    
-    
-  },[affected, name, getFieldHelpers, values,includeAllItem,includeAll])
+    })
+    return {included:[...included],excluded:[...excluded],excludedFullPath:[...excludedFullPath]}
+  },[customization, subItems])
 
-  const toggleExclude = async() => {
-    setIncludeAll(!includeAll);
-    promiseRemove()
-    
+
+  React.useEffect(()=>{
+    if (!affected2?.excludedFullPath.length)return
+    const {excludedFullPath} = affected2
+    const deletionList:string[] = []
+    excludedFullPath.forEach((exc)=>{
+      if(!markedForDeletionList?.includes(exc)){
+        deletionList.push(exc)
+      }
+    })
+    setExcludedList((pre)=>({...pre,[name]:[...deletionList]}))
+  },[affected2, markedForDeletionList, name, setExcludedList])
+  
+  const toggleExclude = (value:string) => {
+    if(!touched[name]){
+      setTouched({...touched,[name]:true})
+    }
+    if (value === "disable"){
+        setSelectAll({...selectAll,elements:"disable",attributes:"disable"})
+        return 
+      }
+    if(value==="enable"){
+      return
+    }
+    setSelectAll({...selectAll,[name]:!selectAll[name]})
   };
-  const promiseRemove = (): Promise<void> =>{
-        return new Promise((resolves,rejects)=>{
-          if (!includeAll && value?.length) {
-                for (let i=value.length; i >=0;i--){
-                  values[name]?.splice(i,1)
-                }
-              } 
-          resolves(getFieldHelpers(name).setValue(values[name]))
-        })
-      }
-
-  React.useEffect(()=>{
-      if (!values[includeAllItem] && !value.length){
-        setIncludeAll(false)
-      }
-  },[values,includeAllItem,value.length])
-  React.useEffect(()=>{
-    if (value.length && includeAll){
-      setIncludeAll(false)
-
-    }
-  },[value?.length,includeAll])
-
+ 
   return (
     <>
-    
       <List className={classes.subItem}>
         <FieldArray
           name={name}
-          render={() => (
+          render={(arrayHelper) => (
             <div>
               <LixiListItemHeader 
               name={includeAllItem}
-              includesAll={includeAll}
               header={header} 
-              itemsLength={subItems.length}
+              items={subItems}
+              arrayHelper={arrayHelper}
               selectedItemsLength={values[name].length}
               toggle={toggleExclude}
               />
-              {!includeAll &&
+              {
                 subItems?.map((subEle, idx) => {
                   if (!subEle?.path) {
-                    return <></>;
+                    return <p></p>;
                   }
                   return (
                     <LixiListItem 
                     key={`${idx}-${subEle.path}`} 
+                    fixedListItem={fixedListItem}
                     name={name} 
                     element={subEle} 
-                    values={{values}} 
+                    selectAll={selectAll[name]}
+                    touched={touched[name]}
+                    toggleSelectAll={toggleExclude}
+                    excluded={affected2?.excluded||[]}
+                    included={affected2?.included||[]}
+                    arrayHelper={arrayHelper}
                     />
                   );
                 })}
+                
             </div>
           )}
         />
