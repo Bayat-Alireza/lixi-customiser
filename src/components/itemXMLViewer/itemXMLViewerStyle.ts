@@ -6,7 +6,7 @@ export const useStyles = makeStyles((theme: Theme) =>
       position: "relative",
       overflow: "scroll",
       backgroundColor: "#444",
-      height: "40vh",
+      height: "100%",
       marginTop: "0.5rem",
       borderRadius: "0.1rem",
     },
