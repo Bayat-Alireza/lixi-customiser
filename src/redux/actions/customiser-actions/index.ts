@@ -33,10 +33,10 @@ interface UploadErrorCustomizationAction {
 interface ResetSubSchemaAction {
   type: CustomizationActionType.RESET_SUB_SCHEMA;
 }
-interface IncludeItem {
-  type: CustomizationActionType.INCLUDE;
-  payload: Element;
-}
+// interface IncludeItem {
+//   type: CustomizationActionType.INCLUDE;
+//   payload: Element;
+// }
 
 interface CustomizeSubSchema {
   type: CustomizationActionType.CUSTOMIZE_SUB_SCHEMA;
@@ -48,6 +48,8 @@ interface IUpdateCustomisation {
   payload: Element;
 }
 
+
+
 export type CustomizationAction =
   | CustomiseElement
   | IUpdateCustomisation
@@ -55,6 +57,6 @@ export type CustomizationAction =
   | UploadSuccessCustomizationAction
   | UploadErrorCustomizationAction
   | ExcludeItem
-  | IncludeItem
+  // | IncludeItem
   | CustomizeSubSchema
   | ResetSubSchemaAction;
