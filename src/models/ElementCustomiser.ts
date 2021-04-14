@@ -3,17 +3,20 @@ import { CustomisedElementType } from "./customisationTypes";
 
 export class ElementCustomiser extends Customiser {
   object = {} as CustomisedElementType;
+  fixedList:boolean
   constructor(
     customisation: Element | undefined = undefined,
     path?: string,
     values?: CustomisedElementType
   ) {
     super(customisation, path);
+    this.fixedList = !!(values?.elements.length || values?.attributes.length)
     this.object = values || {
       includeAllElements: true,
       includeAllAttributes: true,
       elements: [],
       attributes: [],
+      heading: "",
       excerpt: "",
       documentation: "",
       newMin: "",
@@ -47,10 +50,10 @@ export class ElementCustomiser extends Customiser {
     this.removeCustomisedItem();
     this.itemPath();
     this.setInLineAttributes();
-    this.customMinOccurs();
     this.customMaxOccurs();
-    this.customElements();
+    this.customMinOccurs();
     this.customAttributes();
+    this.customElements();
     this.customExcerpt();
     this.customDocumentation();
     this.customisation.append(this.customiseItem);
@@ -58,7 +61,7 @@ export class ElementCustomiser extends Customiser {
 
   customMinOccurs() {
     if (this.object.newMin) {
-      this.customiseItem.setAttribute("customMinOccurs", "yes");
+      this.customiseItem.setAttribute("CustomMinOccurs", "Yes");
       const doc = Customiser.docStub();
       const customMinOccurs = doc.createElement("CustomMinOccurs");
       customMinOccurs.textContent = this.object.newMin.toString();
@@ -67,7 +70,7 @@ export class ElementCustomiser extends Customiser {
   }
   customMaxOccurs() {
     if (this.object.newMax) {
-      this.customiseItem.setAttribute("customMaxOccurs", "yes");
+      this.customiseItem.setAttribute("CustomMaxOccurs", "Yes");
       const doc = Customiser.docStub();
       const customMaxOccurs = doc.createElement("CustomMaxOccurs");
       customMaxOccurs.textContent = this.object.newMax.toString();
@@ -93,25 +96,29 @@ export class ElementCustomiser extends Customiser {
       this.customiseItem.append(element);
     });
   }
+
   setInLineAttributes() {
+    if  (this.object.heading)  {
+      this.customiseItem.setAttribute("customHeading",  this.object.heading);;
+    }
     if (this.object.elements.length || this.object.attributes.length) {
-      this.customiseItem.setAttribute("include", "yes");
+      this.customiseItem.setAttribute("Include", "Yes");
     }
     if (this.object.elements.length) {
-      this.customiseItem.setAttribute("excludeAllElements", "no");
+      // this.customiseItem.setAttribute("ExcludeAllElements", "No");
     }
     if (this.object.attributes.length) {
-      this.customiseItem.setAttribute("excludeAllAttributes", "no");
+      // this.customiseItem.setAttribute("ExcludeAllAttributes", "No");
     }
     if (this.object.includeAllAttributes) {
-      this.customiseItem.setAttribute("includeAllAttributes", "yes");
+      // this.customiseItem.setAttribute("IncludeAllAttributes", "Yes");
     } else if (!this.object.attributes.length) {
-      this.customiseItem.setAttribute("excludeAllAttributes", "yes");
+      this.customiseItem.setAttribute("ExcludeAllAttributes", "Yes");
     }
     if (this.object.includeAllElements) {
-      this.customiseItem.setAttribute("includeAllElements", "yes");
+      // this.customiseItem.setAttribute("IncludeAllElements", "Yes");
     } else if (!this.object.elements.length) {
-      this.customiseItem.setAttribute("excludeAllElements", "yes");
+      this.customiseItem.setAttribute("ExcludeAllElements", "Yes");
     }
     if (
       !this.object.elements.length &&
@@ -134,31 +141,33 @@ export class ElementCustomiser extends Customiser {
   customisedObject() {
     const customisedEle = this.getCustomisedItem()?.parentElement;
     if (!customisedEle) return this.object;
-    this.object.includeAllAttributes =
-      customisedEle.getAttribute("includeAllAttributes") === "yes"
-        ? true
-        : false;
-    this.object.includeAllElements =
-      customisedEle.getAttribute("includeAllElements") === "yes" ? true : false;
+    this.fixedList = !!customisedEle.getAttribute("Include")
+    const heading = customisedEle.getAttribute("customHeading")
+    this.object.heading = heading?heading:undefined
+    this.object.includeAllAttributes = !(!!customisedEle.getAttribute("ExcludeAllAttributes"))
+      
+    this.object.includeAllElements = !(!!customisedEle.getAttribute("ExcludeAllElements"))
+    
+    
     Array.prototype.forEach.call(customisedEle.children, (child: Element) => {
       switch (child.localName) {
-        case "CustomMinOccurs":
-          const newMin = child.textContent;
-          this.object.newMin = newMin ? parseInt(newMin) : "";
-          break;
         case "CustomMaxOccurs":
           const newMax = child.textContent;
           this.object.newMax = newMax ? parseInt(newMax) : "";
           break;
+        case "CustomMinOccurs":
+          const newMin = child.textContent;
+          this.object.newMin = newMin ? parseInt(newMin) : "";
+          break;
+        case "Attribute":
+            const attribute = child.textContent;
+            if (!attribute) break;
+            this.object.attributes?.push(attribute);
+            break;
         case "Element":
           const element = child.textContent;
           if (!element) break;
           this.object.elements?.push(element);
-          break;
-        case "Attribute":
-          const attribute = child.textContent;
-          if (!attribute) break;
-          this.object.attributes?.push(attribute);
           break;
         case "CustomExcerpt":
           const excerpt = child.textContent;
@@ -187,45 +196,50 @@ export class ElementCustomiser extends Customiser {
     const customisedItem = customiser.getTouchedItem()?.parentElement;
     customiser.customisedObject();
     if (customisedItem) {
-      if (customisedItem.getAttribute("exclude")) {
+      if (customisedItem.getAttribute("Exclude")) {
         parentStatus.included = false;
         parentStatus.path = pathList.join(".");
         return parentStatus;
       }
-      if (type === "element") {
-        if (customisedItem.getAttribute("includeAllElements") === "yes") {
-          parentStatus.included = true;
-          parentStatus.path = pathList.join(".");
-          return parentStatus;
-        } else if (pathLeaf && customiser.object.elements.includes(pathLeaf)) {
-          parentStatus.included = true;
-          parentStatus.path = pathList.join(".");
-          return parentStatus;
-        } else {
-          parentStatus.included = false;
-          parentStatus.path = pathList.join(".");
-          return parentStatus;
-        }
-      } else if (type === "attribute") {
-        if (customisedItem.getAttribute("includeAllAttributes") === "yes") {
-          parentStatus.included = true;
-          parentStatus.path = pathList.join(".");
-          return parentStatus;
-        } else if (
-          pathLeaf &&
-          customiser.object.attributes.includes(pathLeaf)
-        ) {
-          parentStatus.included = true;
-          parentStatus.path = pathList.join(".");
-          return parentStatus;
-        } else {
-          parentStatus.included = false;
-          parentStatus.path = pathList.join(".");
-          return parentStatus;
-        }
-      } else {
-        pathList.pop();
+      if (!customisedItem.getAttribute("Include")){
+        parentStatus.included = true;
+        parentStatus.path = pathList.join(".");
+        return parentStatus;
       }
+      if (type === "element") {
+        if (customisedItem.getAttribute("ExcludeAllElements")) {
+            parentStatus.included = false;
+            parentStatus.path = pathList.join(".");
+            return parentStatus;
+          } else {
+              if (pathLeaf && customiser.object.elements.includes(pathLeaf)) {
+                parentStatus.included = true;
+                parentStatus.path = pathList.join(".");
+                return parentStatus;
+              }else{
+                parentStatus.included = false;
+                parentStatus.path = pathList.join(".");
+                return parentStatus;
+              }
+            }
+      } else if (type === "attribute") {
+        if (customisedItem.getAttribute("ExcludeAllAttributes")) {
+          parentStatus.included = false;
+          parentStatus.path = pathList.join(".");
+          return parentStatus;
+        }else{
+          if (pathLeaf && customiser.object.attributes.includes(pathLeaf)) {
+            parentStatus.included = true;
+            parentStatus.path = pathList.join(".");
+            return parentStatus;
+          }else{
+            parentStatus.included = false;
+            parentStatus.path = pathList.join(".");
+            return parentStatus;
+          }
+        }
+      } 
+        pathList.pop();
     }
     while (pathList.length) {
       const pathLeaf = pathList.pop();
@@ -236,27 +250,29 @@ export class ElementCustomiser extends Customiser {
       const customisedItem = customiser.getTouchedItem()?.parentElement;
       customiser.customisedObject();
       if (customisedItem) {
-        if (customisedItem.getAttribute("exclude")) {
+        if (customisedItem.getAttribute("Exclude")) {
           parentStatus.included = false;
           parentStatus.path = pathList.join(".");
           return parentStatus;
         }
-        if (customisedItem.getAttribute("includeAllElements") === "yes") {
+
+        if (!customisedItem.getAttribute("Include")){
           parentStatus.included = true;
+          parentStatus.path = pathList.join(".");
+          return parentStatus;
+        }
+        if (customisedItem.getAttribute("ExcludeAllElements")) {
+          parentStatus.included = false;
           parentStatus.path = pathList.join(".");
           return parentStatus;
         } else if (pathLeaf && customiser.object.elements.includes(pathLeaf)) {
           parentStatus.included = true;
           parentStatus.path = pathList.join(".");
           return parentStatus;
-        } else {
-          parentStatus.included = false;
-          parentStatus.path = pathList.join(".");
-          return parentStatus;
-        }
+        } 
       }
     }
-
     return;
   };
-}
+    }
+
