@@ -16,8 +16,14 @@ interface SearchItemErrorAction {
   payload: string;
 }
 
+interface IMarkForDeletion {
+  type: ItemActionType.MARKED_FOR_DELETION;
+  payload: string[];
+}
+
 export type ItemAction =
   | SearchItemAction
   | SearchItemSuccessAction
   | SearchItemErrorAction
-  | ResetItemAction;
+  | ResetItemAction
+  | IMarkForDeletion;

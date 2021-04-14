@@ -47,3 +47,12 @@ export const resetItem = () => {
     });
   };
 };
+
+export const markedForDeletion = (markedForDeletionList: string[]) => {
+  return (dispatch: Dispatch<ItemAction>) => {
+    dispatch({
+      type: ItemActionType.MARKED_FOR_DELETION,
+      payload: [...markedForDeletionList],
+    });
+  };
+};

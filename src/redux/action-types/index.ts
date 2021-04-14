@@ -3,6 +3,7 @@ export enum ItemActionType {
   SEARCH_ITEM_SUCCESS = "search_item_success",
   SEARCH_ITEM_ERROR = "search_item_error",
   REST_ITEM = "resetItem",
+  MARKED_FOR_DELETION = "markedForDeletion",
 }
 
 export enum CustomizationActionType {
