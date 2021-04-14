@@ -3,17 +3,17 @@ import { CustomizationAction, SubSchema } from "../actions/customiser-actions";
 
 interface CustomizationState {
   customization: Element | undefined;
-  customisedItem: Element | undefined;
+  // customisedItem: Element | undefined;
   loading: boolean;
   error: string | null;
   subSchema: SubSchema | undefined;
-  customHeading?: string | undefined;
+  // customHeading?: string | undefined;
   metaData: File | undefined;
 }
 
 const initialState: CustomizationState = {
   customization: undefined,
-  customisedItem: undefined,
+  // customisedItem: undefined,
   subSchema: { transactionType: undefined, transactionVersion: undefined },
   error: null,
   loading: false,
@@ -29,7 +29,7 @@ const reducer = (
       return {
         ...state,
         customization: undefined,
-        customisedItem: undefined,
+        // customisedItem: undefined,
         loading: true,
         error: null,
       };
@@ -37,7 +37,7 @@ const reducer = (
       return {
         ...state,
         customization: action.payload.doc,
-        customisedItem: undefined,
+        // customisedItem: undefined,
         metaData: action.payload.file,
         loading: false,
         error: null,
@@ -47,7 +47,7 @@ const reducer = (
         ...state,
         customization: undefined,
         metaData: undefined,
-        customisedItem: undefined,
+        // customisedItem: undefined,
         loading: false,
         error: action.payload,
       };
@@ -56,16 +56,17 @@ const reducer = (
     case CustomizationActionType.RESET_SUB_SCHEMA:
       return {
         ...state,
-        customHeading: undefined,
+        // customHeading: undefined,
         subSchema: undefined,
         customization: undefined,
-        customisedItem: undefined,
+        // customisedItem: undefined,
       };
     case CustomizationActionType.UPDATE_CUSTOMISATION:
       return {
         ...state,
         customization: action.payload,
       };
+
     default:
       return state;
   }
