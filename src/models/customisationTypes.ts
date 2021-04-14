@@ -7,6 +7,7 @@ export type CustomisedElementType = {
   newMax?: number | "";
   excerpt?: string;
   documentation?: string;
+  heading?: string;
 };
 
 export type CustomiseAttributeType = {
@@ -15,5 +16,6 @@ export type CustomiseAttributeType = {
   stringTo: "list" | "pattern" | "";
   excerpt: string;
   documentation: string;
+  heading?: string;
   enumerations: { name: string; definition: string }[];
 };
