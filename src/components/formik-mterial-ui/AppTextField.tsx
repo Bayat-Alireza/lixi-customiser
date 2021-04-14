@@ -1,9 +1,7 @@
 import TextField, { TextFieldProps } from "@material-ui/core/TextField";
 import React from "react";
 import { useField, FieldAttributes } from "formik";
-import classes from "*.module.css";
 import { useStyles } from "./appTextFieldStyle";
-import Tooltip, { TooltipProps } from "@material-ui/core/Tooltip";
 
 type AppTextFieldProps = TextFieldProps & FieldAttributes<{}>;
 

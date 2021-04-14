@@ -2,7 +2,6 @@ import Checkbox, { CheckboxProps } from "@material-ui/core/Checkbox";
 import React from "react";
 import { useField, FieldAttributes } from "formik";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 
 type AppTextFieldProps = { label?: string } & CheckboxProps &

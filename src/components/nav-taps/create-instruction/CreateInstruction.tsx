@@ -19,7 +19,7 @@ export const CreateInstructionTab: React.FC<TabPanelProps> = (
   props: TabPanelProps
 ) => {
   const { children, value, index, ...other } = props;
-  const { data, loading } = useTypedSelector((state) => state.item);
+  const { data } = useTypedSelector((state) => state.item);
   const [itemInstruction, setItemInstruction] = React.useState<Element>();
   const { customization } = useTypedSelector((state) => state.customizer);
 

@@ -13,32 +13,23 @@ import LaunchIcon from "@material-ui/icons/Launch";
 import { useAction } from "../../hooks/useActions";
 import { LixiBase } from "../../models/LixiBase";
 import { CustomisedElementType } from "../../models/customisationTypes";
-import { FieldArrayRenderProps, prepareDataForValidation, useFormikContext } from "formik";
+import { FieldArrayRenderProps, useFormikContext } from "formik";
 
 import { useStyles } from "./lixiListItemStyle";
 import { Customiser } from "../../models/Customiser";
 import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { ConfirmRemoveItemDialog } from "../confirm-remove-dialog/ConfirmRemoveItemDialog";
-import Badge from "@material-ui/core/Badge";
-
-interface FormikValues<T> {
-  values: T;
-}
 
 interface IListLixiItem {
   name: "elements" | "attributes";
-  // itemList: string[];
   element: LixiBase;
-  included:string[];
-  excluded:string[];
-  selectAll:boolean |"disable";
-  fixedListItem:string[];
-  touched:boolean
-  // subElementLength:number
-  arrayHelper:FieldArrayRenderProps;
-  toggleSelectAll:(value:string)=>void;
-
-  // handelAddRemove: (element: LixiBase) => void;
+  included:   string[];
+  excluded:   string[];
+  selectAll:   boolean |   "disable";
+  fixedListItem:   string[];
+  touched:   boolean;
+  arrayHelper:   FieldArrayRenderProps;
+  toggleSelectAll:   (value:   string)   =>   void;
 }
 export const LixiListItem: React.FC<IListLixiItem> = ({
   name,
@@ -46,21 +37,15 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
   included,
   excluded,
   touched,
-  // subElementLength,
-  // itemList,
   fixedListItem,
   selectAll,
   arrayHelper,
-  toggleSelectAll
- 
+  toggleSelectAll,
 }) => {
   const classes = useStyles();
-  const [value, setValue] = React.useState<string>("")
-  const [neutral, setNeutral] = React.useState<string[]>([])
-  const [itemTouched,setItemTouched] = React.useState(false)
-  // const [furtherCustomisation,setFurtherCustomisation] = React.useState<string>()
+  const [value, setValue] = React.useState<string>("");
+  const [neutral, setNeutral] = React.useState<string[]>([]);
   const { markedForDeletionList } = useTypedSelector((state) => state.item);
-  const {markedForDeletion} =useAction()
   const { customization } = useTypedSelector((state) => state.customizer);
   const { searchItem } = useAction();
   const { values } = useFormikContext<CustomisedElementType>();
@@ -69,82 +54,104 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
     items: string[];
   }>();
   const [open, setOpen] = React.useState(false);
-  
-  const leafItem = React.useMemo(()=>{
-    return element.path?.split(".").pop()
-  },[element.path])
 
-  const furtherCustomisation = React.useMemo(()=>{
-    const path = element?.path 
-    if (!path)return
-   return markedForDeletionList?.find((d)=>{
-      return d.startsWith(path)
-    })
-  },[element?.path, markedForDeletionList])
+  const leafItem = React.useMemo(() => {
+    return element.path?.split(".").pop();
+  }, [element.path]);
 
-  
+  const furtherCustomisation = React.useMemo(() => {
+    const path = element?.path;
+    if (!path) return;
+    return markedForDeletionList?.find((d) => {
+      return d.startsWith(path);
+    });
+  }, [element?.path, markedForDeletionList]);
 
-  React.useEffect(()=>{
-    if(!leafItem )return 
-    if ((included.includes(leafItem) || excluded.includes(leafItem)) && neutral.includes(leafItem)){
-      setNeutral([])
+  React.useEffect(() => {
+    if (!leafItem) return;
+    if (
+      (included.includes(leafItem) || excluded.includes(leafItem)) &&
+      neutral.includes(leafItem)
+    ) {
+      setNeutral([]);
     }
-    if (!(included.includes(leafItem) || excluded.includes(leafItem)) && !neutral.includes(leafItem)){
-      setNeutral([leafItem])
+    if (
+      !(included.includes(leafItem) || excluded.includes(leafItem)) &&
+      !neutral.includes(leafItem)
+    ) {
+      setNeutral([leafItem]);
     }
-  },[excluded, included, leafItem, neutral])
+  }, [excluded, included, leafItem, neutral]);
 
-  React.useEffect(()=>{
-      if(!leafItem)return 
-      if (furtherCustomisation && values[name].includes(leafItem)){
-        setValue(leafItem)
-        return
-      }
-      if(furtherCustomisation && !values[name].includes(leafItem)){
-        setValue("")
-        return
-      }
-      if((included.includes(leafItem)|| values[name].includes(leafItem))){
-        setValue(leafItem)
-        return
-      }
-      if((excluded.includes(leafItem)|| !values[name].includes(leafItem)) ){ 
-        setValue("")
-        return
-      }
-  },[excluded, furtherCustomisation, included, leafItem, name, values])
+  React.useEffect(() => {
+    if (!leafItem) return;
+    if (furtherCustomisation && values[name].includes(leafItem)) {
+      setValue(leafItem);
+      return;
+    }
+    if (furtherCustomisation && !values[name].includes(leafItem)) {
+      setValue("");
+      return;
+    }
+    if (included.includes(leafItem) || values[name].includes(leafItem)) {
+      setValue(leafItem);
+      return;
+    }
+    if (excluded.includes(leafItem) || !values[name].includes(leafItem)) {
+      setValue("");
+      return;
+    }
+  }, [excluded, furtherCustomisation, included, leafItem, name, values]);
 
   const handleClose = () => {
     setOpen(false);
-    
   };
 
-  React.useEffect(()=>{
-    if(!leafItem )return
-    if (values[name].includes(leafItem))return
-   if (fixedListItem.length && !fixedListItem.includes(leafItem) && !touched)return
-    if(selectAll==="disable")return 
-    
-    if (selectAll && !excluded.includes(leafItem)){
-     
-      arrayHelper.push(leafItem)
-  
-      return
+  React.useEffect(() => {
+    if (!leafItem) return;
+    if (values[name].includes(leafItem)) return;
+    if (fixedListItem.length && !fixedListItem.includes(leafItem) && !touched)
+      return;
+    if (selectAll === "disable") return;
+
+    if (selectAll && !excluded.includes(leafItem)) {
+      arrayHelper.push(leafItem);
+
+      return;
     }
-    
-  },[arrayHelper, excluded, fixedListItem, leafItem, name, selectAll, touched, values])
+  }, [
+    arrayHelper,
+    excluded,
+    fixedListItem,
+    leafItem,
+    name,
+    selectAll,
+    touched,
+    values,
+  ]);
 
-
-
-  React.useEffect(()=>{
-    if(!leafItem)return
-    if(selectAll==="disable") return 
-    if (!selectAll && (furtherCustomisation || (!excluded.includes(leafItem) && !included.includes(leafItem))) && values[name].includes(leafItem)){
-      arrayHelper.remove(values[name].indexOf(leafItem))
-      return
+  React.useEffect(() => {
+    if (!leafItem) return;
+    if (selectAll === "disable") return;
+    if (
+      !selectAll &&
+      (furtherCustomisation ||
+        (!excluded.includes(leafItem) && !included.includes(leafItem))) &&
+      values[name].includes(leafItem)
+    ) {
+      arrayHelper.remove(values[name].indexOf(leafItem));
+      return;
     }
-  },[arrayHelper, excluded, furtherCustomisation, included, leafItem, name, selectAll, values])
-
+  }, [
+    arrayHelper,
+    excluded,
+    furtherCustomisation,
+    included,
+    leafItem,
+    name,
+    selectAll,
+    values,
+  ]);
 
   const affected = React.useMemo(():
     | { path: string; items: string[] }
@@ -168,24 +175,24 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
     }
   }, [customization, element]);
 
-  const handelAddItem = (subEle: string|undefined) => {
-    if (!subEle ) return;
+  const handelAddItem = (subEle: string | undefined) => {
+    if (!subEle) return;
     if (affected && !furtherCustomisation) {
-      toggleSelectAll("enable")
+      toggleSelectAll("enable");
       setAffectedPath(affected);
-      if(leafItem && !excluded.includes(leafItem)){
+      if (leafItem && !excluded.includes(leafItem)) {
         setOpen(true);
         return;
       }
     }
-    if (selectAll !== "disable"){
-      toggleSelectAll("disable")
+    if (selectAll !== "disable") {
+      toggleSelectAll("disable");
     }
     if (!values[name].includes(subEle)) {
-      setValue(subEle)
+      setValue(subEle);
       arrayHelper.push(subEle);
     } else {
-      setValue("")
+      setValue("");
       arrayHelper.remove(values[name].indexOf(subEle));
     }
   };
@@ -197,9 +204,7 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
         open={open}
         handleClose={handleClose}
       />
-      <ListItem divider dense button 
-      onClick={() => handelAddItem(leafItem)}
-      >
+      <ListItem divider dense button onClick={() => handelAddItem(leafItem)}>
         <ListItemIcon>
           <AppCheckBox
             onClick={() => handelAddItem(leafItem)}
@@ -219,21 +224,27 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
           style={{ cursor: "pointer" }}
           id={`${element?.path?.split(".").pop()}`}
           primary={
-            <div><Typography
-              style={{ alignItems: "center" }}
-              component="span"
-              variant="body2"
-              color="textPrimary"
-            >
-              {leafItem}
-              
-            </Typography>
-            <Typography variant="caption" color="textSecondary">
-            &nbsp;
-            <em>{excluded.includes(leafItem||"")?"- excluded.":included.includes(leafItem||"")?"- customised.":""}</em>
-            <LixiItemToolTip lixiItem={element} placement="top-start" />
-          </Typography>
-          </div>
+            <div>
+              <Typography
+                style={{ alignItems: "center" }}
+                component="span"
+                variant="body2"
+                color="textPrimary"
+              >
+                {leafItem}
+              </Typography>
+              <Typography variant="caption" color="textSecondary">
+                &nbsp;
+                <em>
+                  {excluded.includes(leafItem || "")
+                    ? "- excluded."
+                    : included.includes(leafItem || "")
+                    ? "- customised."
+                    : ""}
+                </em>
+                <LixiItemToolTip lixiItem={element} placement="top-start" />
+              </Typography>
+            </div>
           }
         />
 

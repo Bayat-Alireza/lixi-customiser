@@ -18,7 +18,6 @@ import Typography from "@material-ui/core/Typography";
 import * as Yup from "yup";
 import { useAction } from "../../hooks/useActions";
 import Tooltip from "@material-ui/core/Tooltip";
-import { Customiser } from "../../models/Customiser";
 import { useTypedSelector } from "../../hooks/useTypeSelector";
 
 interface IConfirmRemoveItem {

@@ -8,7 +8,6 @@ import React from "react";
 import { useAction } from "../../hooks/useActions";
 import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { CustomisedElementType } from "../../models/customisationTypes";
-import { Customiser } from "../../models/Customiser";
 import { ElementCustomiser } from "../../models/ElementCustomiser";
 import { LixiBase } from "../../models/LixiBase";
 import { ElementSubItems } from "../element-sub-items/ElementSubItems";

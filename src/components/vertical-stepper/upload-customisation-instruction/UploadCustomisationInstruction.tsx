@@ -35,7 +35,7 @@ export const UploadCustomisationInstruction: React.FC<IUploadCustomisationInstru
 }) => {
   const classes = useStyles();
   const { uploadExistingCustomization } = useAction();
-  const { customization,metaData } = useTypedSelector((state) => state.customizer);
+  const { metaData } = useTypedSelector((state) => state.customizer);
 
   const fileSize = React.useMemo(()=>{
     if (!metaData?.size) return

@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Badge,
   Box,
   Button,
@@ -8,21 +7,16 @@ import {
 
   Divider,
   FormControlLabel,
-  // FormGroup,
   List,
   ListItem,
   ListSubheader,
-  // TextField,
   Typography
 } from "@material-ui/core";
 import Collapse from "@material-ui/core/Collapse";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
-import DoneIcon from "@material-ui/icons/Done";
 import DoneOutlinedIcon from "@material-ui/icons/DoneOutlined";
-// import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
-// import DeleteTwoToneIcon from "@material-ui/icons/DeleteTwoTone";
 import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
 import React, { Fragment, useEffect, useState } from "react";
 import { useAction } from "../../hooks/useActions";

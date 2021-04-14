@@ -1,8 +1,7 @@
 import Grid from "@material-ui/core/Grid";
 import React from "react";
 import { AppTextField } from "../formik-mterial-ui/AppTextField";
-import { Formik, useFormik, useFormikContext } from "formik";
-import Tooltip from "@material-ui/core/Tooltip";
+import { useFormikContext } from "formik";
 
 export const ExcerptDocumentation: React.FC = () => {
   const excerptTooltip = `

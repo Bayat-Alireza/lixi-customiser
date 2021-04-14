@@ -8,7 +8,6 @@ import { useAction } from "../../hooks/useActions";
 import IconButton from "@material-ui/core/IconButton";
 import FindInPageIcon from "@material-ui/icons/FindInPage";
 import Paper from "@material-ui/core/Paper";
-import { useTypedSelector } from "../../hooks/useTypeSelector";
 
 interface BreadCrumbsType {
   pathSections: string[] | undefined;
@@ -20,7 +19,6 @@ export const IconBreadcrumbs: React.FC<BreadCrumbsType> = (
 ) => {
   const classes = useStyles();
   const { searchItem } = useAction();
-  const { subSchema } = useTypedSelector((state) => state.customizer);
   const handleClick = (
     event: React.MouseEvent<HTMLParagraphElement, MouseEvent>
   ) => {

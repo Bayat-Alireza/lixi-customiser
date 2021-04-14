@@ -1,7 +1,6 @@
 import List from "@material-ui/core/List/List";
 import { FieldArray, useFormikContext } from "formik";
 import React from "react";
-import { useAction } from "../../hooks/useActions";
 import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { CustomisedElementType } from "../../models/customisationTypes";
 import { Customiser } from "../../models/Customiser";
