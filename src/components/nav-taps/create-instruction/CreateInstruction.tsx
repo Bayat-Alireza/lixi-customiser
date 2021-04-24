@@ -2,6 +2,7 @@ import Box from "@material-ui/core/Box";
 import Collapse from "@material-ui/core/Collapse";
 import Typography from "@material-ui/core/Typography";
 import React from "react";
+import { useAction } from "../../../hooks/useActions";
 import { useTypedSelector } from "../../../hooks/useTypeSelector";
 import { Customiser } from "../../../models/Customiser";
 import { LixiBase } from "../../../models/LixiBase";
@@ -20,6 +21,7 @@ export const CreateInstructionTab: React.FC<TabPanelProps> = (
 ) => {
   const { children, value, index, ...other } = props;
   const { data } = useTypedSelector((state) => state.item);
+
   const [itemInstruction, setItemInstruction] = React.useState<Element>();
   const { customization } = useTypedSelector((state) => state.customizer);
 
@@ -53,7 +55,7 @@ export const CreateInstructionTab: React.FC<TabPanelProps> = (
               {data ? <LixiItem item={data} /> : undefined}
             </Collapse>
             <Collapse key="lixiItemXML" in={!!itemInstruction}>
-              {<ItemXMLViewer itemXML={itemInstruction} />}
+              {<ItemXMLViewer role="view" itemXML={itemInstruction} />}
             </Collapse>
           </Typography>
         </Box>
