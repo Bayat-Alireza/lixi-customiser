@@ -178,7 +178,6 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
   const handelAddItem = (subEle: string | undefined) => {
     if (!subEle) return;
     if (affected && !furtherCustomisation) {
-      toggleSelectAll("enable");
       setAffectedPath(affected);
       if (leafItem && !excluded.includes(leafItem)) {
         setOpen(true);
