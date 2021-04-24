@@ -16,7 +16,7 @@ interface ITypeFormikValue {
   enumerations: { definition: string; name: string }[];
 }
 
-export const StringToList: React.FC = () => {
+export const StringToListHeader: React.FC = () => {
   const classes = useStyles();
   const [nameAlert, setNameAlert] = React.useState(false);
   const { getFieldHelpers, values } = useFormikContext<ITypeFormikValue>();
