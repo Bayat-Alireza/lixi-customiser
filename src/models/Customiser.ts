@@ -112,22 +112,20 @@ export class Customiser {
   }
 
   customExcerpt() {
-    if (this.excerpt) {
-      const doc = Customiser.docStub();
-      const customExcerpt = doc.createElement("CustomExcerpt");
-      customExcerpt.textContent = this.excerpt;
-      this.customiseItem.append(customExcerpt);
-    }
+    if (!this.excerpt) return;
+    const doc = Customiser.docStub();
+    const customExcerpt = doc.createElement("CustomExcerpt");
+    customExcerpt.textContent = this.excerpt.trim();
+    this.customiseItem.append(customExcerpt);
   }
   customDocumentation() {
-    if (this.documentation) {
-      const doc = Customiser.docStub();
-      const customDocumentation: Element = doc.createElement(
-        "CustomDocumentation"
-      );
-      customDocumentation.textContent = this.documentation;
-      this.customiseItem.append(customDocumentation);
-    }
+    if (!this.documentation) return;
+    const doc = Customiser.docStub();
+    const customDocumentation: Element = doc.createElement(
+      "CustomDocumentation"
+    );
+    customDocumentation.textContent = this.documentation.trim();
+    this.customiseItem.append(customDocumentation);
   }
 
   affectedDecedents() {
