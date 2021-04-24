@@ -10,7 +10,7 @@ export const ExcerptDocumentation: React.FC = () => {
   const documentationTooltip = `
   An alternative description - explaining the item usage.
   `;
-  const customHeading = `A custom heading for the documentation`;
+  const customHeadingTooltip = `A custom heading for the documentation`;
   const { values } = useFormikContext<{
     excerpt: string;
     documentation: string;
@@ -18,16 +18,16 @@ export const ExcerptDocumentation: React.FC = () => {
   }>();
 
   return (
-    <Grid container spacing={1}>
+    <Grid container spacing={2}>
       <Grid item xs={12}>
         <AppTextField
-          title={customHeading}
+          title={customHeadingTooltip}
           variant="outlined"
           multiline
           fullWidth
           rows={1}
           name="heading"
-          value={values?.heading}
+          value={values.heading}
           label="Custom Heading"
         />
       </Grid>
@@ -39,7 +39,7 @@ export const ExcerptDocumentation: React.FC = () => {
           fullWidth
           rows={4}
           name="excerpt"
-          value={values?.excerpt}
+          value={values.excerpt}
           label="Custom Excerpt"
         />
       </Grid>
@@ -51,7 +51,7 @@ export const ExcerptDocumentation: React.FC = () => {
           fullWidth
           rows={4}
           name="documentation"
-          value={values?.documentation}
+          value={values.documentation}
           label="Custom Documentation"
         />
       </Grid>
