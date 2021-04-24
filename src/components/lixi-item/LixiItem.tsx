@@ -24,10 +24,17 @@ import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { Customiser } from "../../models/Customiser";
 import { ElementCustomiser } from "../../models/ElementCustomiser";
 import { LixiBase } from "../../models/LixiBase";
-import { CustomiseAttribute } from "../customise-attribute/CustomiseAttribute";
+// import { CustomiseAttribute } from "../customise-attribute/CustomiseAttribute";
 import { CustomiseElement } from "../customise-element/CustomiseElement";
 import { useStyles } from "./lixiItemStyle";
 import Alert from '@material-ui/lab/Alert';
+import { IntegerTypeAttribute } from "../customise-attribute/integer-type-attribute/IntegerTypeAttribute";
+import { SwitchAttributeType } from "./AttributeSwitchType";
+import { StringTypeAttribute } from "../customise-attribute/string-type-attribute/StringTypeAttribute";
+import { ItemAttributes } from "./lixi-item-attributes/ItemAttributes";
+import { LabelDescription } from "./lixi-item-label-description/LabelDescription";
+import { ListTypeAttribute } from "../customise-attribute/list-type-attribute/ListTypeAttribute";
+import { SimpleTokenType } from "../customise-simple-type/simple-token-type/SimpleTokenType";
 
 
 interface ItemType {
@@ -35,7 +42,6 @@ interface ItemType {
 }
 export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
   const classes = useStyles();
-
 
   const [openToCustomise, setOpenToCustomise] = useState<boolean>(false);
   const [alert, setAlert] = useState<{ included: boolean; path: string }>();
@@ -49,15 +55,20 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
   const localName = React.useMemo(() => {
     return lixiItem?.element?.localName;
   }, [lixiItem]);
+
   const type = React.useMemo(() => {
-    return lixiItem?.element?.getAttribute("type");
+    return lixiItem?.element?.getAttribute("type")||"";
   }, [lixiItem]);
+
+
 
   useEffect(() => {
     if (item) {
       const ele: LixiBase = new LixiBase(item);
       setLixiItem(ele);
+      return
     }
+    
   }, [item, customization]);
 
   const onExclude = () => {
@@ -72,6 +83,12 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
     }
     updateCustomisation(newCustomisation.customisation);
   };
+
+  useEffect(()=>{
+    if (lixiItem?.path === "Package"){
+      setOpenToCustomise(true)
+    }
+  },[lixiItem?.path])
 
   useEffect(() => {
     if (exclude) return;
@@ -93,8 +110,6 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
       setAlert(parentCustomised);
     }
   }, [customization, lixiItem?.path, lixiItem?.element.localName]);
-
-
 
   return (
     <Grid container spacing={2}>
@@ -160,101 +175,10 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
               )}
             </Paper>
           </Grid>
-          <div className={classes.itemLabelDescription}>
-            <Badge
-              color="primary"
-              badgeContent={`${item?.localName}`}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-            >
-              <Typography color="primary" variant="h4">
-                {lixiItem?.label}
-              </Typography>
-            </Badge>
+          <div style={{display:"flex",justifyContent:"space-between",alignContent:"center"}}>
+            <LabelDescription lixiItem={lixiItem}localName={item?.localName} subSchema={subSchema}/>
+            <ItemAttributes lixiItem={lixiItem} type={type} />
           </div>
-          <div style={{ maxWidth: "75ch", marginBottom: "1rem" }}>
-            <Typography
-              style={{ padding: "0.1rem 1rem" }}
-              color="textPrimary"
-              variant="body1"
-            >
-              {lixiItem?.documentation}
-            </Typography>
-          </div>
-
-          <Divider />
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <div className={classes.attributes}>
-              {lixiItem?.element.getAttributeNames().map((att, idx) => {
-                return (
-                  <Box
-                    key={`${idx}-${att}`}
-                    style={{
-                      display: "flex",
-                      justifyContent: "flex-start",
-                      alignItems: "center",
-                      marginRight: "0.5rem",
-                    }}
-                  >
-                    <Typography
-                      color="textSecondary"
-                      align="left"
-                      variant="body1"
-                    >
-                      {`${att}:`}
-                    </Typography>
-                    <Typography
-                      className={att==="type"?classes.typeAttribute:classes.otherAttribute}
-                      color="textPrimary"
-                      align="left"
-                      variant="body2"
-                      onClick={()=>att ==="type"?searchItem(type|| ""):undefined}
-                    >
-                      <strong>{lixiItem?.element.getAttribute(att)}</strong>
-                    </Typography>
-                  </Box>
-                );
-              })}
-            </div>
-            <div className={classes.attributes}>
-              {lixiItem?.transactions?.sort().map((t, idx) => {
-                if (
-                  subSchema?.transactionType &&
-                  subSchema.transactionType !== t
-                ) {
-                  return (
-                    <Chip
-                      key={`${idx}_${t}`}
-                      size="small"
-                      color="default"
-                      variant="outlined"
-                      label={t}
-                    />
-                  );
-                } else {
-                  return <div key={`${idx}_${t}`}></div>;
-                }
-              })}
-            </div>
-          </div>
-          {lixiItem?.element.localName === "simpleType" ? (
-            <div className={classes.references}>
-              <Typography color="primary" align="left" variant="h6">
-                {`Base Restriction:`}
-              </Typography>
-              <Typography color="secondary" align="left" variant="body1">
-                {lixiItem?.baseRestriction}
-              </Typography>
-            </div>
-          ) : undefined}
 
           {lixiItem?.references ? (
             <div>
@@ -276,13 +200,20 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
         </Paper>
       </Grid>
       <Grid item xs={12}>
-        <Collapse in={openToCustomise}>
+        <Collapse in={!exclude && openToCustomise}>
           {localName === "element" ? (
             <CustomiseElement lixiItem={lixiItem} />
           ) : undefined}
-          {(localName === "attribute" && type === "stringType") ? (
-            <CustomiseAttribute lixiItem={lixiItem} />
-          ) : undefined}
+
+            {localName==="attribute"?(
+            <SwitchAttributeType switchType={type}>
+              <IntegerTypeAttribute lixiItem={lixiItem} />
+              <StringTypeAttribute lixiItem={lixiItem} />
+              <ListTypeAttribute  lixiItem={lixiItem}/>
+            </SwitchAttributeType>)
+            :null}
+
+            {localName==="simpleType"?(<SimpleTokenType lixiItem={lixiItem}/>):null}
         </Collapse>
       </Grid>
     </Grid>

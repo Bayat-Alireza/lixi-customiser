@@ -36,7 +36,7 @@ export const useStyles = makeStyles((theme: Theme) =>
       padding: "0.1rem",
       margin: "0.5rem",
       display: "flex",
-      justifyContent: "flex-start",
+      justifyContent: "space-between",
       alignItems: "center",
       [theme.breakpoints.down("sm")]: {
         display: "inline-block",
