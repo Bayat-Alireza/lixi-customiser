@@ -1,3 +1,4 @@
+
 export type CustomisedElementType = {
   includeAllElements: boolean;
   includeAllAttributes: boolean;
@@ -10,12 +11,34 @@ export type CustomisedElementType = {
   heading?: string;
 };
 
-export type CustomiseAttributeType = {
+export type StringTypeAttributeType = {
   optionalToMandatory: boolean;
-  pattern: string;
-  stringTo: "list" | "pattern" | "";
+  pattern?: {regex:string,definition?:string};
+  stringTo?: "list" | "pattern" | "";
   excerpt: string;
   documentation: string;
   heading?: string;
   enumerations: { name: string; definition: string }[];
 };
+
+export type IntegerTypeAttributeType = {
+  optionalToMandatory: boolean;
+  excerpt: string;
+  documentation: string;
+  heading?: string;
+  minInteger?: string;
+  maxInteger?: string;
+};
+export type ListTypeAttributeType = {
+  optionalToMandatory: boolean;
+  excerpt: string;
+  documentation: string;
+  heading?: string;
+};
+
+export type tokenType={
+  tokens:string[];
+  excerpt?: string;
+  documentation?: string;
+  heading?: string;
+}
