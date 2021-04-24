@@ -68,7 +68,7 @@ export class LixiBase implements ILixiBase {
   }
 
   get baseRestriction() {
-    if (!this.annotated || this.element.localName !== "attribute") {
+    if (this.element.localName === "simpleType") {
       const restriction = this.element.children[1];
       return restriction.getAttribute("base");
     }
@@ -94,7 +94,6 @@ export class LixiBase implements ILixiBase {
     Array.from(this.element.children).forEach((child) => {
       if (child.localName === LixiLocalNameEnum.complexType) {
         complex.push(child);
-        // return;
       }
     });
     return complex[0];
@@ -118,5 +117,15 @@ export class LixiBase implements ILixiBase {
       return subElements;
     }
     return subElements;
+  }
+
+  get enumeration() {
+    if (this.element.localName === "simpleType") {
+      const restriction = this.element.children[1];
+      if (restriction.getAttribute("base") === "xs:token") {
+        return [...Array.from(restriction.children)];
+      }
+    }
+    return undefined;
   }
 }
