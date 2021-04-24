@@ -6,7 +6,7 @@ export const useStyles = makeStyles((theme: Theme) =>
       position: "relative",
       overflow: "scroll",
       backgroundColor: "#444",
-      height: "100%",
+      maxHeight: "100vh",
       marginTop: "0.5rem",
       borderRadius: "0.1rem",
     },
@@ -23,6 +23,7 @@ export const useStyles = makeStyles((theme: Theme) =>
       borderRadius: "0.1rem",
       width: "inherit",
       boxShadow: "0.3rem 0.4rem #555",
+      color: theme.palette.getContrastText("#333"),
     },
     downloadLink: {
       color: theme.palette.secondary.light,

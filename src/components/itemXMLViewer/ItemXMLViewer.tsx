@@ -9,9 +9,10 @@ import { useStyles } from "./itemXMLViewerStyle";
 
 interface IItemXMLViewer {
   itemXML: Element | null | undefined;
+  role?: "download" | "view";
 }
 
-export const ItemXMLViewer: React.FC<IItemXMLViewer> = ({ itemXML }) => {
+export const ItemXMLViewer: React.FC<IItemXMLViewer> = ({ itemXML, role }) => {
   const classes = useStyles();
   const serializer = new XMLSerializer();
   if (itemXML) {
@@ -19,23 +20,29 @@ export const ItemXMLViewer: React.FC<IItemXMLViewer> = ({ itemXML }) => {
     return (
       <div className={classes.container}>
         <div className={classes.header}>
-          <Typography variant="h5" color="secondary">
-            Customisation Instructions
+          <Typography variant="h5">
+            {(!role || role ===   "download")?"Customisation Instructions":"Item Instruction"}
           </Typography>
-          <Button
-            variant="outlined"
-            color="secondary"
-            startIcon={<GetAppIcon />}
-          >
-            <div>
-              <DownloadLink
-                label="Download"
-                filename="customisation.xml"
-                exportFile={() => Promise.resolve(xmlString)}
-                style={{ color: "pink", textDecoration: "none" }}
-              />
-            </div>
-          </Button>
+          {(!role || role ===   "download") && (
+          (
+          (
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  startIcon={<GetAppIcon />}
+                >
+                  <div>
+                    <DownloadLink
+                      label="Download"
+                      filename="customisation.xml"
+                      exportFile={() => Promise.resolve(xmlString)}
+                      style={{ color: "pink", textDecoration: "none" }}
+                    />
+                  </div>
+                </Button>
+          )
+          )
+          )}
         </div>
 
         <div style={{ margin: "1rem" }}>
