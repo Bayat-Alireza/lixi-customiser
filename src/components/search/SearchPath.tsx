@@ -29,6 +29,13 @@ export const SearchPath: React.FC = () => {
     return newItem?.path;
   }, [data]);
 
+  React.useEffect(() => {
+    if (!data && !loading && schema) {
+      searchItem("Package");
+      return;
+    }
+  }, [data, loading, schema, searchItem]);
+
   useEffect(() => {
     if (data) {
       setShowSearchBox(false);
