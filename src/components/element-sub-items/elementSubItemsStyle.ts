@@ -13,9 +13,10 @@ export const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.primary.main,
     },
     subItem: {
-      height: "16rem",
+      height: "35rem",
       // maxHeight: "12rem",
       overflow: "scroll",
+      paddingTop:  "0"
     },
     viewItem: {
       "&:hover": {
