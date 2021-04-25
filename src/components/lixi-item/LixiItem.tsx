@@ -35,6 +35,7 @@ import { ItemAttributes } from "./lixi-item-attributes/ItemAttributes";
 import { LabelDescription } from "./lixi-item-label-description/LabelDescription";
 import { ListTypeAttribute } from "../customise-attribute/list-type-attribute/ListTypeAttribute";
 import { SimpleTokenType } from "../customise-simple-type/simple-token-type/SimpleTokenType";
+import { SwitchSimpleType } from "./SimpleTypeSwitchType";
 
 
 interface ItemType {
@@ -58,6 +59,9 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
 
   const type = React.useMemo(() => {
     return lixiItem?.element?.getAttribute("type")||"";
+  }, [lixiItem]);
+  const baseRestriction = React.useMemo(() => {
+    return lixiItem?.baseRestriction || "";
   }, [lixiItem]);
 
 
@@ -175,8 +179,18 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
               )}
             </Paper>
           </Grid>
-          <div style={{display:"flex",justifyContent:"space-between",alignContent:"center"}}>
-            <LabelDescription lixiItem={lixiItem}localName={item?.localName} subSchema={subSchema}/>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignContent: "center",
+            }}
+          >
+            <LabelDescription
+              lixiItem={lixiItem}
+              localName={item?.localName}
+              subSchema={subSchema}
+            />
             <ItemAttributes lixiItem={lixiItem} type={type} />
           </div>
 
@@ -205,15 +219,20 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
             <CustomiseElement lixiItem={lixiItem} />
           ) : undefined}
 
-            {localName==="attribute"?(
+          {localName === "attribute" ? (
             <SwitchAttributeType switchType={type}>
               <IntegerTypeAttribute lixiItem={lixiItem} />
               <StringTypeAttribute lixiItem={lixiItem} />
-              <ListTypeAttribute  lixiItem={lixiItem}/>
-            </SwitchAttributeType>)
-            :null}
+              <ListTypeAttribute lixiItem={lixiItem} />
+            </SwitchAttributeType>
+          ) : null}
 
-            {localName==="simpleType"?(<SimpleTokenType lixiItem={lixiItem}/>):null}
+          {localName === "simpleType" ? (
+            <SwitchSimpleType switchBase={baseRestriction}>
+              <div></div>
+              <SimpleTokenType lixiItem={lixiItem} />
+            </SwitchSimpleType>
+          ) : null}
         </Collapse>
       </Grid>
     </Grid>
