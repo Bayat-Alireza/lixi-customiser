@@ -21,6 +21,8 @@ export const SearchPath: React.FC = () => {
   const {  schema } = useTypedSelector((state) => state.schema);
   const { data,loading } = useTypedSelector((state) => state.item);
   const { subSchema } = useTypedSelector((state) => state.customizer);
+  const [pathsCount, setPathsCount] = useState(0);
+
   const _loading = loading || options?.length === 0;
 
   const path = React.useMemo(() => {
@@ -58,7 +60,9 @@ export const SearchPath: React.FC = () => {
 
     (async () => {
       setOptions([]);
-      setOptions(await lixiItems());
+      const paths = await lixiItems();
+      setPathsCount(paths.length);
+      setOptions(paths);
     })();
   }, [subSchema?.transactionType, schema]);
 
@@ -111,6 +115,9 @@ export const SearchPath: React.FC = () => {
                       fullWidth: true,
                       endAdornment: (
                         <React.Fragment>
+                          <Typography color="textSecondary">
+                            <em>{`${pathsCount} Paths`}</em>
+                          </Typography>
                           {loading ? (
                             <CircularProgress color="inherit" size={20} />
                           ) : null}
