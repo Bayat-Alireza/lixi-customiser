@@ -21,18 +21,20 @@ import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { ConfirmRemoveItemDialog } from "../confirm-remove-dialog/ConfirmRemoveItemDialog";
 
 interface IListLixiItem {
-  name: "elements" | "attributes";
+  listName: "elements" | "attributes";
   element: LixiBase;
-  included:   string[];
-  excluded:   string[];
-  selectAll:   boolean |   "disable";
-  fixedListItem:   string[];
-  touched:   boolean;
-  arrayHelper:   FieldArrayRenderProps;
-  toggleSelectAll:   (value:   string)   =>   void;
+  included: string[];
+  excluded: string[];
+  selectAll: boolean | "disable";
+  fixedListItem: string[];
+  touched: boolean;
+  arrayHelper: FieldArrayRenderProps;
+  toggleSelectAll: (value: string) => void;
+  includeAll: "includeAllElements" | "includeAllAttributes";
+  excludeAll:"excludeAllElements" | "excludeAllAttributes";
 }
 export const LixiListItem: React.FC<IListLixiItem> = ({
-  name,
+  listName,
   element,
   included,
   excluded,
@@ -41,6 +43,8 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
   selectAll,
   arrayHelper,
   toggleSelectAll,
+  includeAll,
+  excludeAll
 }) => {
   const classes = useStyles();
   const [value, setValue] = React.useState<string>("");
@@ -85,23 +89,29 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
 
   React.useEffect(() => {
     if (!leafItem) return;
-    if (furtherCustomisation && values[name].includes(leafItem)) {
+    if  (values[excludeAll]){
+      setValue("");
+      return;
+    } 
+
+    if (furtherCustomisation && values[listName].includes(leafItem)) {
       setValue(leafItem);
       return;
     }
-    if (furtherCustomisation && !values[name].includes(leafItem)) {
+    if (furtherCustomisation && !values[listName].includes(leafItem)) {
       setValue("");
       return;
     }
-    if (included.includes(leafItem) || values[name].includes(leafItem)) {
+    if (included.includes(leafItem) || values[listName].includes(leafItem)) {
+      // if  (!values[includeAll])  return;;
       setValue(leafItem);
       return;
     }
-    if (excluded.includes(leafItem) || !values[name].includes(leafItem)) {
+    if (excluded.includes(leafItem) || !values[listName].includes(leafItem)) {
       setValue("");
       return;
     }
-  }, [excluded, furtherCustomisation, included, leafItem, name, values]);
+  }, [excludeAll, excluded, furtherCustomisation, includeAll, included, leafItem, listName, values]);
 
   const handleClose = () => {
     setOpen(false);
@@ -109,7 +119,11 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
 
   React.useEffect(() => {
     if (!leafItem) return;
-    if (values[name].includes(leafItem)) return;
+    if  (values[excludeAll]){
+      setValue("");
+      return;
+    } 
+    if (values[listName].includes(leafItem)) return;
     if (fixedListItem.length && !fixedListItem.includes(leafItem) && !touched)
       return;
     if (selectAll === "disable") return;
@@ -119,39 +133,25 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
 
       return;
     }
-  }, [
-    arrayHelper,
-    excluded,
-    fixedListItem,
-    leafItem,
-    name,
-    selectAll,
-    touched,
-    values,
-  ]);
+  }, [arrayHelper, excludeAll, excluded, fixedListItem, leafItem, listName, selectAll, touched, values]);
 
   React.useEffect(() => {
     if (!leafItem) return;
+    if  (values[excludeAll]){
+      setValue("");
+      return;
+    } 
     if (selectAll === "disable") return;
     if (
       !selectAll &&
       (furtherCustomisation ||
         (!excluded.includes(leafItem) && !included.includes(leafItem))) &&
-      values[name].includes(leafItem)
+      values[listName].includes(leafItem)
     ) {
-      arrayHelper.remove(values[name].indexOf(leafItem));
+      arrayHelper.remove(values[listName].indexOf(leafItem));
       return;
     }
-  }, [
-    arrayHelper,
-    excluded,
-    furtherCustomisation,
-    included,
-    leafItem,
-    name,
-    selectAll,
-    values,
-  ]);
+  }, [arrayHelper, excludeAll, excluded, furtherCustomisation, included, leafItem, listName, selectAll, values]);
 
   const affected = React.useMemo(():
     | { path: string; items: string[] }
@@ -187,12 +187,12 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
     if (selectAll !== "disable") {
       toggleSelectAll("disable");
     }
-    if (!values[name].includes(subEle)) {
+    if (!values[listName].includes(subEle)) {
       setValue(subEle);
       arrayHelper.push(subEle);
     } else {
       setValue("");
-      arrayHelper.remove(values[name].indexOf(subEle));
+      arrayHelper.remove(values[listName].indexOf(subEle));
     }
   };
 
@@ -208,7 +208,7 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
           <AppCheckBox
             onClick={() => handelAddItem(leafItem)}
             disableRipple
-            name={name}
+            name={listName}
             checked={!!value}
             value={value}
             checkedIcon={

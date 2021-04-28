@@ -1,7 +1,9 @@
 
 export type CustomisedElementType = {
   includeAllElements: boolean;
+  excludeAllElements:  boolean;
   includeAllAttributes: boolean;
+  excludeAllAttributes: boolean;
   elements: string[];
   attributes: string[];
   newMin?: number | "";

@@ -31,12 +31,14 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
       newMin: "",
       newMax: "",
       includeAllElements: true,
+      excludeAllElements:  false,
       includeAllAttributes: true,
+      excludeAllAttributes:  true,
       elements: [],
       attributes: [],
       excerpt: "",
       documentation: "",
-      heading:""
+      heading:  ""
     }
   );
   const [itemSubElement, setItemSubElement] = React.useState<SubElement>({});
@@ -121,22 +123,22 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
       onSubmit={(values, { setSubmitting }) => {
         setSubmitting(true);
         if (!lixiItem?.path) return;
-        
-          alert(JSON.stringify(values, null, 2))
+
+        alert(JSON.stringify(values, null, 2));
         const newCustomisation = new ElementCustomiser(
           customization,
           lixiItem?.path,
           values
         );
-        const {elements, attributes} = excludedList
-        if (markedForDeletionList){
-          newCustomisation.removeCustomisation([...markedForDeletionList])
+        const { elements, attributes } = excludedList;
+        if (markedForDeletionList) {
+          newCustomisation.removeCustomisation([...markedForDeletionList]);
         }
-        if (elements.length){
-          newCustomisation.removeCustomisation([...elements])
+        if (elements.length) {
+          newCustomisation.removeCustomisation([...elements]);
         }
-        if (attributes.length ){
-          newCustomisation.removeCustomisation([...attributes])
+        if (attributes.length) {
+          newCustomisation.removeCustomisation([...attributes]);
         }
         newCustomisation.customise();
         updateCustomisation(newCustomisation.customisation);
@@ -222,10 +224,10 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
               </Grid>
             </Grid>
           </Paper>
-          {/* <pre>{JSON.stringify(values, null, 2)}</pre>
-          <pre>{JSON.stringify(markedForDeletionList, null, 2)}</pre>
-          <pre>{JSON.stringify(excludedList["attributes"], null, 2)}</pre>
-          <pre>{JSON.stringify(excludedList["elements"], null, 2)}</pre> */}
+          <pre>{JSON.stringify(values, null, 2)}</pre>
+          {/* <pre>{JSON.stringify(markedForDeletionList, null, 2)}</pre> */}
+          {/* <pre>{JSON.stringify(excludedList["attributes"], null, 2)}</pre> */}
+          {/* <pre>{JSON.stringify(excludedList["elements"], null, 2)}</pre> */}
         </Form>
       )}
     </Formik>

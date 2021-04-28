@@ -13,7 +13,9 @@ export class ElementCustomiser extends Customiser {
     this.fixedList = !!(values?.elements.length || values?.attributes.length)
     this.object = values || {
       includeAllElements: true,
+      excludeAllElements:  false,
       includeAllAttributes: true,
+      excludeAllAttributes:  false,
       elements: [],
       attributes: [],
       heading: "",
@@ -141,16 +143,13 @@ export class ElementCustomiser extends Customiser {
   customisedObject() {
     const customisedEle = this.getCustomisedItem()?.parentElement;
     if (!customisedEle) return this.object;
+    this.object.excludeAllAttributes = customisedEle.getAttribute("ExcludeAllAttributes") === "Yes"
+    this.object.excludeAllElements = customisedEle.getAttribute("ExcludeAllElements") === "Yes"
     this.fixedList = !!customisedEle.getAttribute("Include")
     const heading = customisedEle.getAttribute("customHeading")
     this.object.heading = heading?heading:undefined
-    this.object.includeAllAttributes = !(
-      customisedEle.getAttribute("ExcludeAllAttributes") === "Yes"
-    );
-      
-    this.object.includeAllElements = !(
-      customisedEle.getAttribute("ExcludeAllElements") === "Yes"
-    );
+    // this.object.includeAllAttributes = !this.object.excludeAllAttributes;
+    // this.object.includeAllElements = !this.object.excludeAllElements;
     
     
     Array.prototype.forEach.call(customisedEle.children, (child: Element) => {

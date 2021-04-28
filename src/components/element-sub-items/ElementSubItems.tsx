@@ -47,6 +47,13 @@ export const ElementSubItems: React.FC<SubItems> = ({
     }) 
     return `includeAll${titleCaseName}`
   },[name]) as  "includeAllElements"|"includeAllAttributes"
+  
+  const excludeAllItem = React.useMemo(() => {
+    const titleCaseName = name.replace(new RegExp("^[a-z]"), (matched) => {
+      return matched.toUpperCase();
+    });
+    return `excludeAll${titleCaseName}`;
+  }, [name]) as "excludeAllElements" | "excludeAllAttributes";
 
   const affected2 = React.useMemo(()=>{
     if (!customization)return
@@ -88,6 +95,9 @@ export const ElementSubItems: React.FC<SubItems> = ({
   },[affected2, markedForDeletionList, name, setExcludedList])
   
   const toggleExclude = (value:string) => {
+    if (values[excludeAllItem]) {
+      values[excludeAllItem] = false;
+    }
     if(!touched[name]){
       setTouched({...touched,[name]:true})
     }
@@ -108,35 +118,36 @@ export const ElementSubItems: React.FC<SubItems> = ({
           name={name}
           render={(arrayHelper) => (
             <div>
-              <LixiListItemHeader 
-              name={includeAllItem}
-              header={header} 
-              items={subItems}
-              arrayHelper={arrayHelper}
-              selectedItemsLength={values[name].length}
-              toggle={toggleExclude}
+              <LixiListItemHeader
+                name={includeAllItem}
+                header={header}
+                items={subItems}
+                excludeAll={excludeAllItem}
+                arrayHelper={arrayHelper}
+                selectedItemsLength={values[name].length}
+                toggle={toggleExclude}
               />
-              {
-                subItems?.map((subEle, idx) => {
-                  if (!subEle?.path) {
-                    return <p></p>;
-                  }
-                  return (
-                    <LixiListItem 
-                    key={`${idx}-${subEle.path}`} 
+              {subItems?.map((subEle, idx) => {
+                if (!subEle?.path) {
+                  return <p></p>;
+                }
+                return (
+                  <LixiListItem
+                    key={`${idx}-${subEle.path}`}
                     fixedListItem={fixedListItem}
-                    name={name} 
-                    element={subEle} 
+                    includeAll={includeAllItem}
+                    excludeAll={excludeAllItem}
+                    listName={name}
+                    element={subEle}
                     selectAll={selectAll[name]}
                     touched={touched[name]}
                     toggleSelectAll={toggleExclude}
-                    excluded={affected2?.excluded||[]}
-                    included={affected2?.included||[]}
+                    excluded={affected2?.excluded || []}
+                    included={affected2?.included || []}
                     arrayHelper={arrayHelper}
-                    />
-                  );
-                })}
-                
+                  />
+                );
+              })}
             </div>
           )}
         />
