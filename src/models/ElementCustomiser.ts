@@ -144,9 +144,13 @@ export class ElementCustomiser extends Customiser {
     this.fixedList = !!customisedEle.getAttribute("Include")
     const heading = customisedEle.getAttribute("customHeading")
     this.object.heading = heading?heading:undefined
-    this.object.includeAllAttributes = !(!!customisedEle.getAttribute("ExcludeAllAttributes"))
+    this.object.includeAllAttributes = !(
+      customisedEle.getAttribute("ExcludeAllAttributes") === "Yes"
+    );
       
-    this.object.includeAllElements = !(!!customisedEle.getAttribute("ExcludeAllElements"))
+    this.object.includeAllElements = !(
+      customisedEle.getAttribute("ExcludeAllElements") === "Yes"
+    );
     
     
     Array.prototype.forEach.call(customisedEle.children, (child: Element) => {
