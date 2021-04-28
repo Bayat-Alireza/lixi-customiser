@@ -122,7 +122,6 @@ export const ElementSubItems: React.FC<SubItems> = ({
                 name={includeAllItem}
                 header={header}
                 items={subItems}
-                excludeAll={excludeAllItem}
                 arrayHelper={arrayHelper}
                 selectedItemsLength={values[name].length}
                 toggle={toggleExclude}
