@@ -36,8 +36,8 @@ export class ElementCustomiser extends Customiser {
       excerpt,
     } = this.object;
     if (
-      includeAllAttributes &&
-      includeAllElements &&
+      !includeAllAttributes &&
+      !includeAllElements &&
       !newMax &&
       !newMin &&
       !documentation &&

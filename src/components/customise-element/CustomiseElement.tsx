@@ -2,6 +2,7 @@ import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
+import Switch from "@material-ui/core/Switch";
 import SaveIcon from "@material-ui/icons/Save";
 import { Form, Formik } from "formik";
 import React, { Dispatch } from "react";
@@ -10,7 +11,6 @@ import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { CustomisedElementType } from "../../models/customisationTypes";
 import { ElementCustomiser } from "../../models/ElementCustomiser";
 import { LixiBase } from "../../models/LixiBase";
-import { CustomizationAction } from "../../redux/actions/customiser-actions";
 import { ElementSubItems } from "../element-sub-items/ElementSubItems";
 import { ExcerptDocumentation } from "../excerpt-documentation/ExcerptDocumentation";
 import { AppTextField } from "../formik-mterial-ui/AppTextField";
@@ -21,22 +21,6 @@ interface ICustomiseElement {
   lixiItem: LixiBase | undefined;
 }
 type SubElement = { [key: string]: Element[] };
-
-// const useDeleteInstruction = (
-//   path: string | undefined | null,
-//   customization: Element | undefined,
-//   updateCustomisation: (customisation: Element) => void
-// ) => {
-//   const [value, setValue] = React.useState(0);
-//   if (!path) return;
-//   const newCustomisation = new ElementCustomiser(customization, path);
-//   const removedItem = newCustomisation.removeCustomisedItem();
-//   if (removedItem) {
-//     updateCustomisation(newCustomisation.customisation);
-//   }
-//   return () => setValue((value) => value + 1);
-// };
-
 
 export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
   const classes = useStyles();
@@ -58,6 +42,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
       heading: "",
     }
   );
+  const [checked, setChecked] = React.useState(true);
   const [itemSubElement, setItemSubElement] = React.useState<SubElement>({});
   const [itemAttributes, setItemAttributes] = React.useState<Element[]>([]);
   const [excludedList, setExcludedList] = React.useState<{
@@ -110,6 +95,10 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
     });
   }, [customization, lixiItem?.path]);
 
+  const toggleIncludeExclude = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
+  };
+
   React.useEffect(() => {
     const subElement = lixiItem?.lixiSubElements;
     const attributes = lixiItem?.attributes;
@@ -138,6 +127,10 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
     const removedItem = newCustomisation.removeCustomisedItem();
     if (removedItem) {
       updateCustomisation(newCustomisation.customisation);
+      setFixedListItems({
+        elements: [],
+        attributes: [],
+      });
     }
   };
 
@@ -171,6 +164,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
         newCustomisation.customise();
         updateCustomisation(newCustomisation.customisation);
         setSubmitting(false);
+        // searchItem(lixiItem.path);
         // setTimeout(() => {
         // }, 400);
       }}
@@ -205,6 +199,11 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                     />
                   </div>
                   <div className={classes.saveButton}>
+                  <Switch
+                    checked={checked}
+                    onChange={(e) => toggleIncludeExclude(e)}
+                    inputProps={{ "aria-label": "controlled" }}
+                  />
                     <Button
                       size="small"
                       style={{ marginInline: "0.5rem" }}
@@ -226,6 +225,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                       Save
                     </Button>
                   </div>
+                 
                 </div>
                 <Divider />
               </Grid>
@@ -263,7 +263,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
               </Grid>
             </Grid>
           </Paper>
-          <pre>{JSON.stringify(values, null, 2)}</pre>
+          {/* <pre>{JSON.stringify(values, null, 2)}</pre> */}
           {/* <pre>{JSON.stringify(markedForDeletionList, null, 2)}</pre> */}
           {/* <pre>{JSON.stringify(excludedList["attributes"], null, 2)}</pre> */}
           {/* <pre>{JSON.stringify(excludedList["elements"], null, 2)}</pre> */}
