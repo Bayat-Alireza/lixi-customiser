@@ -103,6 +103,7 @@ export class Customiser {
     const existingCustomisedItem = this.getCustomisedItem()?.parentElement;
     if (existingCustomisedItem) {
       this.customisation.removeChild(existingCustomisedItem);
+      return existingCustomisedItem;
     }
   }
 

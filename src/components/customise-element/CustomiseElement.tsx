@@ -4,12 +4,13 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import SaveIcon from "@material-ui/icons/Save";
 import { Form, Formik } from "formik";
-import React from "react";
+import React, { Dispatch } from "react";
 import { useAction } from "../../hooks/useActions";
 import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { CustomisedElementType } from "../../models/customisationTypes";
 import { ElementCustomiser } from "../../models/ElementCustomiser";
 import { LixiBase } from "../../models/LixiBase";
+import { CustomizationAction } from "../../redux/actions/customiser-actions";
 import { ElementSubItems } from "../element-sub-items/ElementSubItems";
 import { ExcerptDocumentation } from "../excerpt-documentation/ExcerptDocumentation";
 import { AppTextField } from "../formik-mterial-ui/AppTextField";
@@ -21,9 +22,25 @@ interface ICustomiseElement {
 }
 type SubElement = { [key: string]: Element[] };
 
+// const useDeleteInstruction = (
+//   path: string | undefined | null,
+//   customization: Element | undefined,
+//   updateCustomisation: (customisation: Element) => void
+// ) => {
+//   const [value, setValue] = React.useState(0);
+//   if (!path) return;
+//   const newCustomisation = new ElementCustomiser(customization, path);
+//   const removedItem = newCustomisation.removeCustomisedItem();
+//   if (removedItem) {
+//     updateCustomisation(newCustomisation.customisation);
+//   }
+//   return () => setValue((value) => value + 1);
+// };
+
+
 export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
   const classes = useStyles();
-  const { updateCustomisation, } = useAction();
+  const { updateCustomisation } = useAction();
   const { customization } = useTypedSelector((state) => state.customizer);
   const { markedForDeletionList } = useTypedSelector((state) => state.item);
   const [initialValue, setInitialValue] = React.useState<CustomisedElementType>(
@@ -31,19 +48,22 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
       newMin: "",
       newMax: "",
       includeAllElements: true,
-      excludeAllElements:  false,
+      excludeAllElements: false,
       includeAllAttributes: true,
-      excludeAllAttributes:  true,
+      excludeAllAttributes: true,
       elements: [],
       attributes: [],
       excerpt: "",
       documentation: "",
-      heading:  ""
+      heading: "",
     }
   );
   const [itemSubElement, setItemSubElement] = React.useState<SubElement>({});
   const [itemAttributes, setItemAttributes] = React.useState<Element[]>([]);
-  const [excludedList,setExcludedList] = React.useState<{elements:string[],attributes:string[]}>({elements:[],attributes:[]})
+  const [excludedList, setExcludedList] = React.useState<{
+    elements: string[];
+    attributes: string[];
+  }>({ elements: [], attributes: [] });
   const [fixedListItem, setFixedListItems] = React.useState<{
     elements: string[];
     attributes: string[];
@@ -88,7 +108,6 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
       elements: [...instruction.elements],
       attributes: [...instruction.attributes],
     });
-
   }, [customization, lixiItem?.path]);
 
   React.useEffect(() => {
@@ -110,8 +129,17 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
     setOccursMinMax(occurrenceMinMax);
   }, [lixiItem?.element]);
 
-
-
+  const deleteInstruction = () => {
+    if (!lixiItem?.path) return;
+    const newCustomisation = new ElementCustomiser(
+      customization,
+      lixiItem?.path
+    );
+    const removedItem = newCustomisation.removeCustomisedItem();
+    if (removedItem) {
+      updateCustomisation(newCustomisation.customisation);
+    }
+  };
 
   return (
     <Formik
@@ -142,9 +170,9 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
         }
         newCustomisation.customise();
         updateCustomisation(newCustomisation.customisation);
-        setTimeout(() => {
-          setSubmitting(false);
-        }, 400);
+        setSubmitting(false);
+        // setTimeout(() => {
+        // }, 400);
       }}
     >
       {({ isSubmitting, values, errors, touched }) => (
@@ -177,6 +205,17 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                     />
                   </div>
                   <div className={classes.saveButton}>
+                    <Button
+                      size="small"
+                      style={{ marginInline: "0.5rem" }}
+                      // onClick={(DeleteInstruction)  =>  useDeleteInstruction(lixiItem?.path,customization,updateCustomisation)}
+                      onClick={deleteInstruction}
+                      variant="contained"
+                      color="primary"
+                      startIcon={<SaveIcon fontSize="large" />}
+                    >
+                      Delete
+                    </Button>
                     <Button
                       size="small"
                       type="submit"
