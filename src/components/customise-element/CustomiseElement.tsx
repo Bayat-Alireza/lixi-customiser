@@ -127,11 +127,12 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
     const removedItem = newCustomisation.removeCustomisedItem();
     if (removedItem) {
       updateCustomisation(newCustomisation.customisation);
-      setFixedListItems({
-        elements: [],
-        attributes: [],
-      });
     }
+    setInitialValue(newCustomisation.customisedObject())
+    setFixedListItems({
+      elements: [],
+      attributes: [],
+    });
   };
 
   return (
@@ -263,7 +264,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
               </Grid>
             </Grid>
           </Paper>
-          {/* <pre>{JSON.stringify(values, null, 2)}</pre> */}
+          <pre>{JSON.stringify(values, null, 2)}</pre>
           {/* <pre>{JSON.stringify(markedForDeletionList, null, 2)}</pre> */}
           {/* <pre>{JSON.stringify(excludedList["attributes"], null, 2)}</pre> */}
           {/* <pre>{JSON.stringify(excludedList["elements"], null, 2)}</pre> */}

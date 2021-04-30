@@ -29,7 +29,9 @@ export class ElementCustomiser extends Customiser {
   customise() {
     const {
       includeAllAttributes,
+      attributes,
       includeAllElements,
+      elements,
       newMin,
       newMax,
       documentation,
@@ -37,7 +39,9 @@ export class ElementCustomiser extends Customiser {
     } = this.object;
     if (
       !includeAllAttributes &&
+      !attributes.length &&
       !includeAllElements &&
+      !elements.length &&
       !newMax &&
       !newMin &&
       !documentation &&
