@@ -11,6 +11,7 @@ import { useStyles } from "./elementSubItemsStyle";
 
 interface SubItems {
   subItems: (LixiBase | null | undefined)[];
+  customisByExclusion: boolean
   header: string;
   name: "elements"|"attributes";
   value:string[];
@@ -27,6 +28,7 @@ export const ElementSubItems: React.FC<SubItems> = ({
   name,
   fixedListItem,
   setExcludedList,
+  customisByExclusion,
   value
 }) => {
   const classes = useStyles();
@@ -136,6 +138,7 @@ export const ElementSubItems: React.FC<SubItems> = ({
                     fixedListItem={fixedListItem}
                     includeAll={includeAllItem}
                     excludeAll={excludeAllItem}
+                    customisByExclusion={customisByExclusion}
                     listName={name}
                     element={subEle}
                     selectAll={selectAll[name]}

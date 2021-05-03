@@ -1,5 +1,6 @@
 import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Switch from "@material-ui/core/Switch";
@@ -142,8 +143,8 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
         CustomiseElementSchema(occursMinMax?.min, occursMinMax?.max)
       }
       onSubmit={(values, { setSubmitting }) => {
+        if (!lixiItem?.path || checked) return;
         setSubmitting(true);
-        if (!lixiItem?.path) return;
 
         alert(JSON.stringify(values, null, 2));
         const newCustomisation = new ElementCustomiser(
@@ -174,7 +175,19 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
           <Paper style={{ padding: "0.5rem" }}>
             <Grid container spacing={1}>
               <Grid item xs={12}>
+              <div className={classes.saveMinMax}>
+                  <FormControlLabel
+                    label={checked ? "Customise By Exclusion" : "Customise By Inclusion"}
+                    control={<Switch
+                      checked={checked}
+                      onChange={(e) => toggleIncludeExclude(e)}
+                      inputProps={{ "aria-label": "controlled" }}
+                    />} />
+                </div>
+              </Grid>
+              <Grid item xs={12}>
                 <div className={classes.saveMinMax}>
+
                   <div className={classes.minMaxContainer}>
                     <AppTextField
                       className={classes.textFieldMinMax}
@@ -199,12 +212,8 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                     />
                   </div>
                   <div className={classes.saveButton}>
-                  <Switch
-                    checked={checked}
-                    onChange={(e) => toggleIncludeExclude(e)}
-                    inputProps={{ "aria-label": "controlled" }}
-                  />
-                    <Button
+
+                    {!checked && <><Button
                       size="small"
                       style={{ marginInline: "0.5rem" }}
                       // onClick={(DeleteInstruction)  =>  useDeleteInstruction(lixiItem?.path,customization,updateCustomisation)}
@@ -222,8 +231,9 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                       color="primary"
                       startIcon={<SaveIcon fontSize="large" />}
                     >
-                      Save
-                    </Button>
+                        Save
+                    </Button></>}
+
                   </div>
                  
                 </div>
@@ -233,6 +243,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                 <Grid item xs={12} sm={itemAttributes?.length ? 6 : 12}>
                   <ElementSubItems
                     setExcludedList={setExcludedList}
+                    customisByExclusion={checked}
                     fixedListItem={fixedListItem["elements"]}
                     key={"element"}
                     value={values.elements}
@@ -247,6 +258,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
               {leafAttribs?.length ? (
                 <Grid item xs={12} sm={leafEle?.length ? 6 : 12}>
                   <ElementSubItems
+                    customisByExclusion={checked}
                     setExcludedList={setExcludedList}
                     fixedListItem={fixedListItem["attributes"]}
                     key="attribute"

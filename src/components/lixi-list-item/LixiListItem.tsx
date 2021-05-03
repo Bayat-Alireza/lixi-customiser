@@ -24,6 +24,7 @@ import RestoreFromTrashIcon from '@material-ui/icons/RestoreFromTrash';
 
 interface IListLixiItem {
   listName: "elements" | "attributes";
+  customisByExclusion: boolean
   element: LixiBase;
   included: string[];
   excluded: string[];
@@ -46,7 +47,8 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
   arrayHelper,
   toggleSelectAll,
   includeAll,
-  excludeAll
+  excludeAll,
+  customisByExclusion
 }) => {
   const classes = useStyles();
   const [value, setValue] = React.useState<string>("");
@@ -258,10 +260,10 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
             checked={!!value}
             value={value}
             checkedIcon={
-              <DoneOutlinedIcon style={{ color: "green" }} fontSize="small" />
+              <DoneOutlinedIcon style={{ color: "white" }} fontSize="small" />
             }
             icon={
-              <CloseOutlinedIcon fontSize="small" style={{ color: "red" }} />
+              <CloseOutlinedIcon fontSize="small" style={{ color: "white" }} />
             }
           />
         </ListItemIcon>
@@ -281,11 +283,13 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
               <Typography variant="caption" color="textSecondary">
                 &nbsp;
                 <em>
-                  {excluded.includes(leafItem || "")
+                  {excluded.includes(leafItem || "") && customisByExclusion
                     ? "- excluded."
+                    : excluded.includes(leafItem || "") && !customisByExclusion
+                      ? "- not included"
                     : included.includes(leafItem || "")
                     ? "- customised."
-                    : fixedListItem.includes(leafItem||"")?"- included": ""}
+                        : fixedListItem.includes(leafItem || "") ? "- included" : ""}
                 </em>
                 <LixiItemToolTip lixiItem={element} placement="top-start" />
               </Typography>
@@ -294,7 +298,7 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
         />
 
         <ListItemSecondaryAction>
-          <IconButton
+          {customisByExclusion && <IconButton
             onClick={toggleExclude}
             disabled={!!fixedListItem.length}
             edge="end"
@@ -305,7 +309,7 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
             <RestoreFromTrashIcon fontSize="small" />:
             <DeleteForeverOutlinedIcon fontSize="small" />
           }
-          </IconButton>
+          </IconButton>}
           <IconButton
             edge="end"
             aria-label="comments"
