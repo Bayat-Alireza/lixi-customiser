@@ -17,7 +17,8 @@ interface IHeaderLixiItem {
   items: (LixiBase | null | undefined)[];
   selectedItemsLength: number;
   toggle: (value:string) => void;
-  arrayHelper:FieldArrayRenderProps
+  arrayHelper:FieldArrayRenderProps;
+  customisByExclusion:boolean
 }
 
 export const LixiListItemHeader: React.FC<IHeaderLixiItem> = ({
@@ -26,7 +27,8 @@ export const LixiListItemHeader: React.FC<IHeaderLixiItem> = ({
   items,
   selectedItemsLength,
   header,
-  arrayHelper:FieldArrayRenderProps
+  arrayHelper:FieldArrayRenderProps,
+  customisByExclusion
 }) => {
   const classes = useStyles();
   const [value,setValue]=React.useState<string>("")
@@ -49,7 +51,7 @@ export const LixiListItemHeader: React.FC<IHeaderLixiItem> = ({
       style={{ marginTop: "0", alignItems: "center" }}
       className={classes.subItemHeader}
     >
-      <ListItemIcon>
+      {/* <ListItemIcon>
         <AppCheckBox
           key={name}
           name={name}
@@ -66,8 +68,15 @@ export const LixiListItemHeader: React.FC<IHeaderLixiItem> = ({
             selectedItemsLength > 0 && selectedItemsLength < items.length
           }
         />
-      </ListItemIcon>
-      <ListItemText primary={`Include All ${header}`} />
+      </ListItemIcon> */}
+      <ListItemText
+     
+          onClick={()  =>  toggle(name)}
+ 
+              // primary={`Include All ${header}`}
+              primary="Select All"
+     
+      />
     </ListSubheader>
   );
 };

@@ -11,6 +11,7 @@ export const useStyles = makeStyles((theme: Theme) =>
       borderRadius: "0.2rem",
       maxHeight: "5rem",
       color: theme.palette.primary.main,
+      cursor: "pointer",
     },
 
     viewItem: {

@@ -210,6 +210,20 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
   }, [customization, element]);
 
   const handelAddItem = (subEle: string | undefined) => {
+    if(customisByExclusion){
+      toggleExclude()
+      return 
+    }else{
+      toggleExclude()
+      // if(element?.path){
+      // const newCustomisation = new Customiser(customization, element?.path);
+      // if (!!newCustomisation.ExcludedItem()) {
+      //   newCustomisation.include();
+      //   updateCustomisation(newCustomisation.customisation);
+      
+      // }}
+    }
+    
     if (!subEle) return;
     if (affected && !furtherCustomisation) {
       setAffectedPath(affected);
@@ -218,9 +232,9 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
         return;
       }
     }
-    if (selectAll !== "disable") {
-      toggleSelectAll("disable");
-    }
+    // if (selectAll !== "disable") {
+    //   toggleSelectAll("disable");
+    // }
     if (!values[listName].includes(subEle)) {
       setValue(subEle);
       arrayHelper.push(subEle);
@@ -252,7 +266,7 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
         handleClose={handleClose}
       />
       <ListItem divider dense button onClick={() => handelAddItem(leafItem)}>
-        <ListItemIcon>
+        {/* <ListItemIcon>
           <AppCheckBox
             onClick={() => handelAddItem(leafItem)}
             disableRipple
@@ -266,7 +280,7 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
               <CloseOutlinedIcon fontSize="small" style={{ color: "white" }} />
             }
           />
-        </ListItemIcon>
+        </ListItemIcon> */}
         <ListItemText
           style={{ cursor: "pointer" }}
           id={`${element?.path?.split(".").pop()}`}
@@ -283,13 +297,28 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
               <Typography variant="caption" color="textSecondary">
                 &nbsp;
                 <em>
-                  {excluded.includes(leafItem || "") && customisByExclusion
-                    ? "- excluded."
-                    : excluded.includes(leafItem || "") && !customisByExclusion
-                      ? "- not included"
-                    : included.includes(leafItem || "")
+                  { included.includes(leafItem || "")
                     ? "- customised."
-                        : fixedListItem.includes(leafItem || "") ? "- included" : ""}
+                      :fixedListItem.includes(leafItem || "") 
+                    ? "- included"
+                      :excluded.includes(leafItem || "") && customisByExclusion
+                    ? "- excluded"
+                      : excluded.includes(leafItem || "") && !customisByExclusion && !values[listName].includes(leafItem|| "")
+                    ? "- not included"
+                      : excluded.includes(leafItem || "") && !customisByExclusion && values[listName].includes(leafItem|| "")
+                    ? "- included"
+                      : !excluded.includes(leafItem || "") && customisByExclusion && !values[listName].includes(leafItem|| "")
+                    ? "- excluded"
+                      : !excluded.includes(leafItem || "") && customisByExclusion
+                    ? "- not excluded"
+                      : !excluded.includes(leafItem || "") && !customisByExclusion && values[listName].includes(leafItem|| "")
+                    ? "- included"
+                      : !excluded.includes(leafItem || "") && !customisByExclusion && !values[listName].includes(leafItem|| "")
+                    ? "- not included"
+                      : included.includes(leafItem || "")
+                    ? "- customised"
+                      : fixedListItem.includes(leafItem || "") ? "- included" : ""
+                  }
                 </em>
                 <LixiItemToolTip lixiItem={element} placement="top-start" />
               </Typography>
@@ -298,7 +327,7 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
         />
 
         <ListItemSecondaryAction>
-          {customisByExclusion && <IconButton
+          {/* {customisByExclusion && <IconButton
             onClick={toggleExclude}
             disabled={!!fixedListItem.length}
             edge="end"
@@ -309,7 +338,7 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
             <RestoreFromTrashIcon fontSize="small" />:
             <DeleteForeverOutlinedIcon fontSize="small" />
           }
-          </IconButton>}
+          </IconButton>} */}
           <IconButton
             edge="end"
             aria-label="comments"

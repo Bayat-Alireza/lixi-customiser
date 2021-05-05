@@ -175,19 +175,25 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
           <Paper style={{ padding: "0.5rem" }}>
             <Grid container spacing={1}>
               <Grid item xs={12}>
-              <div className={classes.saveMinMax}>
+                <div className={classes.saveMinMax}>
                   <FormControlLabel
-                    label={checked ? "Customise By Exclusion" : "Customise By Inclusion"}
-                    control={<Switch
-                      checked={checked}
-                      onChange={(e) => toggleIncludeExclude(e)}
-                      inputProps={{ "aria-label": "controlled" }}
-                    />} />
+                    label={
+                      checked
+                        ? "Customise By Exclusion"
+                        : "Customise By Inclusion"
+                    }
+                    control={
+                      <Switch
+                        checked={checked}
+                        onChange={(e) => toggleIncludeExclude(e)}
+                        inputProps={{ "aria-label": "controlled" }}
+                      />
+                    }
+                  />
                 </div>
               </Grid>
               <Grid item xs={12}>
                 <div className={classes.saveMinMax}>
-
                   <div className={classes.minMaxContainer}>
                     <AppTextField
                       className={classes.textFieldMinMax}
@@ -212,30 +218,31 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                     />
                   </div>
                   <div className={classes.saveButton}>
-
-                    {!checked && <><Button
-                      size="small"
-                      style={{ marginInline: "0.5rem" }}
-                      // onClick={(DeleteInstruction)  =>  useDeleteInstruction(lixiItem?.path,customization,updateCustomisation)}
-                      onClick={deleteInstruction}
-                      variant="contained"
-                      color="primary"
-                      startIcon={<SaveIcon fontSize="large" />}
-                    >
-                      Delete
-                    </Button>
-                    <Button
-                      size="small"
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      startIcon={<SaveIcon fontSize="large" />}
-                    >
-                        Save
-                    </Button></>}
-
+                    {!checked && (
+                      <>
+                        <Button
+                          size="small"
+                          style={{ marginInline: "0.5rem" }}
+                          // onClick={(DeleteInstruction)  =>  useDeleteInstruction(lixiItem?.path,customization,updateCustomisation)}
+                          onClick={deleteInstruction}
+                          variant="contained"
+                          color="primary"
+                          startIcon={<SaveIcon fontSize="large" />}
+                        >
+                          Delete
+                        </Button>
+                        <Button
+                          size="small"
+                          type="submit"
+                          variant="contained"
+                          color="primary"
+                          startIcon={<SaveIcon fontSize="large" />}
+                        >
+                          Save
+                        </Button>
+                      </>
+                    )}
                   </div>
-                 
                 </div>
                 <Divider />
               </Grid>
@@ -275,7 +282,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
               </Grid>
             </Grid>
           </Paper>
-          {/* <pre>{JSON.stringify(values, null, 2)}</pre> */}
+          <pre>{JSON.stringify(values, null, 2)}</pre>
           {/* <pre>{JSON.stringify(markedForDeletionList, null, 2)}</pre> */}
           {/* <pre>{JSON.stringify(excludedList["attributes"], null, 2)}</pre> */}
           {/* <pre>{JSON.stringify(excludedList["elements"], null, 2)}</pre> */}
