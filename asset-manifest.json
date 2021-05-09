@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.js": "/lixi-customiser/static/js/main.be7fc31c.chunk.js",
-    "main.js.map": "/lixi-customiser/static/js/main.be7fc31c.chunk.js.map",
-    "runtime-main.js": "/lixi-customiser/static/js/runtime-main.6f210624.js",
-    "runtime-main.js.map": "/lixi-customiser/static/js/runtime-main.6f210624.js.map",
-    "static/js/2.4fca30cc.chunk.js": "/lixi-customiser/static/js/2.4fca30cc.chunk.js",
-    "static/js/2.4fca30cc.chunk.js.map": "/lixi-customiser/static/js/2.4fca30cc.chunk.js.map",
-    "static/js/3.196f0e50.chunk.js": "/lixi-customiser/static/js/3.196f0e50.chunk.js",
-    "static/js/3.196f0e50.chunk.js.map": "/lixi-customiser/static/js/3.196f0e50.chunk.js.map",
+    "main.js": "/lixi-customiser/static/js/main.d2d93d0e.chunk.js",
+    "main.js.map": "/lixi-customiser/static/js/main.d2d93d0e.chunk.js.map",
+    "runtime-main.js": "/lixi-customiser/static/js/runtime-main.90e3229d.js",
+    "runtime-main.js.map": "/lixi-customiser/static/js/runtime-main.90e3229d.js.map",
+    "static/js/2.38bdc13b.chunk.js": "/lixi-customiser/static/js/2.38bdc13b.chunk.js",
+    "static/js/2.38bdc13b.chunk.js.map": "/lixi-customiser/static/js/2.38bdc13b.chunk.js.map",
+    "static/js/3.047da2fd.chunk.js": "/lixi-customiser/static/js/3.047da2fd.chunk.js",
+    "static/js/3.047da2fd.chunk.js.map": "/lixi-customiser/static/js/3.047da2fd.chunk.js.map",
     "index.html": "/lixi-customiser/index.html",
-    "static/js/2.4fca30cc.chunk.js.LICENSE.txt": "/lixi-customiser/static/js/2.4fca30cc.chunk.js.LICENSE.txt"
+    "static/js/2.38bdc13b.chunk.js.LICENSE.txt": "/lixi-customiser/static/js/2.38bdc13b.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.6f210624.js",
-    "static/js/2.4fca30cc.chunk.js",
-    "static/js/main.be7fc31c.chunk.js"
+    "static/js/runtime-main.90e3229d.js",
+    "static/js/2.38bdc13b.chunk.js",
+    "static/js/main.d2d93d0e.chunk.js"
   ]
 }
