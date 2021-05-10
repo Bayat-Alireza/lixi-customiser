@@ -250,7 +250,7 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
     if (selectAll !== "disable") {
       toggleSelectAll("disable");
     }
-    if (!values[listName].includes(subEle)) {
+    if (!values[listName].includes(subEle) && !exclusion) {
       setValue(subEle);
       arrayHelper.push(subEle);
     } else {

@@ -289,7 +289,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                      title={
                        <div style={{backgroundColor:"#fff",margin:0,color:"#333",padding:"0.5rem"}}>
                          <Typography color="primary" variant="h6"><u>Exclusion Mode</u></Typography>
-                         <Typography component="div" color="textPrimary">The <Typography variant="caption" color="secondary">excluded</Typography> item(s) will not appear in the customised schema</Typography>
+                         <Typography component="div" color="textPrimary">The&nbsp;<Typography variant="caption" color="secondary">excluded</Typography>&nbsp;item(s) will not appear in the customised schema</Typography>
                        </div>
                      }>
                     <Typography variant="button" className={classes.customisationTitleExclusion}>
@@ -302,7 +302,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                             title={
                               <div style={{backgroundColor:"#fff",margin:0,color:"#333",padding:"0.5rem"}}>
                                 <Typography color="primary" variant="h6"><u>Inclusion Mode</u></Typography>
-                                <Typography color="textPrimary">ONLY the included item(s) <DoneOutlinedIcon style={{ color: "green" }} fontSize="small" /> of the parent element will appear in the customised schema.</Typography>
+                                <Typography color="textPrimary">ONLY the included item(s)&nbsp;<DoneOutlinedIcon style={{ color: "green" }} fontSize="small" />of the parent element will appear in the customised schema.</Typography>
                               </div>
                             }>
                               <Typography variant="button" className={classes.customisationTitleInclusion}><u><em>Inclusion</em></u></Typography>
