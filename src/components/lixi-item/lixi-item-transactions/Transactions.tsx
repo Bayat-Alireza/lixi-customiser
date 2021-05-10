@@ -26,7 +26,7 @@ export const Transactions: React.FC<ITransactions> = ({
                   size="small"
                   color="primary"
                   variant="outlined"
-                  clickable
+                  // clickable
                   label={t}
                 />
               </span>
@@ -38,7 +38,7 @@ export const Transactions: React.FC<ITransactions> = ({
                   size="small"
                   color="primary"
                   variant="default"
-                  clickable
+                  // clickable
                   label={t}
                   avatar={<Avatar>{t[0]}</Avatar>}
                 />

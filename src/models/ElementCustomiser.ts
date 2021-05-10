@@ -3,19 +3,19 @@ import { CustomisedElementType } from "./customisationTypes";
 
 export class ElementCustomiser extends Customiser {
   object = {} as CustomisedElementType;
-  fixedList:boolean
+  fixedList: boolean;
   constructor(
     customisation: Element | undefined = undefined,
     path?: string,
     values?: CustomisedElementType
   ) {
     super(customisation, path);
-    this.fixedList = !!(values?.elements.length || values?.attributes.length)
+    this.fixedList = !!(values?.elements.length || values?.attributes.length);
     this.object = values || {
       includeAllElements: true,
-      excludeAllElements:  false,
+      excludeAllElements: false,
       includeAllAttributes: true,
-      excludeAllAttributes:  false,
+      excludeAllAttributes: false,
       elements: [],
       attributes: [],
       heading: "",
@@ -36,6 +36,7 @@ export class ElementCustomiser extends Customiser {
       newMax,
       documentation,
       excerpt,
+      heading,
     } = this.object;
     if (
       !includeAllAttributes &&
@@ -45,6 +46,7 @@ export class ElementCustomiser extends Customiser {
       !newMax &&
       !newMin &&
       !documentation &&
+      !heading &&
       !excerpt
     ) {
       this.removeCustomisedItem();
@@ -104,8 +106,8 @@ export class ElementCustomiser extends Customiser {
   }
 
   setInLineAttributes() {
-    if  (this.object.heading)  {
-      this.customiseItem.setAttribute("customHeading",  this.object.heading);;
+    if (this.object.heading) {
+      this.customiseItem.setAttribute("customHeading", this.object.heading);
     }
     if (this.object.elements.length || this.object.attributes.length) {
       this.customiseItem.setAttribute("Include", "Yes");
@@ -118,12 +120,12 @@ export class ElementCustomiser extends Customiser {
     }
     if (this.object.includeAllAttributes) {
       // this.customiseItem.setAttribute("IncludeAllAttributes", "Yes");
-    } else if (!this.object.attributes.length) {
+    } else if (!this.object.attributes.length && this.object.elements.length) {
       this.customiseItem.setAttribute("ExcludeAllAttributes", "Yes");
     }
     if (this.object.includeAllElements) {
       // this.customiseItem.setAttribute("IncludeAllElements", "Yes");
-    } else if (!this.object.elements.length) {
+    } else if (!this.object.elements.length && this.object.attributes.length) {
       this.customiseItem.setAttribute("ExcludeAllElements", "Yes");
     }
     if (
@@ -138,24 +140,60 @@ export class ElementCustomiser extends Customiser {
       !this.object.elements.length &&
       !this.object.includeAllElements &&
       !this.object.attributes.length &&
-      !this.object.includeAllAttributes
+      !this.object.includeAllAttributes &&
+      !this.object.heading &&
+      !this.object.documentation &&
+      !this.object.excerpt
     ) {
       return this.exclude();
     }
   }
 
+  // Remove a customsed element, while switching from 
+  // customisation by inclusion to customisation by exclusion 
+  removeElementsAndAttributes() {
+    const customisedEle = this.getCustomisedItem()?.parentElement;
+    if (!customisedEle) return;
+    const customHeading = customisedEle.getAttribute("customHeading");
+    const result = Array.prototype.find.call(
+      customisedEle.children,
+      (child: Element) => {
+        return ["CustomDocumentation", "CustomExcerpt"].includes(
+          child.localName
+        );
+      }
+    );
+    if (!result && !customHeading) {
+      customisedEle.parentElement?.removeChild(customisedEle);
+      return;
+    }
+    Array.prototype.forEach.call(customisedEle.children, (child: Element) => {
+      switch (child.localName) {
+        case "Element":
+          customisedEle.removeChild(child);
+          break;
+        case "Attribute":
+          customisedEle.removeChild(child);
+          break;
+
+        default:
+          break;
+      }
+    });
+  }
   customisedObject() {
     const customisedEle = this.getCustomisedItem()?.parentElement;
     if (!customisedEle) return this.object;
-    this.object.excludeAllAttributes = customisedEle.getAttribute("ExcludeAllAttributes") === "Yes"
-    this.object.excludeAllElements = customisedEle.getAttribute("ExcludeAllElements") === "Yes"
-    this.fixedList = !!customisedEle.getAttribute("Include")
-    const heading = customisedEle.getAttribute("customHeading")
-    this.object.heading = heading?heading:undefined
+    this.object.excludeAllAttributes =
+      customisedEle.getAttribute("ExcludeAllAttributes") === "Yes";
+    this.object.excludeAllElements =
+      customisedEle.getAttribute("ExcludeAllElements") === "Yes";
+    this.fixedList = !!customisedEle.getAttribute("Include");
+    const heading = customisedEle.getAttribute("customHeading");
+    this.object.heading = heading ? heading : undefined;
     // this.object.includeAllAttributes = !this.object.excludeAllAttributes;
     // this.object.includeAllElements = !this.object.excludeAllElements;
-    
-    
+
     Array.prototype.forEach.call(customisedEle.children, (child: Element) => {
       switch (child.localName) {
         case "CustomMaxOccurs":
@@ -167,10 +205,10 @@ export class ElementCustomiser extends Customiser {
           this.object.newMin = newMin ? parseInt(newMin) : "";
           break;
         case "Attribute":
-            const attribute = child.textContent;
-            if (!attribute) break;
-            this.object.attributes?.push(attribute);
-            break;
+          const attribute = child.textContent;
+          if (!attribute) break;
+          this.object.attributes?.push(attribute);
+          break;
         case "Element":
           const element = child.textContent;
           if (!element) break;
@@ -208,45 +246,45 @@ export class ElementCustomiser extends Customiser {
         parentStatus.path = pathList.join(".");
         return parentStatus;
       }
-      if (!customisedItem.getAttribute("Include")){
+      if (!customisedItem.getAttribute("Include")) {
         parentStatus.included = true;
         parentStatus.path = pathList.join(".");
         return parentStatus;
       }
       if (type === "element") {
         if (customisedItem.getAttribute("ExcludeAllElements")) {
-            parentStatus.included = false;
-            parentStatus.path = pathList.join(".");
-            return parentStatus;
-          } else {
-              if (pathLeaf && customiser.object.elements.includes(pathLeaf)) {
-                parentStatus.included = true;
-                parentStatus.path = pathList.join(".");
-                return parentStatus;
-              }else{
-                parentStatus.included = false;
-                parentStatus.path = pathList.join(".");
-                return parentStatus;
-              }
-            }
-      } else if (type === "attribute") {
-        if (customisedItem.getAttribute("ExcludeAllAttributes")) {
           parentStatus.included = false;
           parentStatus.path = pathList.join(".");
           return parentStatus;
-        }else{
-          if (pathLeaf && customiser.object.attributes.includes(pathLeaf)) {
+        } else {
+          if (pathLeaf && customiser.object.elements.includes(pathLeaf)) {
             parentStatus.included = true;
             parentStatus.path = pathList.join(".");
             return parentStatus;
-          }else{
+          } else {
             parentStatus.included = false;
             parentStatus.path = pathList.join(".");
             return parentStatus;
           }
         }
-      } 
-        pathList.pop();
+      } else if (type === "attribute") {
+        if (customisedItem.getAttribute("ExcludeAllAttributes")) {
+          parentStatus.included = false;
+          parentStatus.path = pathList.join(".");
+          return parentStatus;
+        } else {
+          if (pathLeaf && customiser.object.attributes.includes(pathLeaf)) {
+            parentStatus.included = true;
+            parentStatus.path = pathList.join(".");
+            return parentStatus;
+          } else {
+            parentStatus.included = false;
+            parentStatus.path = pathList.join(".");
+            return parentStatus;
+          }
+        }
+      }
+      pathList.pop();
     }
     while (pathList.length) {
       const pathLeaf = pathList.pop();
@@ -263,7 +301,7 @@ export class ElementCustomiser extends Customiser {
           return parentStatus;
         }
 
-        if (!customisedItem.getAttribute("Include")){
+        if (!customisedItem.getAttribute("Include")) {
           parentStatus.included = true;
           parentStatus.path = pathList.join(".");
           return parentStatus;
@@ -276,10 +314,10 @@ export class ElementCustomiser extends Customiser {
           parentStatus.included = true;
           parentStatus.path = pathList.join(".");
           return parentStatus;
-        } 
+        }
       }
     }
     return;
   };
-    }
+}
 

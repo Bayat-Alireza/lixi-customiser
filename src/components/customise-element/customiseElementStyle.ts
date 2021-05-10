@@ -17,24 +17,53 @@ export const useStyles = makeStyles((theme: Theme) =>
       overflow: "scroll",
     },
     saveMinMax: {
-      padding: "0.5rem",
-      display: "flex",
+      width:"100%",
+      margin:"auto",
+      // padding: "0.5rem 0",
+      // display: "flex",
       gap: "0.5rem",
-      justifyContent: "space-between",
+      // justifyContent: "space-between",
       alignItems: "center",
     },
     minMaxContainer: {
+      // width:"50%",
+      margin:"auto",
       display: "flex",
+
       justifyContent: "space-between",
       gap: "0.5rem",
     },
     textFieldMinMax: {
-      width: "10rem",
+      // width: "10rem",
     },
     saveButton: {
-      width: "100%",
+      // width: "100%",
       display: "flex",
       justifyContent: "flex-end",
+    },
+    customisationTitleContainer: {
+      display: "flex",
+      justifyContent:  "space-between",
+      padding: "0.5rem",
+      backgroundColor: theme.palette.primary.main,
+      // color: theme.palette.text.primary,
+    },
+    customisationTitle: {
+      color: theme.palette.getContrastText(theme.palette.primary.main),
+    },
+    customisationTitleExclusion: {
+      color: theme.palette.secondary.main,
+    },
+    customisationTitleInclusion: {
+      color: theme.palette.getContrastText(theme.palette.primary.main),
+    },
+
+    customisationTooltip: {
+      // backgroundColor: "#f5f5f9",
+      // color: "rgba(0, 0, 0, 0.87)",
+      // maxWidth: 220,
+      // fontSize: theme.typography.pxToRem(12),
+      // border: "1px solid #dadde9",
     },
   })
 );

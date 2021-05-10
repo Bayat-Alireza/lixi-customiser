@@ -3,7 +3,7 @@ import React from "react";
 import { AppTextField } from "../formik-mterial-ui/AppTextField";
 import { useFormikContext } from "formik";
 
-export const ExcerptDocumentation: React.FC = () => {
+export const ExcerptDocumentation: React.FC = ({ children }) => {
   const excerptTooltip = `
   A short description - explaining the item usage.
   `;
@@ -19,7 +19,8 @@ export const ExcerptDocumentation: React.FC = () => {
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12}>
+      
+      <Grid item xs={12} sm={children?6:12}>
         <AppTextField
           title={customHeadingTooltip}
           variant="outlined"
@@ -31,6 +32,7 @@ export const ExcerptDocumentation: React.FC = () => {
           label="Custom Heading"
         />
       </Grid>
+      {children}
       <Grid item xs={12} sm={6}>
         <AppTextField
           title={excerptTooltip}

@@ -5,7 +5,7 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
 import Typography from "@material-ui/core/Typography";
 import React, { Fragment } from "react";
-import { AppCheckBox } from "../formik-mterial-ui/AppCheckBox";
+// import { AppCheckBox } from "../formik-mterial-ui/AppCheckBox";
 import { LixiItemToolTip } from "../tool-tip/LixiItemToolTip";
 import CloseOutlinedIcon from "@material-ui/icons/CloseOutlined";
 import DoneOutlinedIcon from "@material-ui/icons/DoneOutlined";
@@ -19,8 +19,9 @@ import { useStyles } from "./lixiListItemStyle";
 import { Customiser } from "../../models/Customiser";
 import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { ConfirmRemoveItemDialog } from "../confirm-remove-dialog/ConfirmRemoveItemDialog";
-import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
-import RestoreFromTrashIcon from '@material-ui/icons/RestoreFromTrash';
+// import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
+// import RestoreFromTrashIcon from '@material-ui/icons/RestoreFromTrash';
+// import Switch from "@material-ui/core/Switch";
 
 interface IListLixiItem {
   listName: "elements" | "attributes";
@@ -34,6 +35,7 @@ interface IListLixiItem {
   toggleSelectAll: (value: string) => void;
   includeAll: "includeAllElements" | "includeAllAttributes";
   excludeAll:"excludeAllElements" | "excludeAllAttributes";
+  exclusion:boolean
 }
 export const LixiListItem: React.FC<IListLixiItem> = ({
   listName,
@@ -46,7 +48,8 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
   arrayHelper,
   toggleSelectAll,
   includeAll,
-  excludeAll
+  excludeAll,
+  exclusion
 }) => {
   const classes = useStyles();
   const [value, setValue] = React.useState<string>("");
@@ -54,7 +57,7 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
   const { markedForDeletionList } = useTypedSelector((state) => state.item);
   const { customization } = useTypedSelector((state) => state.customizer);
   const { searchItem,  updateCustomisation } = useAction();
-  const { values } = useFormikContext<CustomisedElementType>();
+  const { values,submitForm } = useFormikContext<CustomisedElementType>();
 
   const [affectedPath, setAffectedPath] = React.useState<{
     path: string;
@@ -62,6 +65,33 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
   }>();
   const [open, setOpen] = React.useState(false);
 
+  const Status = ()=>{
+    let status = ''
+    if(exclusion){
+      status = included.includes(leafItem || "")
+      ? "customised"
+      : excluded.includes(leafItem||"")
+      ? "excluded"
+      : "not excluded"
+      
+    }
+    if (!exclusion){
+      status = included.includes(leafItem || "")
+      ? "customised"
+      : values[listName].includes(leafItem||"")
+      ?"included"
+      : "not included"
+    }
+     if (status === "excluded"){
+       return <Typography variant="caption" color="secondary">{status}</Typography>
+     }
+     if (status === "customised"){
+       return <Typography variant="caption" color="primary"><strong>{status}</strong></Typography>
+     }
+     return <em>{status}</em>
+   
+
+  }
   const leafItem = React.useMemo(() => {
     return element.path?.split(".").pop();
   }, [element.path]);
@@ -74,88 +104,89 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
     });
   }, [element?.path, markedForDeletionList]);
 
-  React.useEffect(() => {
-    if (!leafItem) return;
-    if (
-      (included.includes(leafItem) || excluded.includes(leafItem)) &&
-      neutral.includes(leafItem)
-    ) {
-      setNeutral([]);
-    }
-    if (
-      !(included.includes(leafItem) || excluded.includes(leafItem)) &&
-      !neutral.includes(leafItem)
-    ) {
-      setNeutral([leafItem]);
-    }
-  }, [excluded, included, leafItem, neutral]);
 
-  React.useEffect(() => {
-    if (!leafItem) return;
-    if (values[excludeAll]) {
-      setValue("");
-      return;
-    }
+  // React.useEffect(() => {
+  //   if (!leafItem) return;
+  //   if (
+  //     (included.includes(leafItem) || excluded.includes(leafItem)) &&
+  //     neutral.includes(leafItem)
+  //   ) {
+  //     setNeutral([]);
+  //   }
+  //   if (
+  //     !(included.includes(leafItem) || excluded.includes(leafItem)) &&
+  //     !neutral.includes(leafItem)
+  //   ) {
+  //     setNeutral([leafItem]);
+  //   }
+  // }, [excluded, included, leafItem, neutral]);
 
-    if (furtherCustomisation && values[listName].includes(leafItem)) {
-      setValue(leafItem);
-      return;
-    }
-    if (furtherCustomisation && !values[listName].includes(leafItem)) {
-      setValue("");
-      return;
-    }
-    if (included.includes(leafItem) || values[listName].includes(leafItem)) {
-      // if  (!values[includeAll])  return;;
-      setValue(leafItem);
-      return;
-    }
-    if (excluded.includes(leafItem) || !values[listName].includes(leafItem)) {
-      setValue("");
-      return;
-    }
-  }, [
-    excludeAll,
-    excluded,
-    furtherCustomisation,
-    includeAll,
-    included,
-    leafItem,
-    listName,
-    values,
-  ]);
+  // React.useEffect(() => {
+  //   if (!leafItem) return;
+  //   if (values[excludeAll]) {
+  //     setValue("");
+  //     return;
+  //   }
+
+  //   if (furtherCustomisation && values[listName].includes(leafItem)) {
+  //     setValue(leafItem);
+  //     return;
+  //   }
+  //   if (furtherCustomisation && !values[listName].includes(leafItem)) {
+  //     setValue("");
+  //     return;
+  //   }
+  //   if (included.includes(leafItem) || values[listName].includes(leafItem)) {
+  //     // if  (!values[includeAll])  return;;
+  //     setValue(leafItem);
+  //     return;
+  //   }
+  //   if (excluded.includes(leafItem) || !values[listName].includes(leafItem)) {
+  //     setValue("");
+  //     return;
+  //   }
+  // }, [
+  //   excludeAll,
+  //   excluded,
+  //   furtherCustomisation,
+  //   includeAll,
+  //   included,
+  //   leafItem,
+  //   listName,
+  //   values,
+  // ]);
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  React.useEffect(() => {
-    if (!leafItem) return;
-    if (values[excludeAll]) {
-      setValue("");
-      return;
-    }
-    if (values[listName].includes(leafItem)) return;
-    if (fixedListItem.length && !fixedListItem.includes(leafItem) && !touched)
-      return;
-    if (selectAll === "disable") return;
+  // React.useEffect(() => {
+  //   if (!leafItem) return;
+  //   if (values[excludeAll]) {
+  //     setValue("");
+  //     return;
+  //   }
+  //   if (values[listName].includes(leafItem)) return;
+  //   if (fixedListItem.length && !fixedListItem.includes(leafItem) && !touched)
+  //     return;
+  //   if (selectAll === "disable") return;
 
-    if (selectAll && !excluded.includes(leafItem)) {
-      arrayHelper.push(leafItem);
+  //   if (selectAll && !excluded.includes(leafItem)) {
+  //     arrayHelper.push(leafItem);
 
-      return;
-    }
-  }, [
-    arrayHelper,
-    excludeAll,
-    excluded,
-    fixedListItem,
-    leafItem,
-    listName,
-    selectAll,
-    touched,
-    values,
-  ]);
+  //     return;
+  //   }
+  // }, [
+  //   arrayHelper,
+  //   excludeAll,
+  //   excluded,
+  //   fixedListItem,
+  //   leafItem,
+  //   listName,
+  //   selectAll,
+  //   touched,
+  //   values,
+  // ]);
 
   React.useEffect(() => {
     if (!leafItem) return;
@@ -226,6 +257,11 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
       setValue("");
       arrayHelper.remove(values[listName].indexOf(subEle));
     }
+    if(!exclusion){
+      submitForm()
+    }else{
+      toggleExclude()
+    }
   };
 
   const toggleExclude = () => {
@@ -250,21 +286,13 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
         handleClose={handleClose}
       />
       <ListItem divider dense button onClick={() => handelAddItem(leafItem)}>
-        <ListItemIcon>
-          <AppCheckBox
-            onClick={() => handelAddItem(leafItem)}
-            disableRipple
-            name={listName}
-            checked={!!value}
-            value={value}
-            checkedIcon={
-              <DoneOutlinedIcon style={{ color: "green" }} fontSize="small" />
-            }
-            icon={
-              <CloseOutlinedIcon fontSize="small" style={{ color: "red" }} />
-            }
-          />
-        </ListItemIcon>
+       { !exclusion &&(<ListItemIcon>
+          {(leafItem && values[listName].includes(leafItem)) 
+          ? <DoneOutlinedIcon style={{ color: "green" }} fontSize="small" />
+          :<CloseOutlinedIcon fontSize="small" style={{ color: "red" }} />}
+          
+       
+        </ListItemIcon>)}
         <ListItemText
           style={{ cursor: "pointer" }}
           id={`${element?.path?.split(".").pop()}`}
@@ -274,19 +302,13 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
                 style={{ alignItems: "center" }}
                 component="span"
                 variant="body2"
-                color="textPrimary"
+                color={excluded.includes(leafItem ||"")?"textPrimary":"textSecondary"}
               >
                 {leafItem}
               </Typography>
               <Typography variant="caption" color="textSecondary">
                 &nbsp;
-                <em>
-                  {excluded.includes(leafItem || "")
-                    ? "- excluded."
-                    : included.includes(leafItem || "")
-                    ? "- customised."
-                    : fixedListItem.includes(leafItem||"")?"- included": ""}
-                </em>
+                <Status/>
                 <LixiItemToolTip lixiItem={element} placement="top-start" />
               </Typography>
             </div>
@@ -294,18 +316,11 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
         />
 
         <ListItemSecondaryAction>
-          <IconButton
-            onClick={toggleExclude}
-            disabled={!!fixedListItem.length}
-            edge="end"
-            aria-label="exclude"
-            color="primary"
-          >
-            {(leafItem && excluded.includes(leafItem))?
-            <RestoreFromTrashIcon fontSize="small" />:
-            <DeleteForeverOutlinedIcon fontSize="small" />
-          }
-          </IconButton>
+          
+          {/* {exclusion && <Switch size="small"
+              checked={!!(leafItem && excluded.includes(leafItem))}
+              inputProps={{ "aria-label": "controlled" }}
+            />} */}
           <IconButton
             edge="end"
             aria-label="comments"

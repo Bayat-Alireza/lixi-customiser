@@ -11,7 +11,6 @@ export class Customiser {
     }
     if (customisation) {
       this.customisation = customisation.cloneNode(true) as Element;
-      
     } else {
       this.customisation = this._customisationStub();
     }
@@ -30,11 +29,13 @@ export class Customiser {
     if (this.ExcludedItem() || !this.path) return;
     this.removeCustomisedItem();
     const doc = Customiser.docStub();
-    this.customiseItem.setAttribute("Exclude", "Yes");
+    const customiseItem = this._customiseItemStub() 
+    customiseItem.setAttribute("Exclude", "Yes");
     const path = doc.createElement("Path");
     path.textContent = this.path;
-    this.customiseItem.append(path);
-    this.customisation.append(this.customiseItem);
+    
+    customiseItem.append(path);
+    this.customisation.append(customiseItem);
     return this.customiseItem;
   }
   include() {
@@ -45,7 +46,9 @@ export class Customiser {
   }
 
   ExcludedItem(): Element {
-    const allPath = Array.from(this.customisation?.getElementsByTagName("Path"));
+    const allPath = Array.from(
+      this.customisation?.getElementsByTagName("Path")
+    );
     const excludedPath: Element = Array.prototype.find.call(
       allPath,
       (p: Element) => {
@@ -132,7 +135,9 @@ export class Customiser {
   affectedDecedents() {
     if (!this?.path) return;
     const path = this.path;
-    const allPath = Array.from(this.customisation?.getElementsByTagName("Path"));
+    const allPath = Array.from(
+      this.customisation?.getElementsByTagName("Path")
+    );
     const affectedItems: Element[] = Array.prototype.filter.call(
       allPath,
       (p: Element) => {
@@ -142,13 +147,12 @@ export class Customiser {
 
     return affectedItems;
   }
-  removeCustomisation(paths: string[]){
-    console.log("paths:", paths);
-    const allCustomisedPaths = Array.from(this.customisation.getElementsByTagName("Path"));
-
+  removeCustomisation(paths: string[]) {
+    const allCustomisedPaths = Array.from(
+      this.customisation.getElementsByTagName("Path")
+    );
 
     Array.prototype.forEach.call(allCustomisedPaths, (p: Element) => {
-      console.log("path:",  p.textContent);;
       if (p) {
         if (p?.textContent && paths.includes(p?.textContent)) {
           if (p.parentElement) {
@@ -157,5 +161,9 @@ export class Customiser {
         }
       }
     });
+  }
+  excludeByPath(path: string) {
+    this.path = path;
+    this.exclude();
   }
 }

@@ -64,7 +64,7 @@ export const NavTabs: React.FC = () => {
   return (
     <div className={classes.root}>
       <SelectTransactionDialog open={open} handleClose={handleClose} />
-      <AppBar position="static">
+      <AppBar className={classes.appBar} position="sticky">
         <Toolbar>
           {subSchema?.transactionType ? (
             <Typography

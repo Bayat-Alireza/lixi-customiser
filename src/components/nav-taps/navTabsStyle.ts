@@ -11,5 +11,8 @@ export const useStyles = makeStyles((theme: Theme) =>
         padding: theme.spacing(0),
       },
     },
+    appBar: {
+      backgroundColor: theme.palette.primary.dark,
+    },
   })
 );

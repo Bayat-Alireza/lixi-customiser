@@ -19,6 +19,7 @@ interface SubItems {
     elements: string[];
     attributes: string[];
 } >>
+exclusion:boolean
 }
 
 export const ElementSubItems: React.FC<SubItems> = ({
@@ -27,7 +28,8 @@ export const ElementSubItems: React.FC<SubItems> = ({
   name,
   fixedListItem,
   setExcludedList,
-  value
+  value,
+  exclusion
 }) => {
   const classes = useStyles();
   const [selectAll, setSelectAll] = React.useState<{elements:boolean|"disable",attributes:boolean|"disable",touched:boolean}>({
@@ -39,7 +41,7 @@ export const ElementSubItems: React.FC<SubItems> = ({
   const { customization } = useTypedSelector((state) => state.customizer);
   const { markedForDeletionList } = useTypedSelector((state) => state.item);
   // const { markedForDeletion } = useAction();
-  const {values} = useFormikContext<CustomisedElementType>()
+  const {values,submitForm} = useFormikContext<CustomisedElementType>()
   
   const includeAllItem = React.useMemo(()=>{
     const titleCaseName = name.replace(new RegExp("^[a-z]"),(matched) => {
@@ -94,7 +96,8 @@ export const ElementSubItems: React.FC<SubItems> = ({
     setExcludedList((pre)=>({...pre,[name]:[...deletionList]}))
   },[affected2, markedForDeletionList, name, setExcludedList])
   
-  const toggleExclude = (value:string) => {
+
+  const toggleExclude = React.useCallback((value:string) => {
     if (values[excludeAllItem]) {
       values[excludeAllItem] = false;
     }
@@ -109,7 +112,7 @@ export const ElementSubItems: React.FC<SubItems> = ({
       return
     }
     setSelectAll({...selectAll,[name]:!selectAll[name]})
-  };
+  },[excludeAllItem, name, selectAll, touched, values]);
  
   return (
     <>
@@ -120,10 +123,14 @@ export const ElementSubItems: React.FC<SubItems> = ({
             <div>
               <LixiListItemHeader
                 name={includeAllItem}
+                exclusion={exclusion}
                 header={header}
+                excluded={affected2?.excluded || []}
+                included={affected2?.included || []}
                 items={subItems}
                 arrayHelper={arrayHelper}
                 selectedItemsLength={values[name].length}
+                listName={name}
                 toggle={toggleExclude}
               />
               {subItems?.map((subEle, idx) => {
@@ -133,6 +140,7 @@ export const ElementSubItems: React.FC<SubItems> = ({
                 return (
                   <LixiListItem
                     key={`${idx}-${subEle.path}`}
+                    exclusion={exclusion}
                     fixedListItem={fixedListItem}
                     includeAll={includeAllItem}
                     excludeAll={excludeAllItem}

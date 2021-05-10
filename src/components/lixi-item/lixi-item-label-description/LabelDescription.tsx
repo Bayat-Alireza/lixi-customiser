@@ -21,7 +21,7 @@ export const LabelDescription: React.FC<ILabelDescription> = ({
   const classes = useStyles();
   return (
     <div>
-      <div className={classes.itemLabelDescription}>
+      <div className={classes.itemLabel}>
         <Badge
           color="primary"
           badgeContent={localName}
@@ -36,7 +36,7 @@ export const LabelDescription: React.FC<ILabelDescription> = ({
         </Badge>
       </div>
 
-      <div style={{ maxWidth: "75ch", marginBottom: "1rem" }}>
+      <div className={classes.itemDescription}>
         <Typography
           style={{ padding: "0.1rem 1rem" }}
           color="textPrimary"
