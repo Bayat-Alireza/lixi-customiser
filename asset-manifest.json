@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.js": "/lixi-customiser/static/js/main.6c32fc6e.chunk.js",
-    "main.js.map": "/lixi-customiser/static/js/main.6c32fc6e.chunk.js.map",
+    "main.js": "/lixi-customiser/static/js/main.025d331f.chunk.js",
+    "main.js.map": "/lixi-customiser/static/js/main.025d331f.chunk.js.map",
     "runtime-main.js": "/lixi-customiser/static/js/runtime-main.90e3229d.js",
     "runtime-main.js.map": "/lixi-customiser/static/js/runtime-main.90e3229d.js.map",
     "static/js/2.5f6700e2.chunk.js": "/lixi-customiser/static/js/2.5f6700e2.chunk.js",
@@ -14,6 +14,6 @@
   "entrypoints": [
     "static/js/runtime-main.90e3229d.js",
     "static/js/2.5f6700e2.chunk.js",
-    "static/js/main.6c32fc6e.chunk.js"
+    "static/js/main.025d331f.chunk.js"
   ]
 }
