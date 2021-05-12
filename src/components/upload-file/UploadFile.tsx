@@ -13,15 +13,24 @@ export const UploadFile: React.FC<FormProps> = ({ saveFace, description }) => {
   const classes = useStyles();
   const [selectedFile, setSelectedFile] = React.useState<File>();
   const handleCapture = ({ target }: any) => {
+    console.log("file changed");;
     setSelectedFile(target.files[0]);
+    saveFace(target.files[0])
   };
 
-  const handleSubmit = () => {
-    saveFace(selectedFile);
-  };
+  // const handleSubmit = React.useCallback(() => {
+  //   saveFace(selectedFile);
+  // },  [saveFace, selectedFile]);;
+
+  // React.useEffect(() => {
+  //   if (selectedFile?.name) {
+  //     console.log("loading...");
+  //     saveFace(selectedFile);
+  //   }
+  // }, [saveFace, selectedFile,selectedFile?.name]);
 
   return (
-    <div style={{width:"100%"}}>
+    <div style={{ width: "100%" }}>
       <input
         accept=".xml,.xsd"
         className={classes.input}
@@ -29,13 +38,16 @@ export const UploadFile: React.FC<FormProps> = ({ saveFace, description }) => {
         type="file"
         onChange={handleCapture}
       />
-      <Grid wrap="nowrap" alignContent="flex-start" container spacing={1} alignItems="center">
-        <Grid item >
+      <Grid
+        wrap="nowrap"
+        alignContent="flex-start"
+        container
+        spacing={1}
+        alignItems="center"
+      >
+        <Grid item>
           <Tooltip title="">
-            <label
-              className={classes.label}
-              htmlFor="document"
-            >
+            <label className={classes.label} htmlFor="document">
               <IconButton
                 className={classes.findPageIcon}
                 color="primary"
@@ -45,30 +57,27 @@ export const UploadFile: React.FC<FormProps> = ({ saveFace, description }) => {
               >
                 <FindInPageTwoToneIcon fontSize="large" />
               </IconButton>
-              <Typography
-                variant="body2"
-                className={classes.fileName}
-                noWrap
-              >
+              <Typography variant="body2" className={classes.fileName} noWrap>
                 Choose the file
               </Typography>
             </label>
           </Tooltip>
         </Grid>
-        <Grid item  >
-        {selectedFile?.name?<IconButton
-          className={classes.loadIcon}
-          onClick={() => handleSubmit()}
-          color="primary"
-          aria-label="upload file"
-          component="span"
-          title="Load"
-          >
-            <PublishTwoToneIcon fontSize="large" />
-          </IconButton>:undefined}
-        </Grid>
+        {/* <Grid item>
+          {selectedFile?.name ? (
+            <IconButton
+              className={classes.loadIcon}
+              // onClick={() => handleSubmit()}
+              color="primary"
+              aria-label="upload file"
+              component="span"
+              title="Load"
+            >
+              <PublishTwoToneIcon fontSize="large" />
+            </IconButton>
+          ) : undefined}
+        </Grid> */}
       </Grid>
-       
     </div>
   );
 };
