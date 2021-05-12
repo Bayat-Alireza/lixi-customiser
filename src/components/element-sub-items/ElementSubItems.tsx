@@ -41,7 +41,7 @@ export const ElementSubItems: React.FC<SubItems> = ({
   const { customization } = useTypedSelector((state) => state.customizer);
   const { markedForDeletionList } = useTypedSelector((state) => state.item);
   // const { markedForDeletion } = useAction();
-  const {values,submitForm} = useFormikContext<CustomisedElementType>()
+  const { values } = useFormikContext<CustomisedElementType>();
   
   const includeAllItem = React.useMemo(()=>{
     const titleCaseName = name.replace(new RegExp("^[a-z]"),(matched) => {
@@ -85,7 +85,7 @@ export const ElementSubItems: React.FC<SubItems> = ({
 
 
   React.useEffect(()=>{
-    if (!affected2?.excludedFullPath.length)return
+    if (!affected2?.excludedFullPath) return;
     const {excludedFullPath} = affected2
     const deletionList:string[] = []
     excludedFullPath.forEach((exc)=>{
