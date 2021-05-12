@@ -29,11 +29,11 @@ export class Customiser {
     if (this.ExcludedItem() || !this.path) return;
     this.removeCustomisedItem();
     const doc = Customiser.docStub();
-    const customiseItem = this._customiseItemStub() 
+    const customiseItem = this._customiseItemStub();
     customiseItem.setAttribute("Exclude", "Yes");
     const path = doc.createElement("Path");
     path.textContent = this.path;
-    
+
     customiseItem.append(path);
     this.customisation.append(customiseItem);
     return this.customiseItem;
@@ -165,5 +165,9 @@ export class Customiser {
   excludeByPath(path: string) {
     this.path = path;
     this.exclude();
+  }
+  notExcludeByPath(path: string) {
+    this.path = path;
+    this.include();
   }
 }
