@@ -264,52 +264,107 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
         }
         newCustomisation.customise();
         updateCustomisation(newCustomisation.customisation);
-        
+
         setSubmitting(false);
         // searchItem(lixiItem.path);
         // setTimeout(() => {
         // }, 400);
       }}
     >
-      {({ isSubmitting, values, errors, touched,submitForm }) => (
+      {({ isSubmitting, values, errors, touched, submitForm }) => (
         <Form>
           <Paper style={{ padding: "0.5rem" }}>
             <Grid container spacing={1}>
-            <Grid item xs={12}>
+              <Grid item xs={12}>
                 <Paper className={classes.customisationTitleContainer}>
-                <div>
-                  <Switch
-                        checked={checked}
-                        onChange={(e) => toggleIncludeExclude(e,submitForm,values)}
-                        inputProps={{ "aria-label": "controlled" }}
-                      />
-                      <Typography variant="button" className={classes.customisationTitle}> Customisation by&nbsp;</Typography>
-                    {checked &&
-                     <Tooltip
-                     title={
-                       <div style={{backgroundColor:"#fff",margin:0,color:"#333",padding:"0.5rem"}}>
-                         <Typography color="primary" variant="h6"><u>Exclusion Mode</u></Typography>
-                         <Typography component="div" color="textPrimary">The&nbsp;<Typography variant="caption" color="secondary">excluded</Typography>&nbsp;item(s) will not appear in the customised schema</Typography>
-                       </div>
-                     }>
-                    <Typography variant="button" className={classes.customisationTitleExclusion}>
-                       <u><em>Exclusion</em></u>
+                  <div>
+                    <Switch
+                      checked={checked}
+                      onChange={(e) =>
+                        toggleIncludeExclude(e, submitForm, values)
+                      }
+                      inputProps={{ "aria-label": "controlled" }}
+                    />
+                    <Typography
+                      variant="button"
+                      className={classes.customisationTitle}
+                    >
+                      {" "}
+                      Customisation by&nbsp;
                     </Typography>
-                    </Tooltip>
-                    }
-                    {!checked &&
-                          <Tooltip
-                            title={
-                              <div style={{backgroundColor:"#fff",margin:0,color:"#333",padding:"0.5rem"}}>
-                                <Typography color="primary" variant="h6"><u>Inclusion Mode</u></Typography>
-                                <Typography color="textPrimary">ONLY the included item(s)&nbsp;<DoneOutlinedIcon style={{ color: "green" }} fontSize="small" />of the parent element will appear in the customised schema.</Typography>
-                              </div>
-                            }>
-                              <Typography variant="button" className={classes.customisationTitleInclusion}><u><em>Inclusion</em></u></Typography>
-                            </Tooltip>
-                   }
-                </div>
-                 <div className={classes.saveButton}>
+                    {checked && (
+                      <Tooltip
+                        title={
+                          <div
+                            style={{
+                              backgroundColor: "#fff",
+                              margin: 0,
+                              color: "#333",
+                              padding: "0.5rem",
+                            }}
+                          >
+                            <Typography color="primary" variant="h6">
+                              <u>Exclusion Mode</u>
+                            </Typography>
+                            <Typography component="div" color="textPrimary">
+                              The&nbsp;
+                              <Typography variant="caption" color="secondary">
+                                excluded
+                              </Typography>
+                              &nbsp;item(s) will not appear in the customised
+                              schema
+                            </Typography>
+                          </div>
+                        }
+                      >
+                        <Typography
+                          variant="button"
+                          className={classes.customisationTitleExclusion}
+                        >
+                          <u>
+                            <em>Exclusion</em>
+                          </u>
+                        </Typography>
+                      </Tooltip>
+                    )}
+                    {!checked && (
+                      <Tooltip
+                        title={
+                          <div
+                            style={{
+                              backgroundColor: "#fff",
+                              margin: 0,
+                              color: "#333",
+                              padding: "0.5rem",
+                            }}
+                          >
+                            <Typography color="primary" variant="h6">
+                              <u>Inclusion Mode</u>
+                            </Typography>
+                            <Typography color="textPrimary">
+                              ONLY the included item(s)&nbsp;
+                              <DoneOutlinedIcon
+                                style={{ color: "green" }}
+                                fontSize="small"
+                              />
+                              of the parent element will appear in the
+                              customised schema.
+                            </Typography>
+                          </div>
+                        }
+                      >
+                        <Typography
+                          variant="button"
+                          className={classes.customisationTitleInclusion}
+                        >
+                          <u>
+                            <em>Inclusion</em>
+                          </u>
+                        </Typography>
+                      </Tooltip>
+                    )}
+                  </div>
+                  <div className={classes.saveButton}>
                     <Button
                       size="small"
                       style={{ marginInline: "0.5rem" }}
@@ -332,7 +387,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                   </div>
                 </Paper>
               </Grid>
-            
+
               {leafEle?.length ? (
                 <Grid item xs={12} sm={itemAttributes?.length ? 6 : 12}>
                   <ElementSubItems
@@ -363,44 +418,44 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                   />
                 </Grid>
               ) : undefined}
-              
+
               <Grid item xs={12}>
                 <ExcerptDocumentation>
-                <Grid item xs={12} sm={6}>
-                <div className={classes.saveMinMax}>
-                  <div className={classes.minMaxContainer}>
-                    <AppTextField
-                      // className={classes.textFieldMinMax}
-                      name="newMin"
-                      size="medium"
-                      fullWidth
-                      variant="outlined"
-                      label="New Min Occurs"
-                      disabled={
-                        occursMinMax?.min === "1" && occursMinMax?.max === "1"
-                      }
-                      value={values?.newMin}
-                    />
+                  <Grid item xs={12} sm={6}>
+                    <div className={classes.saveMinMax}>
+                      <div className={classes.minMaxContainer}>
+                        <AppTextField
+                          // className={classes.textFieldMinMax}
+                          name="newMin"
+                          size="medium"
+                          fullWidth
+                          variant="outlined"
+                          label="New Min Occurs"
+                          disabled={
+                            occursMinMax?.min === "1" &&
+                            occursMinMax?.max === "1"
+                          }
+                          value={values?.newMin}
+                        />
 
-                    <AppTextField
-                      // className={classes.textFieldMinMax}
-                      name="newMax"
-                      size="medium"
-                      fullWidth
-                      variant="outlined"
-                      label="New Max Occurs"
-                      disabled={occursMinMax?.max === "1"}
-                      value={values?.newMax}
-                    />
-                  </div>
-                  
-                </div>
-              </Grid>
+                        <AppTextField
+                          // className={classes.textFieldMinMax}
+                          name="newMax"
+                          size="medium"
+                          fullWidth
+                          variant="outlined"
+                          label="New Max Occurs"
+                          disabled={occursMinMax?.max === "1"}
+                          value={values?.newMax}
+                        />
+                      </div>
+                    </div>
+                  </Grid>
                 </ExcerptDocumentation>
               </Grid>
             </Grid>
           </Paper>
-          <pre>{JSON.stringify(values, null, 2)}</pre>
+          {/* <pre>{JSON.stringify(values, null, 2)}</pre> */}
           {/* <pre>{JSON.stringify(markedForDeletionList, null, 2)}</pre> */}
           {/* <pre>{JSON.stringify(excludedList["attributes"], null, 2)}</pre> */}
           {/* <pre>{JSON.stringify(excludedList["elements"], null, 2)}</pre> */}
