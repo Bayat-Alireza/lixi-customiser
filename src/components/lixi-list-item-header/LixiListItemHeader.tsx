@@ -97,12 +97,18 @@ export const LixiListItemHeader: React.FC<IHeaderLixiItem> = ({
         const path = item?.path
         const leafItem = path?.split(".").pop() 
         if(!excludeAll){
-          if(path && leafItem && !included.includes(leafItem) && !excluded.includes(leafItem)){
-            newCustomisation.excludeByPath(path)
+          if (
+            path &&
+            leafItem &&
+            !included.includes(leafItem) &&
+            !excluded.includes(leafItem) &&
+            !included.includes(leafItem)
+          ) {
+            newCustomisation.excludeByPath(path);
           }
       }else{
-        if(path && leafItem && !included.includes(leafItem) && excluded.includes(leafItem)){
-          newCustomisation.notExcludeByPath(path)
+        if (path && leafItem && excluded.includes(leafItem)) {
+          newCustomisation.notExcludeByPath(path);
         }
       }
       })
@@ -110,13 +116,13 @@ export const LixiListItemHeader: React.FC<IHeaderLixiItem> = ({
     }
   }
 
-  React.useEffect(()=>{
-    if(items.length === excluded.length){
-      setExcludeAll(true)
-      return
-    }
-    setExcludeAll(false)
-  },[excluded.length, items.length])
+  // React.useEffect(()=>{
+  //   if(items.length === excluded.length){
+  //     setExcludeAll(true)
+  //     return
+  //   }
+  //   setExcludeAll(false)
+  // },[excluded.length, items.length])
   React.useEffect(()=>{
     if(items.length === selectedItemsLength){
       setIncludeAll(true)
@@ -126,10 +132,14 @@ export const LixiListItemHeader: React.FC<IHeaderLixiItem> = ({
   },[items.length, selectedItemsLength, setIncludeAll])
 
   const StatusText = ()=>{
-    if(exclusion && excludeAll){
-      return <Typography color="secondary" variant="button"><strong>{" - "}All Excluded</strong></Typography>
+    if (exclusion && excludeAll && !included.length) {
+      return (
+        <Typography color="secondary" variant="button">
+          <strong>{" - "}All Excluded</strong>
+        </Typography>
+      );
     }
-    if(!exclusion && items.length === selectedItemsLength ){
+    if(!exclusion && includeAll ){
       return <Typography color="primary" variant="button"><strong style={{color:"green"}}>{" - "}All Included</strong></Typography>
     }
     return <></>
@@ -157,7 +167,7 @@ export const LixiListItemHeader: React.FC<IHeaderLixiItem> = ({
           </ListItemIcon>)}
           <ListItemSecondaryAction>
           {exclusion && <Switch size="small"
-              checked={(items.length === excluded.length)}
+              checked={excludeAll}
               onChange={(e) => toggleAll()}
               inputProps={{ "aria-label": "controlled" }}
             />}

@@ -19,6 +19,7 @@ import * as Yup from "yup";
 import { useAction } from "../../hooks/useActions";
 import Tooltip from "@material-ui/core/Tooltip";
 import { useTypedSelector } from "../../hooks/useTypeSelector";
+import { Customiser } from "../../models/Customiser";
 
 interface IConfirmRemoveItem {
   open: boolean;
@@ -32,8 +33,8 @@ export const ConfirmRemoveItemDialog: React.FC<IConfirmRemoveItem> = ({
   handleClose,
 }) => {
   const classes = useStyles();
-  const { markedForDeletion } = useAction();
-  const { markedForDeletionList } = useTypedSelector((state) => state.item);
+  const { updateCustomisation } = useAction();
+  const { customization } = useTypedSelector((state) => state.customizer);
   
   return (
     <Formik
@@ -45,15 +46,12 @@ export const ConfirmRemoveItemDialog: React.FC<IConfirmRemoveItem> = ({
       onSubmit={(values, { setSubmitting, resetForm }) => {
         setTimeout(() => {
           setSubmitting(true);
-          const deletionList = markedForDeletionList
-            ? [...markedForDeletionList]
-            : [];
-          values.items.forEach((item) => {
-            if (!markedForDeletionList?.includes(item)) {
-              deletionList.push(item);
-            }
-          });
-          markedForDeletion([...deletionList]);
+          const newCustomisation = new Customiser(
+            customization,
+            affected?.path
+          );
+          newCustomisation.removeCustomisation([...(values.items || [])]);
+          updateCustomisation(newCustomisation.customisation);
           setSubmitting(false);
           resetForm();
           handleClose();
@@ -98,17 +96,19 @@ export const ConfirmRemoveItemDialog: React.FC<IConfirmRemoveItem> = ({
                   </Tooltip>
                 }
               >
-                Excluding{" "}
                 <em>
-                  <strong>{affected?.path.split(".").pop()}</strong>
-                </em>{" "}
-                will delete all of its customised descendants
+                  <strong>{affected?.path.split(".").pop()}</strong>{' '}
+                  Has Customised Descendant(s)!
+                </em>
+                
               </Alert>
             </DialogTitle>
             <DialogContent>
-              <Typography variant="subtitle1">
-                Following customisation will be lost.
+              <Typography gutterBottom variant="subtitle1">
+                Before excluding/not including{" "}<strong>{affected?.path.split(".").pop()}</strong>
+                , following customisation must be deleted to avoid conflicting instructions.
               </Typography>
+
               {affected?.items.map((i, idx) => {
                 return <li key={i}>{`${i}`}</li>;
               })}
@@ -139,7 +139,7 @@ export const ConfirmRemoveItemDialog: React.FC<IConfirmRemoveItem> = ({
                   // onClick={handleClose}
                   color="primary"
                 >
-                  Exclude
+                  Proceed
                 </Button>
               </DialogActions>
             </Form>

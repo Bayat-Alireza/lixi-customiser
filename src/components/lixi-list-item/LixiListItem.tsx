@@ -5,7 +5,6 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
 import Typography from "@material-ui/core/Typography";
 import React, { Fragment } from "react";
-// import { AppCheckBox } from "../formik-mterial-ui/AppCheckBox";
 import { LixiItemToolTip } from "../tool-tip/LixiItemToolTip";
 import CloseOutlinedIcon from "@material-ui/icons/CloseOutlined";
 import DoneOutlinedIcon from "@material-ui/icons/DoneOutlined";
@@ -19,10 +18,6 @@ import { useStyles } from "./lixiListItemStyle";
 import { Customiser } from "../../models/Customiser";
 import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { ConfirmRemoveItemDialog } from "../confirm-remove-dialog/ConfirmRemoveItemDialog";
-// import DeleteForeverOutlinedIcon from "@material-ui/icons/DeleteForeverOutlined";
-// import RestoreFromTrashIcon from '@material-ui/icons/RestoreFromTrash';
-// import Switch from "@material-ui/core/Switch";
-
 interface IListLixiItem {
   listName: "elements" | "attributes";
   element: LixiBase;
@@ -53,7 +48,7 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
 }) => {
   const classes = useStyles();
   const [value, setValue] = React.useState<string>("");
-  const [neutral, setNeutral] = React.useState<string[]>([]);
+  // const [neutral, setNeutral] = React.useState<string[]>([]);
   const { markedForDeletionList } = useTypedSelector((state) => state.item);
   const { customization } = useTypedSelector((state) => state.customizer);
   const { searchItem,  updateCustomisation } = useAction();
@@ -86,7 +81,13 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
        return <Typography variant="caption" color="secondary">{status}</Typography>
      }
      if (status === "customised"){
-       return <Typography variant="caption" color="primary"><strong>{status}</strong></Typography>
+       return (
+       
+           <Typography variant="button" color="primary">
+             <strong>{status}</strong>
+           </Typography>
+     
+       );
      }
      return <em>{status}</em>
    
@@ -286,13 +287,15 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
         handleClose={handleClose}
       />
       <ListItem divider dense button onClick={() => handelAddItem(leafItem)}>
-       { !exclusion &&(<ListItemIcon>
-          {(leafItem && values[listName].includes(leafItem)) 
-          ? <DoneOutlinedIcon style={{ color: "green" }} fontSize="small" />
-          :<CloseOutlinedIcon fontSize="small" style={{ color: "red" }} />}
-          
-       
-        </ListItemIcon>)}
+        {!exclusion && (
+          <ListItemIcon>
+            {leafItem && values[listName].includes(leafItem) ? (
+              <DoneOutlinedIcon style={{ color: "green" }} fontSize="small" />
+            ) : (
+              <CloseOutlinedIcon fontSize="small" style={{ color: "red" }} />
+            )}
+          </ListItemIcon>
+        )}
         <ListItemText
           style={{ cursor: "pointer" }}
           id={`${element?.path?.split(".").pop()}`}
@@ -302,21 +305,26 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
                 style={{ alignItems: "center" }}
                 component="span"
                 variant="body2"
-                color={excluded.includes(leafItem ||"")?"textPrimary":"textSecondary"}
+                color={
+                  excluded.includes(leafItem || "")
+                    ? "textPrimary"
+                    : "textSecondary"
+                }
               >
                 {leafItem}
               </Typography>
+              
               <Typography variant="caption" color="textSecondary">
                 &nbsp;
-                <Status/>
+                  <Status />
                 <LixiItemToolTip lixiItem={element} placement="top-start" />
               </Typography>
+               
             </div>
           }
         />
 
         <ListItemSecondaryAction>
-          
           {/* {exclusion && <Switch size="small"
               checked={!!(leafItem && excluded.includes(leafItem))}
               inputProps={{ "aria-label": "controlled" }}
