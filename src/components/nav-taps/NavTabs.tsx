@@ -21,6 +21,7 @@ import { XmlUtil } from "../../util/nameSpaces";
 import { useAction } from "../../hooks/useActions";
 import { SubSchema } from "../../redux/actions/customiser-actions";
 
+
 function a11yProps(index: any) {
   return {
     id: `simple-tab-${index}`,
@@ -52,35 +53,56 @@ export const NavTabs: React.FC = () => {
     setOpen(false);
   };
   React.useEffect(() => {
-     if(trs && trs?.length === 1 ){
-       if(!subSchema?.transactionType){
-         customizeSubSchema(trs[0]);
-         resetCustomization()
-         resetItem()
-         return
-       }
-       if(trs[0].transactionType !== preSubSchema?.transactionType){
-        resetCustomization()
-        resetItem()
+    if (trs && trs?.length === 1) {
+      if (!subSchema?.transactionType) {
         customizeSubSchema(trs[0]);
-        setPreSubSchema(trs[0])
-        return
-       }
-     }
+        resetCustomization();
+        resetItem();
+        return;
+      }
+      if (trs[0].transactionType !== preSubSchema?.transactionType) {
+        resetCustomization();
+        resetItem();
+        customizeSubSchema(trs[0]);
+        setPreSubSchema(trs[0]);
+        return;
+      }
+    }
     if (!subSchema?.transactionType && schema && !open) {
       setOpen(true);
     }
-  }, [customizeSubSchema, open, preSubSchema?.transactionType, resetCustomization, schema, subSchema?.transactionType, trs]);
+  }, [
+    customizeSubSchema,
+    open,
+    preSubSchema?.transactionType,
+    resetCustomization,
+    resetItem,
+    schema,
+    subSchema?.transactionType,
+    trs,
+  ]);
 
 
   return (
     <div className={classes.root}>
-      {trs?.length && <SelectTransactionDialog transactionList={trs} open={open} handleClose={handleClose} />}
-      <AppBar className={classes.appBar} position="sticky">
-        <Toolbar>
+      {trs?.length && (
+        <SelectTransactionDialog
+          transactionList={trs}
+          open={open}
+          handleClose={handleClose}
+        />
+      )}
+      <AppBar 
+        className={classes.appBar} 
+        position="sticky"
+        >
+        <Toolbar style={{alignItems:"center",alignContent:"center"}}>
+        <img style={{flexGrow: 1,maxWidth:40,marginRight:"1em"}} src="https://cdn.lixi.org.au/assets/lixi-logo-white-mac-smaller.gif" alt="LIXI"/>
           {subSchema?.transactionType ? (
             <Typography
-              onClick={() => (trs && trs?.length>1)?setOpen(true):undefined}
+              onClick={() =>
+                trs && trs?.length > 1 ? setOpen(true) : undefined
+              }
               noWrap
               variant="h6"
               style={{ flexGrow: 1, cursor: "pointer" }}
@@ -89,7 +111,9 @@ export const NavTabs: React.FC = () => {
             </Typography>
           ) : (
             <Typography
-              onClick={() => (trs && trs?.length>1)?setOpen(true):undefined}
+              onClick={() =>
+                trs && trs?.length > 1 ? setOpen(true) : undefined
+              }
               noWrap
               color="secondary"
               variant="h6"
