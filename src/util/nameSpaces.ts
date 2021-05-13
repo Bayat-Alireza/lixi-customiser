@@ -75,6 +75,17 @@ export class XmlUtil {
 
   getPathOfAllItemsInATransaction(subSchema: string) {
     const itemsPath: string[] = [];
+    const individualStandard =
+      this.getSchemaDetails()?.getAttribute("transaction");
+    if (individualStandard) {
+      const result = this.evaluateXpath("//lx:path", this.parsedDoc);
+      let path = result?.iterateNext();
+      while (path) {
+        itemsPath.push(path.textContent as string);
+        path = result?.iterateNext();
+      }
+      return itemsPath;
+    }
     const result = this.evaluateXpath(
       "//lx:path/following-sibling::li:transactions",
       this.parsedDoc
@@ -122,22 +133,28 @@ export class XmlUtil {
       XPathResult.ANY_UNORDERED_NODE_TYPE,
       null
     );
-    return xpathResult.singleNodeValue?.parentElement?.children[0];
+    if (xpathResult.singleNodeValue) {
+      return xpathResult.singleNodeValue as Element;
+    }
+    // return xpathResult.singleNodeValue?.parentElement?.children[0];
   }
 
   getTransactions() {
-    const xpathResult = this.parsedDoc.evaluate(
-      "//lx:schemadetail",
-      this.parsedDoc,
-      nameSpaceResolver,
-      XPathResult.ANY_UNORDERED_NODE_TYPE,
-      null
-    );
-    const appInfo = xpathResult.singleNodeValue?.parentElement?.children;
     const transaction: {
       transactionType: string;
       transactionVersion: string;
     }[] = [];
+    const standard = this.getSchemaDetails()?.getAttribute("transaction");
+    const version = this.getSchemaDetails()?.getAttribute("version");
+
+    if (standard && version) {
+      transaction.push({
+        transactionType: standard,
+        transactionVersion: version,
+      });
+      return transaction;
+    }
+    const appInfo = this.getSchemaDetails()?.parentElement?.children;
     Array.prototype.map.call(appInfo, (i: Element) => {
       if (i.localName === "subschema") {
         transaction?.push({

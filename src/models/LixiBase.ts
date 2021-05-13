@@ -14,9 +14,13 @@ export class LixiBase implements ILixiBase {
 
   get transactions() {
     if (this.annotated) {
-      return this.element.children[0]
-        .getElementsByTagName(LixiTagEnum.transactions)[0]
-        .textContent?.split(",");
+      const annotation = this.element.children[0];
+      const transactions = annotation?.getElementsByTagName(
+        LixiTagEnum.transactions
+      );
+      if (transactions.length) {
+        return transactions[0].textContent?.split(",");
+      }
     }
     return [];
   }

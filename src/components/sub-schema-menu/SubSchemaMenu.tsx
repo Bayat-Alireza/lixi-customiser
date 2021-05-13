@@ -2,22 +2,23 @@ import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useAction } from "../../hooks/useActions";
 import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { SubSchema } from "../../redux/actions/customiser-actions";
-import { XmlUtil } from "../../util/nameSpaces";
 import { useStyles } from "./subSchemaMenuStyle";
 
 
+interface SubSchemaMenuProps {
+  transactionList: SubSchema[];
+}
 
-
-export const SubSchemaMenu: React.FC = () => {
+export const SubSchemaMenu: React.FC<SubSchemaMenuProps> = ({
+  transactionList,
+}) => {
   const classes = useStyles();
-  const { customizeSubSchema } = useAction();
+  const { customizeSubSchema,  resetCustomization,  resetItem } = useAction();
   const { subSchema } = useTypedSelector((state) => state.customizer);
-  const { schema } = useTypedSelector((state) => state.schema);
-  const [transactionList, setTransactionList] = useState<SubSchema[]>([]);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -41,30 +42,10 @@ export const SubSchemaMenu: React.FC = () => {
       transactionVersion: s[1],
     };
     customizeSubSchema(subSchema);
+    resetCustomization();
+    resetItem();
     setAnchorEl(null);
   };
-  useEffect(() => {
-    const transaction = (): Promise<
-      {
-        transactionType: string;
-        transactionVersion: string;
-      }[]
-    > => {
-      return new Promise((resolves, rejects) => {
-        if (!schema) {
-          setTransactionList([]);
-          return;
-        }
-        const xmlUtile = new XmlUtil(schema);
-        const transactions = xmlUtile.getTransactions();
-        resolves(transactions);
-      });
-    };
-
-    (async () => {
-      setTransactionList(await transaction());
-    })();
-  }, [schema]);
 
   return (
     <>

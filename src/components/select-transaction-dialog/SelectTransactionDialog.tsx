@@ -17,15 +17,17 @@ import Tooltip from "@material-ui/core/Tooltip";
 import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { SubSchemaMenu } from "../sub-schema-menu/SubSchemaMenu";
 import { useStyles } from "./selectTransactionDialogStyle";
+import { SubSchema } from "../../redux/actions/customiser-actions";
 
 interface IConfirmRemoveItem {
   open: boolean;
   handleClose: () => void;
+  transactionList: SubSchema[];
 }
 
 export const SelectTransactionDialog: React.FC<IConfirmRemoveItem> = ({
   open,
-
+  transactionList,
   handleClose,
 }) => {
   const classes = useStyles();
@@ -54,7 +56,6 @@ export const SelectTransactionDialog: React.FC<IConfirmRemoveItem> = ({
       onSubmit={(values, { setSubmitting, resetForm }) => {
         setTimeout(() => {
           setSubmitting(true);
-
           alert(JSON.stringify(values, null, 2));
           setSubmitting(false);
           handleClose();
@@ -135,7 +136,7 @@ export const SelectTransactionDialog: React.FC<IConfirmRemoveItem> = ({
             <Divider />
             <Form>
               <DialogActions>
-                <SubSchemaMenu />
+                <SubSchemaMenu transactionList={transactionList} />
               </DialogActions>
             </Form>
           </Dialog>

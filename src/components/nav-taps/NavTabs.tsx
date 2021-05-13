@@ -17,6 +17,9 @@ import Toolbar from "@material-ui/core/Toolbar";
 import { TabPanel } from "./NavTabPanel";
 // import { SubSchemaMenu } from "../sub-schema-menu/SubSchemaMenu";
 import { SelectTransactionDialog } from "../select-transaction-dialog/SelectTransactionDialog";
+import { XmlUtil } from "../../util/nameSpaces";
+import { useAction } from "../../hooks/useActions";
+import { SubSchema } from "../../redux/actions/customiser-actions";
 
 function a11yProps(index: any) {
   return {
@@ -29,46 +32,55 @@ export const NavTabs: React.FC = () => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(0);
-  // const [itemInstruction, setItemInstruction] = React.useState<Element>();
+  const [preSubSchema, setPreSubSchema]= React.useState<SubSchema>()
   const { customization, subSchema } = useTypedSelector(
     (state) => state.customizer
   );
+  const { customizeSubSchema,resetCustomization,resetItem } = useAction();
   const { schema } = useTypedSelector((state) => state.schema);
-  // const { data } = useTypedSelector((state) => state.item);
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
+
+  const trs = React.useMemo(() => {
+    if (!schema) return;
+    const schemaDoc = new XmlUtil(schema);
+    return schemaDoc.getTransactions();
+  }, [schema]);
 
   const handleClose = () => {
     setOpen(false);
   };
   React.useEffect(() => {
+     if(trs && trs?.length === 1 ){
+       if(!subSchema?.transactionType){
+         customizeSubSchema(trs[0]);
+         resetCustomization()
+         resetItem()
+         return
+       }
+       if(trs[0].transactionType !== preSubSchema?.transactionType){
+        resetCustomization()
+        resetItem()
+        customizeSubSchema(trs[0]);
+        setPreSubSchema(trs[0])
+        return
+       }
+     }
     if (!subSchema?.transactionType && schema && !open) {
       setOpen(true);
     }
-  }, [schema, subSchema?.transactionType, open]);
+  }, [customizeSubSchema, open, preSubSchema?.transactionType, resetCustomization, schema, subSchema?.transactionType, trs]);
 
-  // React.useEffect(() => {
-  //   console.log("data:", data);
-  //   if (!data) return;
-  //   const path = new LixiBase(data)?.path;
-  //   if (path) {
-  //     const newCustomiser = new Customiser(customization, path);
-  //     const customisedItem = newCustomiser?.getCustomisedItem()?.parentElement;
-  //     console.log("customisedItem", customisedItem);
-  //     if (!customisedItem) return;
-  //     setItemInstruction(customisedItem);
-  //   }
-  // }, [customization, data]);
 
   return (
     <div className={classes.root}>
-      <SelectTransactionDialog open={open} handleClose={handleClose} />
+      {trs?.length && <SelectTransactionDialog transactionList={trs} open={open} handleClose={handleClose} />}
       <AppBar className={classes.appBar} position="sticky">
         <Toolbar>
           {subSchema?.transactionType ? (
             <Typography
-              onClick={() => setOpen(true)}
+              onClick={() => (trs && trs?.length>1)?setOpen(true):undefined}
               noWrap
               variant="h6"
               style={{ flexGrow: 1, cursor: "pointer" }}
@@ -77,7 +89,7 @@ export const NavTabs: React.FC = () => {
             </Typography>
           ) : (
             <Typography
-              onClick={() => setOpen(true)}
+              onClick={() => (trs && trs?.length>1)?setOpen(true):undefined}
               noWrap
               color="secondary"
               variant="h6"

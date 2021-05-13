@@ -26,6 +26,16 @@ export const resetCustomizeSubSchema = () => {
     });
   };
 };
+export const resetCustomization = () => {
+  return (
+    dispatch: Dispatch<CustomizationAction>,
+    getState: () => RootState
+  ) => {
+    dispatch({
+      type: CustomizationActionType.RESET_CUSTOMIZATION,
+    });
+  };
+};
 
 export const uploadExistingCustomization = (file: File) => {
   const readExistingCustomization = (): Promise<ArrayBuffer | string | null> => {

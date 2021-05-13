@@ -83,7 +83,7 @@ export const SearchPath: React.FC = () => {
       <div>
         {!data || showSearchBox ? (
           <Slide
-            direction="down"
+            // direction="up"
             in={showSearchBox}
             mountOnEnter
             unmountOnExit

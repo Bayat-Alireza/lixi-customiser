@@ -66,6 +66,11 @@ const reducer = (
         ...state,
         customization: action.payload,
       };
+    case CustomizationActionType.RESET_CUSTOMIZATION:
+      return {
+        ...state,
+        customization: undefined,
+      };
 
     default:
       return state;
