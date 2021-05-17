@@ -23,12 +23,12 @@ interface IHeaderLixiItem {
   header: string;
   items: (LixiBase | null | undefined)[];
   selectedItemsLength: number;
-  toggle: (value:string) => void;
-  arrayHelper:FieldArrayRenderProps
-  listName:"elements" | "attributes"
-  excluded:string[]
-  included:string[]
-  exclusion:boolean
+  toggle: (value: string) => void;
+  arrayHelper: FieldArrayRenderProps
+  listName: "elements" | "attributes"
+  excluded: string[]
+  included: string[]
+  exclusion: boolean
 }
 
 export const LixiListItemHeader: React.FC<IHeaderLixiItem> = ({
@@ -40,63 +40,62 @@ export const LixiListItemHeader: React.FC<IHeaderLixiItem> = ({
   header,
   excluded,
   included,
-  arrayHelper:FieldArrayRenderProps,
+  arrayHelper: FieldArrayRenderProps,
   exclusion
 }) => {
   const classes = useStyles();
-  const [value,setValue]=React.useState<string>("")
-  const [includeAll, setIncludeAll]= React.useState(true)
-  const [excludeAll, setExcludeAll]= React.useState(false)
-  const {updateCustomisation} = useAction()
+  const [value, setValue] = React.useState<string>("")
+  const [includeAll, setIncludeAll] = React.useState(true)
+  const [excludeAll, setExcludeAll] = React.useState(false)
+  const { updateCustomisation } = useAction()
   const { customization } = useTypedSelector((state) => state.customizer);
 
-  const {values,getFieldHelpers,submitForm} = useFormikContext<CustomisedElementType>()
+  const { values, getFieldHelpers, submitForm } = useFormikContext<CustomisedElementType>()
 
-  React.useEffect(()=>{
-    if(selectedItemsLength === items.length ){
+  React.useEffect(() => {
+    if (selectedItemsLength === items.length) {
       setValue(name)
       getFieldHelpers(name).setValue(true)
       return
     }
     getFieldHelpers(name).setValue(false)
     setValue("")
-    
-  },[getFieldHelpers, items.length, name, selectedItemsLength, value, values])
 
-  const toggleAll = ()=>{
-    
-    if(!exclusion){
+  }, [getFieldHelpers, items.length, name, selectedItemsLength, value, values])
+
+  const toggleAll = () => {
+
+    if (!exclusion) {
       const copyList = [...values[listName]]
       setIncludeAll(!includeAll)
-      if(!includeAll){
-        items.forEach((item,idx)=>{
-          const leafItem = item?.path?.split(".").pop() 
-          if(leafItem && !copyList.includes(leafItem) ){
-            copyList.push(leafItem) 
+      if (!includeAll) {
+        items.forEach((item, idx) => {
+          const leafItem = item?.path?.split(".").pop()
+          if (leafItem && !copyList.includes(leafItem)) {
+            copyList.push(leafItem)
           }
         })
         getFieldHelpers(listName).setValue(copyList)
-        
+
         submitForm()
-        return 
+        return
       }
-      items.forEach((item,idx)=>{
-        const leafItem = item?.path?.split(".").pop() 
-        if(leafItem && copyList.includes(leafItem) && !included.includes(leafItem) ){
-          copyList.splice(copyList.indexOf(leafItem),1) 
+      items.forEach((item, idx) => {
+        const leafItem = item?.path?.split(".").pop()
+        if (leafItem && copyList.includes(leafItem) && !included.includes(leafItem)) {
+          copyList.splice(copyList.indexOf(leafItem), 1)
         }
         getFieldHelpers(listName).setValue(copyList)
       })
-      // setIncludeAll(true)
       submitForm()
     }
-    else{
+    else {
       const newCustomisation = new Customiser(customization);
       setExcludeAll(!excludeAll)
-      items.forEach((item,idx)=>{
+      items.forEach((item, idx) => {
         const path = item?.path
-        const leafItem = path?.split(".").pop() 
-        if(!excludeAll){
+        const leafItem = path?.split(".").pop()
+        if (!excludeAll) {
           if (
             path &&
             leafItem &&
@@ -106,32 +105,24 @@ export const LixiListItemHeader: React.FC<IHeaderLixiItem> = ({
           ) {
             newCustomisation.excludeByPath(path);
           }
-      }else{
-        if (path && leafItem && excluded.includes(leafItem)) {
-          newCustomisation.notExcludeByPath(path);
+        } else {
+          if (path && leafItem && excluded.includes(leafItem)) {
+            newCustomisation.notExcludeByPath(path);
+          }
         }
-      }
       })
       updateCustomisation(newCustomisation.customisation)
     }
   }
-
-  // React.useEffect(()=>{
-  //   if(items.length === excluded.length){
-  //     setExcludeAll(true)
-  //     return
-  //   }
-  //   setExcludeAll(false)
-  // },[excluded.length, items.length])
-  React.useEffect(()=>{
-    if(items.length === selectedItemsLength){
+  React.useEffect(() => {
+    if (items.length === selectedItemsLength) {
       setIncludeAll(true)
       return
     }
     setIncludeAll(false)
-  },[items.length, selectedItemsLength, setIncludeAll])
+  }, [items.length, selectedItemsLength, setIncludeAll])
 
-  const StatusText = ()=>{
+  const StatusText = () => {
     if (exclusion && excludeAll && !included.length) {
       return (
         <Typography color="secondary" variant="button">
@@ -139,41 +130,53 @@ export const LixiListItemHeader: React.FC<IHeaderLixiItem> = ({
         </Typography>
       );
     }
-    if(!exclusion && includeAll ){
-      return <Typography color="primary" variant="button"><strong style={{color:"green"}}>{" - "}All Included</strong></Typography>
+    if (!exclusion && includeAll) {
+      return <Typography color="primary" variant="button"><strong style={{ color: "green" }}>{" - "}All Included</strong></Typography>
     }
     return <></>
   }
 
   return (
-    <Paper>
-      <div 
-        onClick={()   =>   toggleAll()} 
-        style={{cursor:"pointer"}}>
-      <ListSubheader
-        key={name}
-        style={{ marginTop: "0", alignItems: "center" }}
-        className={classes.subItemHeader}
-      >
-        
-         {!exclusion &&( <ListItemIcon>
-          
-           {(selectedItemsLength > 0 && selectedItemsLength < items.length)
-            ? <IndeterminateCheckBoxTwoToneIcon color="primary" />
-            : includeAll
-            ? <CheckRoundedIcon style={{ color: "green" }} fontSize="default" />
-            :<CloseOutlinedIcon fontSize="small" style={{ color: "red" }}/>}
-          
-          </ListItemIcon>)}
+    <Paper className={classes.container}>
+      <div onClick={() => toggleAll()} style={{ cursor: "pointer" }}>
+        <ListSubheader
+          key={name}
+          style={{ marginTop: "0", alignItems: "center" }}
+          className={classes.subItemHeader}
+        >
+          {!exclusion && (
+            <ListItemIcon>
+              {selectedItemsLength > 0 && selectedItemsLength < items.length ? (
+                <IndeterminateCheckBoxTwoToneIcon color="primary" />
+              ) : includeAll ? (
+                <CheckRoundedIcon
+                  style={{ color: "green" }}
+                  fontSize="default"
+                />
+              ) : (
+                <CloseOutlinedIcon fontSize="small" style={{ color: "red" }} />
+              )}
+            </ListItemIcon>
+          )}
           <ListItemSecondaryAction>
-          {exclusion && <Switch size="small"
-              checked={excludeAll}
-              onChange={(e) => toggleAll()}
-              inputProps={{ "aria-label": "controlled" }}
-            />}
+            {exclusion && (
+              <Switch
+                size="small"
+                checked={excludeAll}
+                onChange={(e) => toggleAll()}
+                inputProps={{ "aria-label": "controlled" }}
+              />
+            )}
           </ListItemSecondaryAction>
-          <ListItemText primary={<>{header}<StatusText/></>} />
-      </ListSubheader>
+          <ListItemText
+            primary={
+              <>
+                {header}
+                <StatusText />
+              </>
+            }
+          />
+        </ListSubheader>
       </div>
     </Paper>
   );
