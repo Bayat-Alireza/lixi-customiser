@@ -256,10 +256,10 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
         if (markedForDeletionList) {
           newCustomisation.removeCustomisation([...markedForDeletionList]);
         }
-        if (elements.length) {
+        if (elements.length && !checked) {
           newCustomisation.removeCustomisation([...elements]);
         }
-        if (attributes.length) {
+        if (attributes.length && !checked) {
           newCustomisation.removeCustomisation([...attributes]);
         }
         newCustomisation.customise();
@@ -273,7 +273,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
     >
       {({ isSubmitting, values, errors, touched, submitForm }) => (
         <Form>
-          <Paper style={{ padding: "0.5rem" }}>
+          <Paper style={{ padding: "0rem 0rem 0.5rem" }}>
             <Grid container spacing={1}>
               <Grid item xs={12}>
                 <Paper className={classes.customisationTitleContainer}>
@@ -300,7 +300,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                               backgroundColor: "#fff",
                               margin: 0,
                               color: "#333",
-                              padding: "0.5rem",
+                              padding: "0.5rem 0rem",
                             }}
                           >
                             <Typography color="primary" variant="h6">
@@ -335,7 +335,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                               backgroundColor: "#fff",
                               margin: 0,
                               color: "#333",
-                              padding: "0.5rem",
+                              padding: "0.5rem 0rem",
                             }}
                           >
                             <Typography color="primary" variant="h6">
@@ -364,7 +364,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                       </Tooltip>
                     )}
                   </div>
-                  <div className={classes.saveButton}>
+                  {/* <div className={classes.saveButton}>
                     <Button
                       size="small"
                       style={{ marginInline: "0.5rem" }}
@@ -384,28 +384,29 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                     >
                       Save
                     </Button>
-                  </div>
+                  </div> */}
                 </Paper>
               </Grid>
 
               {leafEle?.length ? (
                 <Grid item xs={12} sm={itemAttributes?.length ? 6 : 12}>
-                  <ElementSubItems
-                    setExcludedList={setExcludedList}
-                    fixedListItem={fixedListItem["elements"]}
-                    exclusion={checked}
-                    key={"element"}
-                    value={values.elements}
-                    header={`Sub-Elements ${
-                      itemSubElement["choice"] ? "CHOICE" : "(SEQUENCE)"
-                    }`}
-                    subItems={leafEle}
-                    name="elements"
-                  />
+                    <ElementSubItems
+                      setExcludedList={setExcludedList}
+                      fixedListItem={fixedListItem["elements"]}
+                      exclusion={checked}
+                      key={"element"}
+                      value={values.elements}
+                      header={`Sub-Elements ${
+                        itemSubElement["choice"] ? "CHOICE" : "(SEQUENCE)"
+                      }`}
+                      subItems={leafEle}
+                      name="elements"
+                    />
                 </Grid>
               ) : undefined}
               {leafAttribs?.length ? (
                 <Grid item xs={12} sm={leafEle?.length ? 6 : 12}>
+                   {/* <Paper style={{      margin:      "0.1rem 0.25rem"      }}> */}
                   <ElementSubItems
                     setExcludedList={setExcludedList}
                     fixedListItem={fixedListItem["attributes"]}
@@ -416,6 +417,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                     subItems={leafAttribs}
                     name="attributes"
                   />
+                  {/* </Paper> */}
                 </Grid>
               ) : undefined}
 
@@ -425,6 +427,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                     <div className={classes.saveMinMax}>
                       <div className={classes.minMaxContainer}>
                         <AppTextField
+                          onBlur={submitForm}
                           // className={classes.textFieldMinMax}
                           name="newMin"
                           size="medium"
@@ -439,6 +442,7 @@ export const CustomiseElement: React.FC<ICustomiseElement> = ({ lixiItem }) => {
                         />
 
                         <AppTextField
+                          onBlur={submitForm}
                           // className={classes.textFieldMinMax}
                           name="newMax"
                           size="medium"

@@ -11,7 +11,7 @@ export const ExcerptDocumentation: React.FC = ({ children }) => {
   An alternative description - explaining the item usage.
   `;
   const customHeadingTooltip = `A custom heading for the documentation`;
-  const { values } = useFormikContext<{
+  const { values,submitForm } = useFormikContext<{
     excerpt: string;
     documentation: string;
     heading: string;
@@ -23,6 +23,7 @@ export const ExcerptDocumentation: React.FC = ({ children }) => {
       <Grid item xs={12} sm={children?6:12}>
         <AppTextField
           title={customHeadingTooltip}
+          onBlur={submitForm}
           variant="outlined"
           multiline
           fullWidth
@@ -36,6 +37,7 @@ export const ExcerptDocumentation: React.FC = ({ children }) => {
       <Grid item xs={12} sm={6}>
         <AppTextField
           title={excerptTooltip}
+          onBlur={submitForm}
           variant="outlined"
           multiline
           fullWidth
@@ -48,6 +50,7 @@ export const ExcerptDocumentation: React.FC = ({ children }) => {
       <Grid item xs={12} sm={6}>
         <AppTextField
           title={documentationTooltip}
+          onBlur={submitForm}
           variant="outlined"
           multiline
           fullWidth
