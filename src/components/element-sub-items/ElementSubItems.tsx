@@ -120,7 +120,7 @@ export const ElementSubItems: React.FC<SubItems> = ({
         <FieldArray
           name={name}
           render={(arrayHelper) => (
-            <div>
+            <>
               <LixiListItemHeader
                 name={includeAllItem}
                 exclusion={exclusion}
@@ -155,7 +155,7 @@ export const ElementSubItems: React.FC<SubItems> = ({
                   />
                 );
               })}
-            </div>
+            </>
           )}
         />
       </List>
