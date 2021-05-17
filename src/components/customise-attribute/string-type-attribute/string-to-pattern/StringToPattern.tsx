@@ -21,6 +21,7 @@ export const StringToPattern: React.FC<IStringToPattern> = ({ resetForm }) => {
     values,
     errors,
     touched,
+    submitForm
   } = useFormikContext<StringTypeAttributeType>();
   return (
     <Paper style={{ padding: "0.5rem", margin: "0.5rem 0.2rem" }}>
@@ -49,6 +50,7 @@ export const StringToPattern: React.FC<IStringToPattern> = ({ resetForm }) => {
           <div>
             <AppTextField
               variant="outlined"
+              onBlur={submitForm}
               size="small"
               label="Regex Expression"
               name="pattern.regex"
@@ -68,6 +70,7 @@ export const StringToPattern: React.FC<IStringToPattern> = ({ resetForm }) => {
           <div style={{ marginTop: "0.5rem" }}>
             <AppTextField
               variant="outlined"
+              onBlur={submitForm}
               size="small"
               fullWidth
               label="Regex Definition"

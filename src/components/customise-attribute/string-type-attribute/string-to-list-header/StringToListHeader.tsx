@@ -19,7 +19,7 @@ interface ITypeFormikValue {
 export const StringToListHeader: React.FC = () => {
   const classes = useStyles();
   const [nameAlert, setNameAlert] = React.useState(false);
-  const { getFieldHelpers, values } = useFormikContext<ITypeFormikValue>();
+  const { getFieldHelpers, values, submitForm } = useFormikContext<ITypeFormikValue>();
   return (
     <Formik
       initialValues={{ definition: "", name: "", enumList: [] }}
@@ -32,6 +32,7 @@ export const StringToListHeader: React.FC = () => {
         const valuesCopy = [...values.enumerations];
         valuesCopy.push(val);
         getFieldHelpers("enumerations").setValue(valuesCopy);
+        submitForm()
         resetForm();
       }}
       validationSchema={stringToEnumeratedListSchema}

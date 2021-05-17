@@ -2,6 +2,7 @@ import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import RemoveCircleOutlineRoundedIcon from "@material-ui/icons/RemoveCircleOutlineRounded";
+import { useFormikContext } from "formik";
 import React from "react";
 import { useStyles } from "./stringToListBodyStyle";
 
@@ -19,11 +20,18 @@ export const StringToListBody: React.FC<IStringToListBody> = ({
   definition,
 }) => {
   const classes = useStyles();
+  const { submitForm } = useFormikContext();
+
+  const handelRemove = (idx: number) => {
+    remove(idx)
+    submitForm()
+  }
+
   return (
     <div className={classes.root}>
       <div className={classes.row}>
         <IconButton
-          onClick={() => remove(idx)}
+          onClick={() => handelRemove(idx)}
           color="secondary"
           aria-label="delete"
         >

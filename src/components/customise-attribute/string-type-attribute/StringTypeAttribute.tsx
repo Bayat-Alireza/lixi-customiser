@@ -76,13 +76,13 @@ export const StringTypeAttribute: React.FC<ICustomiseAttribute> = ({
         );
         attCustomiser.customise();
         updateCustomisation(attCustomiser.customisation);
-        setTimeout(() => {
-          alert(JSON.stringify(values, null, 2));
-          setSubmitting(false);
-        }, 400);
+        // setTimeout(() => {
+        //   alert(JSON.stringify(values, null, 2));
+        //   setSubmitting(false);
+        // }, 400);
       }}
     >
-      {({ isSubmitting, values, errors, touched, resetForm }) => (
+      {({ isSubmitting, values, errors, touched, resetForm, submitForm }) => (
         <Form>
           <Paper style={{ padding: "0.5rem" }}>
             <FormControl style={{ width: "100%" }}>
@@ -97,13 +97,14 @@ export const StringTypeAttribute: React.FC<ICustomiseAttribute> = ({
                 >
                   <AppCheckBox
                     name="optionalToMandatory"
+                    onBlur={submitForm}
                     color="primary"
                     size="medium"
                     label="Optional To Mandatory"
                     checked={values?.optionalToMandatory}
                     // value={values?.optionalToMandatory}
                   />
-                  <Button
+                  {/* <Button
                     className={classes.saveButton}
                     size="small"
                     type="submit"
@@ -112,7 +113,7 @@ export const StringTypeAttribute: React.FC<ICustomiseAttribute> = ({
                     startIcon={<SaveIcon fontSize="large" />}
                   >
                     Save
-                  </Button>
+                  </Button> */}
                 </div>
               </Paper>
             </FormControl>
