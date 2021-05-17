@@ -1,12 +1,6 @@
 import {
-  Badge,
-  Box,
   Button,
-  Checkbox,
-  Chip,
-
   Divider,
-  FormControlLabel,
   List,
   ListItem,
   ListSubheader,
@@ -15,8 +9,6 @@ import {
 import Collapse from "@material-ui/core/Collapse";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
-import DoneOutlinedIcon from "@material-ui/icons/DoneOutlined";
 import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
 import React, { Fragment, useEffect, useState } from "react";
 import { useAction } from "../../hooks/useActions";
@@ -24,7 +16,6 @@ import { useTypedSelector } from "../../hooks/useTypeSelector";
 import { Customiser } from "../../models/Customiser";
 import { ElementCustomiser } from "../../models/ElementCustomiser";
 import { LixiBase } from "../../models/LixiBase";
-// import { CustomiseAttribute } from "../customise-attribute/CustomiseAttribute";
 import { CustomiseElement } from "../customise-element/CustomiseElement";
 import { useStyles } from "./lixiItemStyle";
 import Alert from '@material-ui/lab/Alert';
@@ -45,20 +36,20 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
   const classes = useStyles();
 
   const [openToCustomise, setOpenToCustomise] = useState<boolean>(false);
-  const [alert, setAlert] = useState<{ included: boolean; path: string }>();
+  const [alert, setAlert] = useState<{ included: boolean, path: string, customised?: boolean }>();
   const [lixiItem, setLixiItem] = useState<LixiBase>();
   const [exclude, setExclude] = useState(false);
   const { customization, subSchema } = useTypedSelector(
     (state) => state.customizer
   );
-  const { searchItem, updateCustomisation } = useAction();
+  const { searchItem } = useAction();
 
   const localName = React.useMemo(() => {
     return lixiItem?.element?.localName;
   }, [lixiItem]);
 
   const type = React.useMemo(() => {
-    return lixiItem?.element?.getAttribute("type")||"";
+    return lixiItem?.element?.getAttribute("type") || "";
   }, [lixiItem]);
   const baseRestriction = React.useMemo(() => {
     return lixiItem?.baseRestriction || "";
@@ -72,27 +63,14 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
       setLixiItem(ele);
       return
     }
-    
+
   }, [item, customization]);
 
-  const onExclude = () => {
-    if (!lixiItem?.path) return;
-    const excluded = !exclude;
-    setExclude(excluded);
-    const newCustomisation = new Customiser(customization, lixiItem?.path);
-    if (excluded) {
-      newCustomisation.exclude();
-    } else {
-      newCustomisation.include();
-    }
-    updateCustomisation(newCustomisation.customisation);
-  };
-
-  useEffect(()=>{
-    if (lixiItem?.path === "Package"){
+  useEffect(() => {
+    if (lixiItem?.path === "Package") {
       setOpenToCustomise(true)
     }
-  },[lixiItem?.path])
+  }, [lixiItem?.path])
 
   useEffect(() => {
     if (exclude) return;
@@ -110,6 +88,7 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
       customization,
       lixiItem.element.localName
     );
+
     if (parentCustomised) {
       setAlert(parentCustomised);
     }
@@ -118,30 +97,16 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
-        <Paper style={{ marginTop: "0.5rem", padding: "0.5rem 0.5rem" }}>
+        <Paper style={{ marginTop: "0.5rem", padding: "0rem 0rem 0.5rem" }}>
           <Grid item xs={12}>
             <Paper>
               {!alert || alert?.included ? (
                 <div className={classes.header}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        icon={
-                          <DoneOutlinedIcon
-                            style={{ color: "green" }}
-                            fontSize="small"
-                          />
-                        }
-                        checkedIcon={<CloseOutlinedIcon fontSize="small" />}
-                        onChange={onExclude}
-                        checked={exclude}
-                        disabled={alert?.included}
-                        name="checkedI"
-                      />
-                    }
-                    label={exclude ? "Excluded" : "Include"}
-                  />
-
+                  {
+                    exclude
+                      ? "- Excluded"
+                      : "---"
+                  }
                   <Button
                     disabled={exclude}
                     style={{ height: "max-content", width: "min-content" }}
@@ -169,7 +134,7 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
                     </Button>
                   }
                 >
-                  This item excluded via its parent:{" "}
+                  This item specifically not included via its parent/ancestors:{" "}
                   {
                     <em>
                       <strong>{alert?.path.split(".").pop()}</strong>
