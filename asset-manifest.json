@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.js": "/lixi-customiser/static/js/main.14837c2b.chunk.js",
-    "main.js.map": "/lixi-customiser/static/js/main.14837c2b.chunk.js.map",
+    "main.js": "/lixi-customiser/static/js/main.8837ca5b.chunk.js",
+    "main.js.map": "/lixi-customiser/static/js/main.8837ca5b.chunk.js.map",
     "runtime-main.js": "/lixi-customiser/static/js/runtime-main.6f210624.js",
     "runtime-main.js.map": "/lixi-customiser/static/js/runtime-main.6f210624.js.map",
-    "static/js/2.138144db.chunk.js": "/lixi-customiser/static/js/2.138144db.chunk.js",
-    "static/js/2.138144db.chunk.js.map": "/lixi-customiser/static/js/2.138144db.chunk.js.map",
+    "static/js/2.397e57af.chunk.js": "/lixi-customiser/static/js/2.397e57af.chunk.js",
+    "static/js/2.397e57af.chunk.js.map": "/lixi-customiser/static/js/2.397e57af.chunk.js.map",
     "static/js/3.196f0e50.chunk.js": "/lixi-customiser/static/js/3.196f0e50.chunk.js",
     "static/js/3.196f0e50.chunk.js.map": "/lixi-customiser/static/js/3.196f0e50.chunk.js.map",
     "index.html": "/lixi-customiser/index.html",
-    "static/js/2.138144db.chunk.js.LICENSE.txt": "/lixi-customiser/static/js/2.138144db.chunk.js.LICENSE.txt"
+    "static/js/2.397e57af.chunk.js.LICENSE.txt": "/lixi-customiser/static/js/2.397e57af.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.6f210624.js",
-    "static/js/2.138144db.chunk.js",
-    "static/js/main.14837c2b.chunk.js"
+    "static/js/2.397e57af.chunk.js",
+    "static/js/main.8837ca5b.chunk.js"
   ]
 }
