@@ -48,7 +48,7 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
 }) => {
   const classes = useStyles();
   const [value, setValue] = React.useState<string>("");
-  // const [neutral, setNeutral] = React.useState<string[]>([]);
+
   const { markedForDeletionList } = useTypedSelector((state) => state.item);
   const { customization } = useTypedSelector((state) => state.customizer);
   const { searchItem,  updateCustomisation } = useAction();
@@ -81,10 +81,20 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
        return <Typography variant="caption" color="secondary">{status}</Typography>
      }
      if (status === "customised"){
-       return (
-       
+       if (exclusion) {
+
+         return (
+
            <Typography variant="button" color="primary">
-             <strong>{status}</strong>
+             <strong> not excluded - {status}</strong>
+           </Typography>
+
+         );
+       }
+       return (
+
+         <Typography variant="button" color="primary">
+           <strong>included - {status}</strong>
            </Typography>
      
        );
@@ -106,88 +116,12 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
   }, [element?.path, markedForDeletionList]);
 
 
-  // React.useEffect(() => {
-  //   if (!leafItem) return;
-  //   if (
-  //     (included.includes(leafItem) || excluded.includes(leafItem)) &&
-  //     neutral.includes(leafItem)
-  //   ) {
-  //     setNeutral([]);
-  //   }
-  //   if (
-  //     !(included.includes(leafItem) || excluded.includes(leafItem)) &&
-  //     !neutral.includes(leafItem)
-  //   ) {
-  //     setNeutral([leafItem]);
-  //   }
-  // }, [excluded, included, leafItem, neutral]);
-
-  // React.useEffect(() => {
-  //   if (!leafItem) return;
-  //   if (values[excludeAll]) {
-  //     setValue("");
-  //     return;
-  //   }
-
-  //   if (furtherCustomisation && values[listName].includes(leafItem)) {
-  //     setValue(leafItem);
-  //     return;
-  //   }
-  //   if (furtherCustomisation && !values[listName].includes(leafItem)) {
-  //     setValue("");
-  //     return;
-  //   }
-  //   if (included.includes(leafItem) || values[listName].includes(leafItem)) {
-  //     // if  (!values[includeAll])  return;;
-  //     setValue(leafItem);
-  //     return;
-  //   }
-  //   if (excluded.includes(leafItem) || !values[listName].includes(leafItem)) {
-  //     setValue("");
-  //     return;
-  //   }
-  // }, [
-  //   excludeAll,
-  //   excluded,
-  //   furtherCustomisation,
-  //   includeAll,
-  //   included,
-  //   leafItem,
-  //   listName,
-  //   values,
-  // ]);
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  // React.useEffect(() => {
-  //   if (!leafItem) return;
-  //   if (values[excludeAll]) {
-  //     setValue("");
-  //     return;
-  //   }
-  //   if (values[listName].includes(leafItem)) return;
-  //   if (fixedListItem.length && !fixedListItem.includes(leafItem) && !touched)
-  //     return;
-  //   if (selectAll === "disable") return;
 
-  //   if (selectAll && !excluded.includes(leafItem)) {
-  //     arrayHelper.push(leafItem);
-
-  //     return;
-  //   }
-  // }, [
-  //   arrayHelper,
-  //   excludeAll,
-  //   excluded,
-  //   fixedListItem,
-  //   leafItem,
-  //   listName,
-  //   selectAll,
-  //   touched,
-  //   values,
-  // ]);
 
   React.useEffect(() => {
     if (!leafItem) return;
@@ -286,7 +220,13 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
         open={open}
         handleClose={handleClose}
       />
-      <ListItem divider dense button onClick={() => handelAddItem(leafItem)}>
+      <ListItem
+        className={classes.subItem}
+        divider
+        dense
+        button
+        onClick={() => handelAddItem(leafItem)}
+      >
         {!exclusion && (
           <ListItemIcon>
             {leafItem && values[listName].includes(leafItem) ? (
@@ -305,34 +245,24 @@ export const LixiListItem: React.FC<IListLixiItem> = ({
                 style={{ alignItems: "center" }}
                 component="span"
                 variant="body2"
-                color={
-                  excluded.includes(leafItem || "")
-                    ? "textPrimary"
-                    : "textSecondary"
-                }
               >
                 {leafItem}
               </Typography>
-              
+
               <Typography variant="caption" color="textSecondary">
                 &nbsp;
-                  <Status />
+                <Status />
                 <LixiItemToolTip lixiItem={element} placement="top-start" />
               </Typography>
-               
             </div>
           }
         />
 
         <ListItemSecondaryAction>
-          {/* {exclusion && <Switch size="small"
-              checked={!!(leafItem && excluded.includes(leafItem))}
-              inputProps={{ "aria-label": "controlled" }}
-            />} */}
           <IconButton
             edge="end"
             aria-label="comments"
-            className={classes.viewItem}
+            className={classes.searchIcon}
             value={element?.path?.split(".").pop()}
             onClick={(e) => searchItem(element?.path || "")}
           >
