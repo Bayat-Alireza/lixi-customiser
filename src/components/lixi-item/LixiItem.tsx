@@ -35,7 +35,7 @@ interface ItemType {
 export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
   const classes = useStyles();
 
-  const [openToCustomise, setOpenToCustomise] = useState<boolean>(true);
+  const [openToCustomise, setOpenToCustomise] = useState<boolean>(false);
   const [alert, setAlert] = useState<{ included: boolean, path: string, customised?: boolean }>();
   const [lixiItem, setLixiItem] = useState<LixiBase>();
   const [exclude, setExclude] = useState(false);
@@ -98,7 +98,10 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
     if (!exclude && (!alert || alert?.included)) {
       setOpenToCustomise(true)
     }
-  }, [alert, exclude])
+    return () => {
+      setOpenToCustomise(false)
+    }
+  }, [alert, exclude, alert?.included])
 
   return (
     <Grid container spacing={2}>
