@@ -1,0 +1,22 @@
+image: node:14.13.1 # change to match your project's node version
+
+cache:
+  paths:
+    - node_modules/
+
+before_script:
+  - rm -rf build
+  - CI=false yarn
+
+pages:
+  stage: deploy
+  script:
+    - CI=false yarn build
+    - rm -rf public
+    - cp build/index.html build/404.html
+    - mv build public
+  artifacts:
+    paths:
+      - public
+  # only:
+  #   - dev
