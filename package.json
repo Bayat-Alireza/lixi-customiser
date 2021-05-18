@@ -30,15 +30,14 @@
     "web-vitals": "^1.0.1",
     "yup": "^0.32.9"
   },
-  "homepage": "http://Bayat-Alireza.github.io/lixi-customiser",
+  "homepage": "https://lixi.gitlab.io/schema-customiser/",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "predeploy":"yarn build",
+    "predeploy": "yarn build",
     "deploy": "gh-pages -d build"
-    
   },
   "eslintConfig": {
     "extends": [

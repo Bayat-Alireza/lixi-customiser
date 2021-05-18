@@ -1,4 +1,4 @@
-image: node:14.13.1 # change to match your project's node version
+image: node:14.13.1
 
 cache:
   paths:
