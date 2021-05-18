@@ -65,13 +65,13 @@ export const IntegerTypeAttribute: React.FC<ICustomiseIntegerTypeAttribute> = ({
         attCustomiser.customise();
         // console.log("ci", attCustomiser.customisation);
         updateCustomisation(attCustomiser.customisation);
-        setTimeout(() => {
-          alert(JSON.stringify(values, null, 2));
-          setSubmitting(false);
-        }, 400);
+        // setTimeout(() => {
+        //   alert(JSON.stringify(values, null, 2));
+        // }, 400);
+        setSubmitting(false);
       }}
     >
-      {({ isSubmitting, values, errors, touched, resetForm }) => (
+      {({ isSubmitting, values, errors, touched, resetForm, submitForm }) => (
         <Form>
           <Paper style={{ padding: "0.5rem" }}>
             <FormControl style={{ width: "100%" }}>
@@ -86,12 +86,13 @@ export const IntegerTypeAttribute: React.FC<ICustomiseIntegerTypeAttribute> = ({
                 >
                   <AppCheckBox
                     name="optionalToMandatory"
+                    onBlur={submitForm}
                     color="primary"
                     size="medium"
                     label="Optional To Mandatory"
                     checked={values?.optionalToMandatory}
                   />
-                  <Button
+                  {/* <Button
                     className={classes.saveButton}
                     size="small"
                     type="submit"
@@ -100,7 +101,7 @@ export const IntegerTypeAttribute: React.FC<ICustomiseIntegerTypeAttribute> = ({
                     startIcon={<SaveIcon fontSize="large" />}
                   >
                     Save
-                  </Button>
+                  </Button> */}
                 </div>
               </Paper>
             </FormControl>
@@ -116,6 +117,7 @@ export const IntegerTypeAttribute: React.FC<ICustomiseIntegerTypeAttribute> = ({
                 <Paper className={classes.paper}>
                   <div className={classes.container}>
                     <AppTextField
+                      onBlur={submitForm}
                       variant="outlined"
                       size="small"
                       label="Minimum"
@@ -124,6 +126,7 @@ export const IntegerTypeAttribute: React.FC<ICustomiseIntegerTypeAttribute> = ({
                       // value={values.minInteger}
                     />
                     <AppTextField
+                      onBlur={submitForm}
                       variant="outlined"
                       size="small"
                       label="Maximum"

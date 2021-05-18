@@ -8,7 +8,8 @@ interface ISwitchAttributeType {
       | "integerType"
       | "decimalType"
       | "currencyType"
-      | "listType";
+    | "listType"
+    | "default"
   }>[];
 }
 export const SwitchAttributeType: React.FC<ISwitchAttributeType> = ({
@@ -21,6 +22,9 @@ export const SwitchAttributeType: React.FC<ISwitchAttributeType> = ({
 
     if (regex.test(switchType)) {
       return type === "listType";
+    }
+    if (type === 'default') {
+      return true
     }
     return switchType === type;
   });

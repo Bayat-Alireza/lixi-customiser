@@ -1,13 +1,13 @@
 import { Customiser } from "./Customiser";
-import { IntegerTypeAttributeType } from "./customisationTypes";
+import {  ListTypeAttributeType } from "./customisationTypes";
 
 export class ListTypeAttributeCustomiser extends Customiser {
-  object = {} as IntegerTypeAttributeType;
+  object = {} as ListTypeAttributeType;
 
   constructor(
     customisation: Element | undefined = undefined,
     path?: string,
-    values?: IntegerTypeAttributeType
+    values?: ListTypeAttributeType
   ) {
     super(customisation, path);
     this.object = values || {
@@ -23,13 +23,10 @@ export class ListTypeAttributeCustomiser extends Customiser {
       optionalToMandatory,
       documentation,
       excerpt,
-      minInteger,
-      maxInteger,
+      
     } = this.object;
     if (
       !optionalToMandatory &&
-      !minInteger &&
-      !maxInteger &&
       !documentation &&
       !excerpt
     ) {

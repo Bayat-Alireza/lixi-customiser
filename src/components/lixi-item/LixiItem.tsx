@@ -27,6 +27,7 @@ import { LabelDescription } from "./lixi-item-label-description/LabelDescription
 import { ListTypeAttribute } from "../customise-attribute/list-type-attribute/ListTypeAttribute";
 import { SimpleTokenType } from "../customise-simple-type/simple-token-type/SimpleTokenType";
 import { SwitchSimpleType } from "./SimpleTypeSwitchType";
+import { DefaultTypeAttribute } from "../customise-attribute/default-attribute/DefaultTypeAttribute";
 
 
 interface ItemType {
@@ -198,6 +199,7 @@ export const LixiItem: React.FC<ItemType | undefined> = ({ item }) => {
               <IntegerTypeAttribute lixiItem={lixiItem} />
               <StringTypeAttribute lixiItem={lixiItem} />
               <ListTypeAttribute lixiItem={lixiItem} />
+              <DefaultTypeAttribute lixiItem={lixiItem} />
             </SwitchAttributeType>
           ) : null}
 

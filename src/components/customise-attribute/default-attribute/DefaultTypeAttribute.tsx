@@ -1,4 +1,3 @@
-import Button from "@material-ui/core/Button";
 import Divider from "@material-ui/core/Divider";
 import FormControl from "@material-ui/core/FormControl";
 import Paper from "@material-ui/core/Paper";
@@ -9,17 +8,16 @@ import { useTypedSelector } from "../../../hooks/useTypeSelector";
 import { LixiBase } from "../../../models/LixiBase";
 import { ExcerptDocumentation } from "../../excerpt-documentation/ExcerptDocumentation";
 import { AppCheckBox } from "../../formik-mterial-ui/AppCheckBox";
-import SaveIcon from "@material-ui/icons/Save";
-import { useStyles } from "./listTypeAttributeStyle";
+import { useStyles } from "./defaultTypeAttributeStyle";
 import { ListTypeAttributeType } from "../../../models/customisationTypes";
 import { ListTypeAttributeCustomiser } from "../../../models/ListTypeAttributeCustomiser";
 
 interface ICustomiseListTypeAttribute {
   lixiItem: LixiBase | undefined;
-  type?: "listType";
+  type?: "default";
 }
 
-export const ListTypeAttribute: React.FC<ICustomiseListTypeAttribute> = ({
+export const DefaultTypeAttribute: React.FC<ICustomiseListTypeAttribute> = ({
   lixiItem,
 }) => {
   const classes = useStyles();
@@ -60,9 +58,6 @@ export const ListTypeAttribute: React.FC<ICustomiseListTypeAttribute> = ({
         attCustomiser.customise();
         // console.log("ci", attCustomiser.customisation);
         updateCustomisation(attCustomiser.customisation);
-        // setTimeout(() => {
-        //   alert(JSON.stringify(values, null, 2));
-        // }, 400);
         setSubmitting(false);
       }}
     >
@@ -109,6 +104,6 @@ export const ListTypeAttribute: React.FC<ICustomiseListTypeAttribute> = ({
   );
 };
 
-ListTypeAttribute.defaultProps = {
-  type: "listType",
+DefaultTypeAttribute.defaultProps = {
+  type: "default",
 };
